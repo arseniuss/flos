@@ -1,0 +1,56 @@
+# _Build_ program
+
+_Build_ program acts like Unix _make_.
+It uses _libflos_ library as a interface for operating system or its emulation.
+
+_Build_ program uses files named _build.recipe_
+
+
+
+`#` - comments
+
+```
+@project "Simple project"
+@version 1.0
+@func otod ext(.o) => ext(.d)
+
+download=wget -N
+@download continue=wget -nc
+
+include:config config
+include global.recipe
+
+linker-flags+=$(pkg-config link dynamic libutf)
+
+source=source/main.c
+objects=$(source 
+    regex(source/([^.]+)\.c)
+        .groups[1]
+        .select(g => build/$(g).o)
+)
+                        # $(source (source/(*).c) => (build/(*).o))
+                        # $(a+b+c (source/(*).c) => (build/(*).o))
+includes=include/*.h    # $(find-files include/*.h) - wildcard search
+                        # $(find-files regex(include/.*\.h)) - regex search
+                        # $(find-files include) - just seach
+                        # $(find-files include/**.h)
+
+dependencies=$(objects ext(.o) => ext(.d))
+
+include:later $(dependencies)
+
+all:virtual: simple-program
+
+simple-program: $(objects) $(dependencies)
+    $(linker) $(linker-flags) -o $(target) $(source)
+
+$(objects):%.o:%.c:
+    $(c-compiler) $(c-flags) -d $(target otod) -o $(target) $(source)
+
+something:virtual: file-on-internet
+    read file-on-internet | regex /([A-Za-z]+)\s+([0-9]+)/ | write staff
+
+file-on-internet:
+    $(download continue) http://domain.com/file-on-internet
+
+```
