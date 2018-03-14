@@ -1,55 +1,51 @@
-ARCHES = \
-    amd64 \
-    arm64 \
-    armel \
-    armhf \
-    i386 \
-    mips \
-    mipsel
+ifeq ($(ROOT),)
+$(error ROOT is not defined!)
+endif
+
+ifeq ($(ARCH),)
+$(error ARCH is not defined!)
+endif
+
+include $(ROOT)/config/make/arches.mk
 
 LIBNAME=cell.builtin
-INSTALLDIR=../../..
-
+INSTALLDIR?=$(ROOT)
 MAKEFLAGS = \
-    --no-print-directory
+	--no-print-directory
 
-all: $(addprefix all-,$(ARCHES))
 
-$(addprefix all-,$(ARCHES)):
-	@arch=$(patsubst all-%,%, $@); \
-	make $(MAKEFLAGS) -f arch.mk all ARCH=$$arch LIBNAME=lib$(LIBNAME)
-	
-install: $(addprefix install-,$(ARCHES))
-	@cp -v --parents  `make -f arch.mk headers` $(INSTALLDIR)/
-	
-$(addprefix install-,$(ARCHES)):
-	@arch=$(patsubst install-%,%, $@); \
-	headers=`make -f arch.mk headers ARCH=$$arch LIBNAME=lib$(LIBNAME)`; \
-	mkdir -p $(INSTALLDIR)/$$arch/; \
-	cp -v --parents $$headers $(INSTALLDIR); \
-	libs=`make -f arch.mk libs ARCH=$$arch LIBNAME=lib$(LIBNAME)`; \
-	cp -v --parents $$libs $(INSTALLDIR);
+all: all-$(ARCH)
 
-uninstall: $(addprefix uninstall-,$(ARCHES))
-	@rm -fv $(addprefix $(INSTALLDIR)/,$(shell make -f arch.mk headers))
-	
-$(addprefix uninstall-,$(ARCHES)):
-	@arch=$(patsubst uninstall-%,%, $@); \
-	headers=`make -f arch.mk headers ARCH=$$arch LIBNAME=lib$(LIBNAME)`; \
-	for file in $$headers; do \
-	    rm -vf $(INSTALLDIR)/$$file; \
-	done; \
-	libs=`make -f arch.mk libs ARCH=$$arch LIBNAME=lib$(LIBNAME)`; \
-	for file in $$libs; do \
-	    rm -vf $(INSTALLDIR)/$$file; \
-	done
-	
+everyting: all $(addprefix all-,$(ARCHES))
 
-clean: $(addprefix clean-,$(ARCHES))
+$(addprefix all-,$(ARCHES)):all-%:
+	@make $(MAKEFLAGS) -f arch.mk all ARCH=$* LIBNAME=lib$(LIBNAME)
+
+install: install-$(ARCH)
+	@cp -v --parents $(shell make $(MAKEFLAGS)  -f arch.mk headers ARCH= LIBNAME=) $(INSTALLDIR)/
+
+install-everyting: install $(addprefix install-,$(ARCHES))
+
+$(addprefix install-,$(ARCHES)):install-%:
+	@cp -v --parents $(shell make $(MAKEFLAGS) -f arch.mk headers ARCH=$* LIBNAME=lib$(LIBNAME)) $(INSTALLDIR)/
+	@cp -v --parents $(shell make $(MAKEFLAGS) -f arch.mk libs ARCH=$* LIBNAME=lib$(LIBNAME)) $(INSTALLDIR)/
+
+uninstall: uninstall-$(ARCH)
+	@rm -fv $(addprefix $(INSTALLDIR)/,$(shell make $(MAKEFLAGS)  -f arch.mk headers ARCH= LIBNAME= ))
+	@rm -fv $(addprefix $(INSTALLDIR)/,$(shell make $(MAKEFLAGS)  -f arch.mk libs ARCH= LIBNAME= ))
+
+uninstall-everyting: uninstall $(addprefix uninstall-,$(ARCHES))
+
+$(addprefix uninstall-,$(ARCHES)):uninstall-%:
+	@rm -vf $(addprefix $(ROOT)/, $(shell make $(MAKEFLAGS)  -f arch.mk headers ARCH=$* LIBNAME=lib$(LIBNAME)))
+	@rm -vf $(addprefix $(ROOT)/, $(shell make $(MAKEFLAGS)  -f arch.mk libs ARCH=$* LIBNAME=lib$(LIBNAME)))
+
+clean: clean-$(ARCH)
 	@rm -rfv build
 	@rm -rfv lib
-	
-$(addprefix clean-,$(ARCHES)):
-	@arch=$(patsubst clean-%,%, $@); \
-	make -f arch.mk clean ARCH=$$arch LIBNAME=lib$(LIBNAME)
-	
+
+clean-everyting: clean $(addprefix clean-,$(ARCHES))
+
+$(addprefix clean-,$(ARCHES)):clean-%:
+	@make $(MAKEFLAGS) -f arch.mk clean ARCH=$* LIBNAME=lib$(LIBNAME)
+

@@ -24,7 +24,7 @@ LDFLAGS =
 
 ifneq ($(LIBNAME)-$(ARCH),-)
 
-include config/$(ARCH).mk
+include $(ROOT)/$(ARCH)/config/make/arch.mk
 
 CFLAGS+= \
     -fPIC \
@@ -37,9 +37,12 @@ BUILDDIR?=build/$(ARCH)
 LIBS = \
     $(ARCH)/lib/$(LIBNAME).a \
     $(ARCH)/lib/$(LIBNAME).so
+    
+GENHEADERS=\
+	$(ARCH)/include/cell/arch.h
 
 
-all: $(LIBS) $(ARCH)/include/cell/arch.h
+all: $(LIBS) $(GENHEADERS)
 	
 $(ARCH)/lib/%.a: $(OBJECTS)
 	@ mkdir -p $(dir $@)
@@ -56,19 +59,20 @@ $(BUILDDIR)/%.o: %.c
 	@ mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-libs: $(LIBS)
+libs:
 	@echo $(LIBS)
 	
 clean:
 	@rm -rfv $(BUILDDIR)
 	@rm -rvf $(ARCH)
-	
-headers: $(ARCH)/include/cell/arch.h
-	@echo $^
-	
-$(ARCH)/include/cell/arch.h:
-	@mkdir -p $(dir $@)
+
+$(GENHEADERS):
+	@mkdir -p $(@D)
 	@touch $@
+
+headers: 
+	@echo $(GENHEADERS)
+
 else
 
 headers: $(HEADERS)
