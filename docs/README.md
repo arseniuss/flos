@@ -1,5 +1,7 @@
 # _flos_  experimental operating system
 
+![flos](https://github.com/arseniuss/flos/blob/master/docs/logo.png?raw=true)
+
 This repository contains a new version of _flos_ experimental operating system. As previous  version this is experimental staff so **THERE IS NO WARRANTY**.
 
 Last project was abondoned because I wanted to learn new things.
@@ -81,5 +83,4 @@ Some code is licensed under beerware license :)
 
 # Author
 
-
-Armands Arseniuss Skolmeisters <[arseniuss@arseniuss.id.lv](mailto:arseniuss@arseniuss.id.lv)>
+Armands Arseniuss Skolmeisters <[arseniuss@arseniuss.id.lv](mailto:arseniuss@arseniuss.id.lv)>>
