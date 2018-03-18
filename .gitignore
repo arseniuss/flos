@@ -6,3 +6,4 @@ i386/
 mips/
 mipsel/
 include/**
+build/
