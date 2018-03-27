@@ -11,11 +11,13 @@ SOURCES=\
 
 ifneq ($(LIBNAME)-$(ARCH),-)
 
-include $(ROOT)/$(ARCH)/config/make/arch.mk
-
 CFLAGS+= \
     -fPIC \
+    -g \
     -I include
+
+SOURCES+= \
+    csource/$(ARCH)/syscall.c
 
 OBJECTS= \
     $(addprefix $(BUILDDIR)/,$(SOURCES:.c=.o))
@@ -35,12 +37,13 @@ $(ARCH)/lib/%.so: $(OBJECTS)
 	@ mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -shared -o $@ $^
 	readelf -a $@ > $(BUILDDIR)/$(notdir $@).elfdump
-	objdump -d -x $@ > $(BUILDDIR)/$(notdir $@).objdump
+	$(OBJDUMP) -source $@ > $(BUILDDIR)/$(notdir $@).objdump
 
 $(OBJECTS): $(SOURCES) $(HEADERS)
 
 $(BUILDDIR)/%.o: %.c
 	@ mkdir -p $(dir $@)
+	@ $(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
 clean:

@@ -1,12 +1,11 @@
 #pragma once
 
 #include <os/linux/defs.h>
+#include <os/linux/syscall.h>
 
-#if __ARCH__ == amd64
-#include "amd64/syscall.h"
-#else
-#error __ARCH__ is not defined!
-#endif
+#define syscall(...)    CONCAT(__ARCH__, __syscall)(__VA_ARGS__)
+
+long syscall(long num, long a, long b, long c, long d, long e, long f);
 
 long* __errno_location();
 
@@ -25,10 +24,10 @@ static long check(long ret)
 #undef SYSCALL_PROC1
 #endif
 
-#define SYSCALL_PROC1(name, t0, r0) \
+#define SYSCALL_PROC1(name, t0, r0)     \
     void linux_##name(t0 r0) \
     {\
-        check(syscall(SYSCALL_##name, (long)r0, 0, 0, 0, 0, 0)); \
+        check(syscall(CONCAT(SYSCALL_, name), (long)r0, 0, 0, 0, 0, 0)); \
     }
 
 #ifdef SYSCALL_FUNC1

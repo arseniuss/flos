@@ -1,5 +1,8 @@
 #pragma once
 
+#define XCONCAT(x, y)    x ## y
+#define CONCAT(x, y)    XCONCAT(x, y)
+
 #ifdef __SIZE_TYPE__
 typedef __SIZE_TYPE__ size_t;
 #else
