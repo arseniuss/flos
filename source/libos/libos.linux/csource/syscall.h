@@ -15,25 +15,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <os/linux.h>
+#pragma once
 
-#include "internal.h"
-#include "syscall.h"
+#define SYSCALL_read        0
+#define SYSCALL_write       1
+#define SYSCALL_open        2
+#define SYSCALL_close       3
+#define SYSCALL_stat        4
+#define SYSCALL_fstat       5
+#define SYSCALL_lstat       6
+#define SYSCALL_poll        7
 
-static uintptr_t errno = 0;
+#define SYSCALL_fork        57
 
-uintptr_t* func(errno_location)()
-{
-    return &errno;
-}
-
-SYSCALL_PROC1(exit, int, error_code);
-        
-SYSCALL_FUNC1(fork, pid_t, struct pt_regs*, regs);
-
-SYSCALL_FUNC3(read, ssize_t, int, fd, void*, buf, size_t, count)
-        
-SYSCALL_FUNC3(write, ssize_t, int, fd, const void*, buf, size_t, count)
-        
-SYSCALL_FUNC3(open, int, const char*, pathname, int, flags, int, mode)
-
+#define SYSCALL_exit        60

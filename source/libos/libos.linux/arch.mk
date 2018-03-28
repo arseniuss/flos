@@ -11,9 +11,14 @@ SOURCES=\
 
 ifneq ($(LIBNAME)-$(ARCH),-)
 
+DEBUG=y
+
+ifeq ($(DEBUG),y)
+CFLAGS += -g
+endif
+
 CFLAGS+= \
     -fPIC \
-    -g \
     -I include
 
 SOURCES+= \
@@ -35,7 +40,7 @@ $(ARCH)/lib/%.a: $(OBJECTS)
 	
 $(ARCH)/lib/%.so: $(OBJECTS)
 	@ mkdir -p $(dir $@)
-	$(LD) $(LDFLAGS) -shared -o $@ $^
+	$(LD) $(LDFLAGS) -shared --no-undefined -o $@ $^
 	readelf -a $@ > $(BUILDDIR)/$(notdir $@).elfdump
 	$(OBJDUMP) -source $@ > $(BUILDDIR)/$(notdir $@).objdump
 
@@ -43,7 +48,7 @@ $(OBJECTS): $(SOURCES) $(HEADERS)
 
 $(BUILDDIR)/%.o: %.c
 	@ mkdir -p $(dir $@)
-	@ $(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
+	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
 clean:

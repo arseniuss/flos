@@ -1,3 +1,4 @@
-CFLAGS = \
-    -target arm-unknown-flos-eabi -mfloat-abi=hard
+CFLAGS += \
+    -target arm-unknown-flos-eabi -mfloat-abi=hard \
+    -D __ARCH__=armhf
 

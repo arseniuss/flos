@@ -17,9 +17,6 @@
 */
 #pragma once
 
-#define XCONCAT(x, y)    x ## y
-#define CONCAT(x, y)    XCONCAT(x, y)
-
 #ifdef __SIZE_TYPE__
 typedef __SIZE_TYPE__ size_t;
 #else
@@ -31,6 +28,12 @@ typedef __PTRDIFF_TYPE__ ptrdiff_t;
 typedef __PTRDIFF_TYPE__ ssize_t;
 #else
 #error __PTRDIFF_TYPE__ is not defined!
+#endif
+
+#ifdef __UINTPTR_TYPE__
+typedef __UINTPTR_TYPE__ uintptr_t;
+#else
+#error __UINTPTR_TYPE__ is not defined!
 #endif
 
 typedef int pid_t;

@@ -3,6 +3,6 @@ ARCHES = \
     arm64 \
     armel \
     armhf \
-    i386 \
+    x86 \
     mips \
     mipsel

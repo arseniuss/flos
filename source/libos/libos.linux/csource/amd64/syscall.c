@@ -16,23 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <os/linux/defs.h>
 
-long amd64__syscall(long num, long a, long b, long c, long d, long e, long f)
+#if __ARCH__ != amd64
+#error Wrong __ARCH__ value!
+#endif
+
+#ifdef NAMESPACE
+#undef NAMESPACE
+#endif
+#define NAMESPACE os_linux
+#include <cell/namespace.h>
+
+uintptr_t afunc(_syscall)(uintptr_t a, uintptr_t b, uintptr_t c, uintptr_t d, uintptr_t e, uintptr_t f, uintptr_t num)
 {
-    long ret;
+    uintptr_t ret = (uintptr_t)-1;
     
-    register long callreg __asm__("eax") = (long)num;
-    register long arg0 __asm__("rdi") = (long)a;
-    register long arg1 __asm__("rsi") = (long)b;
-    register long arg2 __asm__("rdx") = (long)c;
-    register long arg3 __asm__("r10") = (long)d;
-    register long arg4 __asm__("r8") = (long)e;
-    register long arg5 __asm__("r9") = (long)f;
-    
-    __asm__ __volatile__(
-            "syscall"
-            : "=a"(ret)
+    __asm__ __volatile__
+    (
+            "movq %2, %%rdi;"
+            "movq %3, %%rsi;"
+            "movq %4, %%rdx;"
+            "movq %5, %%r10;"
+            "movq %6, %%r8;"
+            "movq %7, %%r9;"
+            "movq %1, %%rax;"
+            "syscall;"
+            : "=a"(ret) // output
+            : "a"(num), "D"(a), "S"(b), "d"(c), "r"(d), "r"(e), "r"(f) // input
+            : "rcx", "r11" // clobers
     );
     
-    return (long)ret;
+    return (uintptr_t)ret;
 } 

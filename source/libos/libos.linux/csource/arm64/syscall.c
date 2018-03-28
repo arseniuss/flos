@@ -16,10 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#if __ARCH__ != arm64
+#error Wrong __ARCH__ value!
+#endif
 
-long arm64__syscall(long num, long a, long b, long c, long d, long e, long f)
-{
-    // TODO:
-    
-    return -1;
-} 
+#include <os/linux.h>
+
+#ifdef NAMESPACE
+#undef NAMESPACE
+#endif
+#define NAMESPACE os_linux
+#include <cell/namespace.h>
+

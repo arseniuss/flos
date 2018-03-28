@@ -20,31 +20,41 @@
 #include <os/linux/defs.h>
 #include <os/linux/syscall.h>
 
-#define syscall(...)    CONCAT(__ARCH__, __syscall)(__VA_ARGS__)
+#ifdef NAMESPACE
+#undef NAMESPACE
+#endif
+#define NAMESPACE os_linux
+#include <cell/namespace.h>
 
-long syscall(long num, long a, long b, long c, long d, long e, long f);
+#define syscall(...)    afunc(_syscall)(__VA_ARGS__)
 
-long* __errno_location();
+uintptr_t syscall(uintptr_t a, uintptr_t b, uintptr_t c, uintptr_t d, uintptr_t e, uintptr_t f, uintptr_t num);
 
-static long check(long ret)
+uintptr_t* func(errno_location)();
+
+static inline uintptr_t func(check_syscall)(uintptr_t ret)
 {
-    if(ret >= (unsigned long)-4095) {
-        long err = ret;
-        *(__errno_location()) = (-err);
-        ret = (unsigned long)-1;
+    if(ret >= (uintptr_t)-4095) {
+        uintptr_t err = ret;
+        *(func(errno_location())) = (-err);
+        ret = (uintptr_t)-1;
     }
     
-    return (long)ret;
+    return (uintptr_t)ret;
 }
+
+
 
 #ifdef SYSCALL_PROC1
 #undef SYSCALL_PROC1
 #endif
 
 #define SYSCALL_PROC1(name, t0, r0)     \
-    void linux_##name(t0 r0) \
+    void func(sys_##name)(t0 r0) \
     {\
-        check(syscall(CONCAT(SYSCALL_, name), (long)r0, 0, 0, 0, 0, 0)); \
+        uintptr_t ret = syscall((uintptr_t)r0, 0, 0, 0, 0, 0, SYSCALL_##name); \
+        \
+        func(check_syscall(ret)); \
     }
 
 #ifdef SYSCALL_FUNC1
@@ -52,9 +62,13 @@ static long check(long ret)
 #endif
 
 #define SYSCALL_FUNC1(name, rettype, t0, r0) \
-    rettype linux_##name(t0 r0) \
+    rettype func(sys_##name)(t0 r0) \
     {\
-        return check(syscall(SYSCALL_##name, (long)r0, 0, 0, 0, 0, 0)); \
+        uintptr_t ret = syscall((uintptr_t)r0, 0, 0, 0, 0, 0, SYSCALL_##name);\
+        \
+        ret = func(check_syscall(ret));\
+        \
+        return ret; \
     }
 
 #ifdef SYSCALL_FUNC3
@@ -62,9 +76,13 @@ static long check(long ret)
 #endif
 
 #define SYSCALL_FUNC3(name, rettype, t0, r0,t1,  r1, t2, r2) \
-    rettype linux_##name(t0 r0, t1 r1, t2 r2) \
+    rettype func(sys_##name)(t0 r0, t1 r1, t2 r2) \
     {\
-        return check(syscall(SYSCALL_##name, (long)r0, (long)r1, (long)r2, 0, 0, 0)); \
+        uintptr_t ret = syscall((uintptr_t)r0, (uintptr_t)r1, (uintptr_t)r2, 0, 0, 0, SYSCALL_##name);\
+        \
+        ret = func(check_syscall(ret)); \
+        \
+        return ret;\
     }
 
     
