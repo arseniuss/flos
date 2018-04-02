@@ -27,8 +27,8 @@ endif
 
 all: $(LIBS)
 
-include $(ROOT)/source/config/make/defaults.mk
-	
+include $(ROOT)/source/config/make/iter.mk
+
 $(LIBS): $(OBJECTS)
 
 ifneq ($(ARCH),)

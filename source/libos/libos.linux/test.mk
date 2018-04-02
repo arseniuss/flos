@@ -15,7 +15,7 @@ endif
  
 all: $(TARGET)
 	
-include $(ROOT)/source/config/make/defaults.mk
+include $(ROOT)/source/config/make/iter.mk
 	
 $(TARGET): $(OBJECTS)
 	@ mkdir -p $(dir $@)

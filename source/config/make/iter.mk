@@ -11,11 +11,15 @@ OBJECTS += $(addprefix $(BUILDDIR)/,$(SOURCES:=.o))
 
 DEPS += $(addprefix $(BUILDDIR)/,$(SOURCES:=.d))
 
+INSTALLDIR ?= $(ROOT)
+
+INSTALLS := $(LIBS) $(HEADERS)
+
 -include $(DEPS)
 
 ifneq ($(ARCH),)
 
-BUILDDIR?=build/$(ARCH)
+BUILDDIR ?= build/$(ARCH)
 
 $(BUILDDIR)/%.c.o: %.c
 	@ $(MKDIR) -p $(dir $@)
@@ -28,6 +32,16 @@ $(BUILDDIR)/%.S.o: %.S
 	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
 	$(AS) $(ASFLAGS) -c -o $@ $(BUILDDIR)/$<.E
 
+install: $(addprefix $(INSTALLDIR)/,$(INSTALLS))
+
+
+$(addprefix $(INSTALLDIR)/,$(INSTALLS)): $(INSTALLDIR)/%: %
+	@ $(MKDIR) -p $(dir $*)
+	@ cp -v --parents $* $(INSTALLDIR)/
+
+uninstall:
+	@ cd $(INSTALLDIR)/; rm -fv $(INSTALLS)
+
 clean:
 	@ $(RM) -rfv $(BUILDDIR)/
 	@ $(RM) -rvf $(ARCH)
@@ -35,6 +49,9 @@ clean:
 else
 
 BUILDDIR?=build
+
+clean:
+	@ $(RM) -rvf $(BUILDDIR)/
 
 endif
 
@@ -49,6 +66,9 @@ headers:
 
 libs:
 	@ $(ECHO) $(LIBS)
+
+installs:
+	@ $(ECHO) $(INSTALLS)
 
 deps:
 	@ $(ECHO) $(DEPS)
