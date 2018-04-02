@@ -24,7 +24,7 @@
 #define NAMESPACE os_linux
 #include <cell/namespace.h>
 
-.section.text
+.section .text
 /**
  * On amd64/x86_64 syscall number is passed in rax register
  * Parameters are passed in: rdi, rsi, rdx, r10, r8, r9

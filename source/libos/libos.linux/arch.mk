@@ -1,47 +1,38 @@
 include config.mk
 
-HEADERS=\
+CINCLUDES += include
+
+CFLAGS += -fPIC
+
+HEADERS = \
     include/os/linux/defs.h \
     include/os/linux.h
 
-SOURCES=\
+SOURCES += \
     csource/syscall.c
 
-.PHONY: .FORCE
+ifneq ($(ARCH),)
 
-ifneq ($(LIBNAME)-$(ARCH),-)
-
-DEBUG=y
-
-ifeq ($(DEBUG),y)
-CFLAGS += -g
-endif
-
-CFLAGS+= \
-    -fPIC
-
-CINCLUDES += include
-
-SOURCES+= \
+SOURCES += \
     csource/$(ARCH)/syscall.S
 
-OBJECTS= \
-    $(addprefix $(BUILDDIR)/,$(SOURCES:=.o))
+ifneq ($(LIBNAME),)
 
-BUILDDIR?=build/$(ARCH)
-LIBS = \
+LIBS := \
     $(ARCH)/lib/$(LIBNAME).a \
     $(ARCH)/lib/$(LIBNAME).so
 
-CFLAGS += \
-    $(addprefix -I,$(CINCLUDES)) \
-    $(addprefix -D,$(CDEFS))
-ASFLAGS += \
-    $(addprefix -I,$(CINCLUDES)) \
-    $(addprefix --defsym ,$(CDEFS))
-    
+endif
+endif
+
 all: $(LIBS)
+
+include $(ROOT)/source/config/make/defaults.mk
 	
+$(LIBS): $(OBJECTS)
+
+ifneq ($(ARCH),)
+
 $(ARCH)/lib/%.a: $(OBJECTS)
 	@ mkdir -p $(dir $@)
 	ar rcs $@ $^
@@ -54,31 +45,4 @@ $(ARCH)/lib/%.so: $(OBJECTS)
 
 $(OBJECTS): $(SOURCES) $(HEADERS)
 
-$(BUILDDIR)/%.c.o: %.c
-	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
-	$(CC) $(CFLAGS) -c -o $@ $<
-	
-$(BUILDDIR)/%.S.o: %.S
-	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
-	$(AS) $(ASFLAGS) -c -o $@ $(BUILDDIR)/$<.E
-	
-clean:
-	@rm -rfv $(BUILDDIR)
-	@rm -rvf $(ARCH)
-	
-libs:
-	@echo $(LIBS)
-
-else
-
-
-
 endif
-
-headers: $(HEADERS)
-	@echo $(HEADERS)
-
-sources:
-	@echo $(SOURCES)

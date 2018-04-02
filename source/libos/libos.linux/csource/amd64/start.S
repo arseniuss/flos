@@ -24,7 +24,9 @@
 #define NAMESPACE os_linux_test
 #include <cell/namespace.h>
 
-.section.text.globl _start _start:
+.section .text
+.globl _start 
+_start:
 call func(main)
     movq $0, %rax 
     movq $60, %rdi 

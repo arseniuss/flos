@@ -82,7 +82,7 @@ find . -not -path './gcc-cc/*' -not -path './.*' | while read file;
 do 
     ext=$(expr "$file" : ".*\(\..*\)")
     case $ext in
-    .c|.h|.S)
+    .c|.h)
         __indent_C $file
     ;;
     esac

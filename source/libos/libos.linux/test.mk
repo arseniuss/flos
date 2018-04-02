@@ -1,37 +1,21 @@
 include config.mk
 
-SOURCES=\
+SOURCES = \
     ctest/main.c
-
-.PHONY: .FORCE
-
-ifneq ($(ARCH),-)
-
-DEBUG=y
-
-ifeq ($(DEBUG),y)
-CFLAGS += -g
-endif
-
-SOURCES += ctest/$(ARCH)/start.S
 
 CINCLUDES += include
 
-OBJECTS= \
-    $(addprefix $(BUILDDIR)/,$(SOURCES:=.o))
+ifneq ($(ARCH),)
 
-BUILDDIR?=build/$(ARCH)
-
-CFLAGS += \
-    $(addprefix -I,$(CINCLUDES)) \
-    $(addprefix -D,$(CDEFS))
-ASFLAGS += \
-    $(addprefix -I,$(CINCLUDES)) \
-    $(addprefix --defsym ,$(CDEFS))
+SOURCES += csource/$(ARCH)/start.S
 
 TARGET=$(ARCH)/bin/os_linux_test
-    
+
+endif
+ 
 all: $(TARGET)
+	
+include $(ROOT)/source/config/make/defaults.mk
 	
 $(TARGET): $(OBJECTS)
 	@ mkdir -p $(dir $@)
@@ -39,31 +23,3 @@ $(TARGET): $(OBJECTS)
 	readelf -a $@ > $(BUILDDIR)/$(notdir $@).elfdump
 	$(OBJDUMP) -source $@ > $(BUILDDIR)/$(notdir $@).objdump
 	@ chmod +x $(TARGET)
-
-$(OBJECTS): $(SOURCES) $(HEADERS)
-
-$(BUILDDIR)/%.c.o: %.c
-	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(BUILDDIR)/%.S.o: %.S
-	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
-	$(AS) $(ASFLAGS) -c -o $@ $(BUILDDIR)/$<.E
-	
-clean:
-	@rm -rfv $(BUILDDIR)
-	@rm -rvf $(ARCH)
-
-else
-
-
-
-endif
-
-headers: $(HEADERS)
-	@echo $(HEADERS)
-
-sources:
-	@echo $(SOURCES)

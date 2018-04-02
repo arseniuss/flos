@@ -6,8 +6,6 @@ include $(ROOT)/config/make/arches.mk
 
 LIBNAME=os.linux
 INSTALLDIR?=$(ROOT)
-#MAKEFLAGS = \
-#	--no-print-directory
 
 ifneq ($(ARCH),)
 
