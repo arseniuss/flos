@@ -17,14 +17,13 @@
 */
 
 #if __ARCH__ != arm64
-#error Wrong __ARCH__ value!
+#    error Wrong __ARCH__ value!
 #endif
 
 #include <os/linux.h>
 
 #ifdef NAMESPACE
-#undef NAMESPACE
+#    undef NAMESPACE
 #endif
 #define NAMESPACE os_linux
 #include <cell/namespace.h>
-

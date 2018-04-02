@@ -16,36 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <os/linux/defs.h>
-
-#if __ARCH__ != amd64
-#error Wrong __ARCH__ value!
-#endif
+#define __ASSEMBLY__
 
 #ifdef NAMESPACE
-#undef NAMESPACE
+#    undef NAMESPACE
 #endif
-#define NAMESPACE os_linux
+#define NAMESPACE os_linux_test
 #include <cell/namespace.h>
 
-uintptr_t afunc(_syscall)(uintptr_t a, uintptr_t b, uintptr_t c, uintptr_t d, uintptr_t e, uintptr_t f, uintptr_t num)
-{
-    uintptr_t ret = (uintptr_t)-1;
-    
-    __asm__ __volatile__
-    (
-            "movq %2, %%rdi;"
-            "movq %3, %%rsi;"
-            "movq %4, %%rdx;"
-            "movq %5, %%r10;"
-            "movq %6, %%r8;"
-            "movq %7, %%r9;"
-            "movq %1, %%rax;"
-            "syscall;"
-            : "=a"(ret) // output
-            : "a"(num), "D"(a), "S"(b), "d"(c), "r"(d), "r"(e), "r"(f) // input
-            : "rcx", "r11" // clobers
-    );
-    
-    return (uintptr_t)ret;
-} 
+.section.text.globl _start _start:
+call func(main)
+    movq $0, %rax 
+    movq $60, %rdi 
+    call eafunc(os_linux, _syscall)
+    ret

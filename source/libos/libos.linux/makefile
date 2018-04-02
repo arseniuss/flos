@@ -11,7 +11,7 @@ INSTALLDIR?=$(ROOT)
 
 ifneq ($(ARCH),)
 
-all: all-$(ARCH)
+all: all-$(ARCH) test
 	
 install: install-$(ARCH)
 	@cp -v --parents $(shell make $(MAKEFLAGS) -f arch.mk headers ARCH= LIBNAME=) $(INSTALLDIR)/	
@@ -19,6 +19,9 @@ install: install-$(ARCH)
 uninstall: uninstall-$(ARCH)
 	@rm -fv $(addprefix $(INSTALLDIR)/,$(shell make $(MAKEFLAGS)  -f arch.mk headers ARCH= LIBNAME= ))
 	@rm -fv $(addprefix $(INSTALLDIR)/,$(shell make $(MAKEFLAGS)  -f arch.mk libs ARCH= LIBNAME= ))
+	
+test: all-$(ARCH)
+	make $(MAKEFLAGS) -f test.mk
 	
 clean: clean-$(ARCH)
 	@rm -rfv build

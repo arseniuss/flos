@@ -1,15 +1,11 @@
 include config.mk
 
-HEADERS=\
-    include/os/linux/defs.h \
-    include/os/linux.h
-
 SOURCES=\
-    csource/syscall.c
+    ctest/main.c
 
 .PHONY: .FORCE
 
-ifneq ($(LIBNAME)-$(ARCH),-)
+ifneq ($(ARCH),-)
 
 DEBUG=y
 
@@ -17,21 +13,14 @@ ifeq ($(DEBUG),y)
 CFLAGS += -g
 endif
 
-CFLAGS+= \
-    -fPIC
+SOURCES += ctest/$(ARCH)/start.S
 
 CINCLUDES += include
-
-SOURCES+= \
-    csource/$(ARCH)/syscall.S
 
 OBJECTS= \
     $(addprefix $(BUILDDIR)/,$(SOURCES:=.o))
 
 BUILDDIR?=build/$(ARCH)
-LIBS = \
-    $(ARCH)/lib/$(LIBNAME).a \
-    $(ARCH)/lib/$(LIBNAME).so
 
 CFLAGS += \
     $(addprefix -I,$(CINCLUDES)) \
@@ -39,18 +28,17 @@ CFLAGS += \
 ASFLAGS += \
     $(addprefix -I,$(CINCLUDES)) \
     $(addprefix --defsym ,$(CDEFS))
+
+TARGET=$(ARCH)/bin/os_linux_test
     
-all: $(LIBS)
+all: $(TARGET)
 	
-$(ARCH)/lib/%.a: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	@ mkdir -p $(dir $@)
-	ar rcs $@ $^
-	
-$(ARCH)/lib/%.so: $(OBJECTS)
-	@ mkdir -p $(dir $@)
-	$(LD) $(LDFLAGS) -shared --no-undefined -o $@ $^
+	$(LD) $(LDFLAGS) --no-undefined -o $@ $^ $(ARCH)/lib/libos.linux.a
 	readelf -a $@ > $(BUILDDIR)/$(notdir $@).elfdump
 	$(OBJDUMP) -source $@ > $(BUILDDIR)/$(notdir $@).objdump
+	@ chmod +x $(TARGET)
 
 $(OBJECTS): $(SOURCES) $(HEADERS)
 
@@ -58,7 +46,7 @@ $(BUILDDIR)/%.c.o: %.c
 	@ mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
 	$(CC) $(CFLAGS) -c -o $@ $<
-	
+
 $(BUILDDIR)/%.S.o: %.S
 	@ mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/$<.E
@@ -67,9 +55,6 @@ $(BUILDDIR)/%.S.o: %.S
 clean:
 	@rm -rfv $(BUILDDIR)
 	@rm -rvf $(ARCH)
-	
-libs:
-	@echo $(LIBS)
 
 else
 
