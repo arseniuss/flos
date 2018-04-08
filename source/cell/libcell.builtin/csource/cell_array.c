@@ -6,9 +6,9 @@
 #    undef NAMESPACE
 #endif
 #define NAMESPACE cell_array
-#include <cell/namespace.inc>
+#include <cell/namespace.h>
 
-size_t __fM4cell5arrayN15array_type_sizePvRui32(type_t ptr) {
+size_t func(type_size) (type_t ptr) {
     if(efunc(cell_type, class) (ptr) != TYPE_ARRAY)
         return 0;
 
@@ -16,6 +16,3 @@ size_t __fM4cell5arrayN15array_type_sizePvRui32(type_t ptr) {
 
     return efunc(cell_type, size) (at->of_type) * at->count;
 }
-
-size_t func(array_type_size) (type_t ptr)
-alias("__fM4cell5arrayN15array_type_sizePvRui32");

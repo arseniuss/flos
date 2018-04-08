@@ -7,5 +7,5 @@ MKDIR=mkdir
 ECHO=echo
 RM=rm
 
-CINCLUDE += $(ROOT)/include
+CINCLUDES += $(ROOT)/include
  

@@ -7,7 +7,7 @@
 #    undef NAMESPACE
 #endif
 #define NAMESPACE cell_type
-#include <cell/namespace.inc>
+#include <cell/namespace.h>
 
 void *func(desc) (type_t ptr) {
     return (void *)(ptr & ~TYPE_MASK);

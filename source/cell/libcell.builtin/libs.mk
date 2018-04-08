@@ -2,29 +2,31 @@ CINCLUDES += include
 
 CFLAGS += -fPIC
 
-HEADERS = \
-    include/os/linux/defs.h \
-    include/os/linux.h
+HEADERS += \
+    include/cell/array.h \
+    include/cell/builtin.h \
+    include/cell/defs.h \
+    include/cell/namespace.h \
+    include/cell/slice.h \
+    include/cell/string.h \
+    include/cell/type.h
 
 SOURCES += \
-    csource/syscall.c
+    csource/cell_slice.c \
+    csource/cell_string.c \
+    csource/cell_type.c \
+    csource/cell_array.c
 
 ifneq ($(ARCH),)
-
-SOURCES += \
-    csource/$(ARCH)/syscall.S
-
 ifneq ($(LIBNAME),)
-
 LIBS := \
-    $(ARCH)/lib/$(LIBNAME).a \
-    $(ARCH)/lib/$(LIBNAME).so
-
+	$(ARCH)/lib/$(LIBNAME).a \
+	$(ARCH)/lib/$(LIBNAME).so
 endif
 endif
 
 all: $(LIBS)
-
+	
 include $(ROOT)/source/config/make/iter.mk
 
 $(LIBS): $(OBJECTS)

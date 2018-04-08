@@ -2,34 +2,27 @@ CINCLUDES += include
 
 CFLAGS += -fPIC
 
-HEADERS = \
-    include/os/linux/defs.h \
-    include/os/linux.h
+HEADERS += \
+    include/os.h
 
 SOURCES += \
-    csource/syscall.c
+    csource/os.c
 
 ifneq ($(ARCH),)
-
-SOURCES += \
-    csource/$(ARCH)/syscall.S
-
 ifneq ($(LIBNAME),)
-
 LIBS := \
-    $(ARCH)/lib/$(LIBNAME).a \
-    $(ARCH)/lib/$(LIBNAME).so
-
+	$(ARCH)/lib/$(LIBNAME).a \
+	$(ARCH)/lib/$(LIBNAME).so
 endif
 endif
 
-all: $(LIBS)
-
+all: $(LIBS) 
+	
 include $(ROOT)/source/config/make/iter.mk
+	
+ifneq ($(ARCH),)
 
 $(LIBS): $(OBJECTS)
-
-ifneq ($(ARCH),)
 
 $(ARCH)/lib/%.a: $(OBJECTS)
 	@ mkdir -p $(dir $@)
@@ -42,5 +35,6 @@ $(ARCH)/lib/%.so: $(OBJECTS)
 	$(OBJDUMP) -source $@ > $(BUILDDIR)/$(notdir $@).objdump
 
 $(OBJECTS): $(SOURCES) $(HEADERS)
+
 
 endif

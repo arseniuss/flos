@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#pragma once
 
-#include <cell/string.h>
-#include <cell/slice.h>
+#include <cell/type.h>
+
+// module cell.slice
 
 #ifdef NAMESPACE
 #    undef NAMESPACE
@@ -25,42 +27,35 @@
 #define NAMESPACE cell_slice
 #include <cell/namespace.h>
 
-size_t func(slice_type_size) (type_t ptr) {
-    if(efunc(cell_type, class) (ptr) != TYPE_SLICE)
-        return 0;
+struct slice {
+    void *data;
+    int32 count;
+    int32 cap;
+};
 
-    struct slice_desc *st = (struct slice_desc *)efunc(cell_type, desc) (ptr);
+struct slice_desc {
+    type_t of_type;
+};
 
-    return efunc(cell_type, size) (st->of_type);
-}
+size_t func(slice_type_size) (type_t ptr);
 
-size_t func(slice_size) (type_t slice_type, const struct slice * s) {
-    return s->count * efunc(cell_type, size) (slice_type);
-}
+/**
+ * Size of slice data
+ * @param slice_type slice describing type
+ * @param s
+ * @return 
+ */
+// func (s []?) size() size_t
+size_t func(slice_size) (type_t slice_type, const struct slice * s);
 
-uint32 func(slice_cap) (const struct slice * s) {
-    return s->cap;
-}
+// func (s []?) cap() uint32
+uint32 func(slice_cap) (const struct slice * s);
 
+struct slice_at_return {
+    void *data;
+    string *error;
+};
+
+// func (s []?) at( index uint32) ?
 struct slice_at_return func(slice_at) (type_t t, const struct slice s,
-                                       uint32 index) {
-    struct slice_at_return r;
-
-    if(index >= s.count) {
-        string error;
-
-        r.data = NULL;
-
-        error.buffer = (const byte *)"index out of bounds";
-        efunc(cell_string, size_calc) (&error);
-
-        r.error = &error;
-
-        return r;
-    } else {
-        r.data = s.data + (index * func(slice_type_size) (t));
-        r.error = NULL;
-    }
-
-    return r;
-}
+                                       uint32 index);

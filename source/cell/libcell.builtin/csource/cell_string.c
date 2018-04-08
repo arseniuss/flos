@@ -4,13 +4,13 @@
 #    undef NAMESPACE
 #endif
 #define NAMESPACE cell_string
-#include <cell/namespace.inc>
+#include <cell/namespace.h>
 
-size_t func(size) (const struct string s) {
+size_t func(size) (const string s) {
     return s.size;
 }
 
-void func(size_calc) (struct string * s) {
+void func(size_calc) (string * s) {
     size_t sz;
     const byte *p;
 

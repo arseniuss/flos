@@ -10,4 +10,5 @@
 *.a
 *.so
 *.ko
-/source/libos/libos.linux/build/
+build/
+nbproject/

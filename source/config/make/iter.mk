@@ -1,12 +1,5 @@
+include $(ROOT)/config/make/config.mk
 
-CFLAGS += \
-    $(addprefix -I,$(CINCLUDES)) \
-    $(addprefix -D,$(CDEFS))
-    
-ASFLAGS += \
-    $(addprefix -I,$(CINCLUDES)) \
-    $(addprefix --defsym ,$(CDEFS))
-    
 OBJECTS += $(addprefix $(BUILDDIR)/,$(SOURCES:=.o))
 
 DEPS += $(addprefix $(BUILDDIR)/,$(SOURCES:=.d))
@@ -18,6 +11,16 @@ INSTALLS := $(LIBS) $(HEADERS)
 -include $(DEPS)
 
 ifneq ($(ARCH),)
+
+include $(ROOT)/$(ARCH)/config/make/arch.mk
+
+CFLAGS += \
+    $(addprefix -I,$(CINCLUDES)) \
+    $(addprefix -D,$(CDEFS))
+    
+ASFLAGS += \
+    $(addprefix -I,$(CINCLUDES)) \
+    $(addprefix --defsym ,$(CDEFS))
 
 BUILDDIR ?= build/$(ARCH)
 
