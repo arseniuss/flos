@@ -83,4 +83,4 @@ Some code is licensed under beerware license :)
 
 # Author
 
-Armands Arseniuss Skolmeisters <[arseniuss@arseniuss.id.lv](mailto:arseniuss@arseniuss.id.lv)>>
+Armands Arseniuss Skolmeisters <[arseniuss@arseniuss.id.lv](mailto:arseniuss@arseniuss.id.lv)>

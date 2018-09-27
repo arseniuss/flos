@@ -1,6 +1,6 @@
 /* 
- * This file is part of the libcell distribution
- * Copyright (c) 2017 Armands Arseniuss Skolmeisters
+ * Builtin library of cell language
+ * Copyright (c) 2017, 2018 Armands Arseniuss Skolmeisters
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,48 +14,67 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#pragma once
+ */
+#ifndef __CELL__STRING_H__
+#    define __CELL__STRING_H__
 
-// module cell.string
+// module builtin.string
 
-#include <cell/builtin.h>
+#    include <cell/array.h>
+#    include <cell/builtin.h>
+#    include <cell/memory.h>
 
-#ifdef NAMESPACE
-#    undef NAMESPACE
-#endif
-#define NAMESPACE cell_string
-#include <cell/namespace.h>
+#    ifdef char
+#        error char is already defined!
+#    endif
 
-// type char int32
-#ifndef char
-#    define char int32
-//#warning `char` is defined as 32bit integer!
-#endif
+// type int32 char
+#    define char        int32_t
 
 // type string !struct {
 // private:
 //      size int32
 //      buffer *byte
 // }
+
 typedef struct {
-    size_t size;
-    const byte *buffer;
+    size_t len;
+    byte *buffer;
 } string;
 
-// func (s string) size() size_t {
-//      return s.size
-// }
-size_t func(size) (const string s);
 
-void func(size_calc) (string * s);
+string string_c(const byte * restrict c_string);
 
-// func +(s1, s2 string) string @unsafe {
-//      var size = s1.size + s2.size -1 // '\0'
-//      var buffer = new [s1.size]byte // *[?]byte
-//      
-//      memcpy(buffer, s1.buffer, s1.size) // func memcpy(target, source *, size size_t)
-//      memcpy(buffer + s1.size, s2.buffer, s2.size)
-//      
-//      return (string){ size, buffer }
-//  }
+/**
+ * Function returns full size of string in bytes
+ * @param s string
+ * @return size of string in bytes
+ */
+// func (s string) size() size_t
+size_t string_size(const string s);
+
+/**
+ * Function returns length of string in bytes
+ * @param s string
+ * @return length of string in bytes
+ */
+// func (s string) len() size_t
+size_t string_len(const string s);
+
+#    ifdef HAS_MEM_ALLOC
+
+// func +(s1, s2 string) string
+const string __string_add(const string s1, const string s2);
+
+#    endif
+
+/**
+ * Allocates string from stack memory
+ * @param len string buffer len
+ * @return pointer to string
+ */
+// func (string s) new(len size_t) *string
+#    define string_make(l)        ({string* __s = memory_salloc(sizeof(size_t) + (l)); \
+                                ((string *)__s)->len = l; ((string*)__s)->buffer = ((byte *)__s) + sizeof(size_t); __s;  })
+
+#endif /* __CELL__STRING_H__ */

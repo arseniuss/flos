@@ -2,9 +2,10 @@
 
 unset ROOT
 unset ARCH
+unset OS
 
 # exports ROOT as ../.. from current script
-export ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )"
+export ROOT=$(readlink -f $(dirname `readlink -f ${BASH_SOURCE[0]}`)/../..)
 
 echo ROOT is $ROOT
 
@@ -17,5 +18,12 @@ case $ARCH in
         everything|any) unset ARCH ;;
         * ) echo Unknown architecture!; exit 1 ;;
     esac
-
+    
+    
+export OS=flos
+export HOST=gnu-linux
+    
 echo ARCH is $ARCH
+echo OS is $OS
+echo HOST is $HOST
+echo ========================================

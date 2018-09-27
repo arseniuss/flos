@@ -1,6 +1,6 @@
 /* 
- * This file is part of the libcell distribution
- * Copyright (c) 2017 Armands Arseniuss Skolmeisters
+ * Builtin library of cell language
+ * Copyright (c) 2017, 2018 Armands Arseniuss Skolmeisters
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,23 +15,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#pragma once
 
-#include <cell/builtin.h>
-#include <cell/type.h>
+#ifndef __CELL__ARRAY_H__
+#    define __CELL__ARRAY_H__
 
-// module cell.array
+#    include <cell/builtin.h>
+#    include <cell/memory.h>
+#    include <cell/type.h>
+#    include <cell/testing.h>
 
-#ifdef NAMESPACE
-#    undef NAMESPACE
-#endif
-#define NAMESPACE cell_array
-#include <cell/namespace.h>
+// module builtin.array
 
+/**
+ * Array descriptor
+ */
+// type array_desc struct {
+//      of_type type_t
+//      len     size_t
+// }
 struct array_desc {
     type_t of_type;
     size_t count;
 };
 
-// func (ptr type_t)type_size() size_t
-extern size_t func(type_size) (type_t ptr);
+typedef struct {
+    size_t len;
+    byte *buffer;
+} array;
+
+
+// func make(len, cap size_t) []?
+#    define array_make(l, c)    ({ assert(l <= c);\
+                                array* a = memory_salloc(sizeof(array) + c);\
+                                a->len = l; a->cap = c; \
+                                a->buffer = ((byte*)a) + sizeof(a); *a;})
+
+#endif /* __CELL__ARRAY_H__ */

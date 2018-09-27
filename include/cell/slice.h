@@ -19,43 +19,16 @@
 
 #include <cell/type.h>
 
-// module cell.slice
+// module builtin.slice
 
-#ifdef NAMESPACE
-#    undef NAMESPACE
-#endif
-#define NAMESPACE cell_slice
-#include <cell/namespace.h>
 
+/** Slice structure */
 struct slice {
-    void *data;
-    int32 count;
-    int32 cap;
+    void *buffer;
+    size_t len;
+    size_t cap;
 };
 
 struct slice_desc {
     type_t of_type;
 };
-
-size_t func(slice_type_size) (type_t ptr);
-
-/**
- * Size of slice data
- * @param slice_type slice describing type
- * @param s
- * @return 
- */
-// func (s []?) size() size_t
-size_t func(slice_size) (type_t slice_type, const struct slice * s);
-
-// func (s []?) cap() uint32
-uint32 func(slice_cap) (const struct slice * s);
-
-struct slice_at_return {
-    void *data;
-    string *error;
-};
-
-// func (s []?) at( index uint32) ?
-struct slice_at_return func(slice_at) (type_t t, const struct slice s,
-                                       uint32 index);

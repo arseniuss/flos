@@ -1,17 +1,23 @@
+#!/bin/gnu/make
+
 ifeq ($(ROOT),)
 $(error ROOT is not defined!)
 endif
 
-MKFILES = \
-	cell/makefile \
-	core/makefile \
-	libarchive/makefile \
-	libcompress/makefile \
-	libcrypto/makefile \
-	libos/makefile \
-	libreflect/makefile \
-	libstd/makefile \
-	pkg/makefile \
-	shell/makefile
+DIRS = $(wildcard */makefile)
 
-include $(ROOT)/source/config/make/arch.mk
+
+MKFILES = \
+	$(addsuffix /makefile,$(DIRS))
+
+.PHONY: $(DIRS)
+
+all: $(DIRS)
+
+$(DIRS): %/makefile:
+	@ make -C $*
+
+clean:
+	for i in $(DIRS); do make -C $$i clean; done
+
+

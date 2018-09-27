@@ -1,32 +1,26 @@
-  /*
-   * This file is part of the libcell distribution
-   * Copyright (c) 2017 Armands Arseniuss Skolmeisters
-   * 
-   * This program is free software: you can redistribute it and/or modify
-   * it under the terms of the GNU Lesser General Public License as published by
-   * the Free Software Foundation, either version 3 of the License, or
-   * (at your option) any later version.
-   *
-   * This program is distributed in the hope that it will be useful,
-   * but WITHOUT ANY WARRANTY; without even the implied warranty of
-   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   * GNU General Public License for more details.
-   *
-   * You should have received a copy of the GNU Lesser General Public License
-   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-   */
+/* 
+ * Builtin library of cell language
+ * Copyright (c) 2017, 2018 Armands Arseniuss Skolmeisters
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #pragma once
 
 #include <cell/builtin.h>
 
-// module cell.type
-
-#ifdef NAMESPACE
-#    undef NAMESPACE
-#endif
-#define NAMESPACE cell_type
-#include <cell/namespace.h>
+// module builtin
 
 /**
  * Types in cell refection is defined as pointers where 8 lower bits describe
@@ -94,24 +88,24 @@
  */
 typedef uintptr_t type_t;
 
-// func (ptr type_t) desc() *void
-void *func(desc) (type_t ptr);
-
-// func (ptr type_t) class() uint8
-uint8 func(class) (type_t ptr);
-
-// func (ptr type_t) bits() uint8
-uint8 func(bits) (type_t ptr);
-
-// func (ptr type_t) iscomplex() bool
-bool func(iscomplex) (type_t ptr);
-
-struct type_info {
-    void *desc;
-    uint8 bits;
-    uint8 cls;
-};
-
-struct type_info func(get_type_info) (type_t ptr);
-
-size_t func(size) (type_t ptr);
+//// func (ptr type_t) desc() *void
+//void *func(desc) (type_t ptr);
+//
+//// func (ptr type_t) class() uint8
+//uint8 func(class) (type_t ptr);
+//
+//// func (ptr type_t) bits() uint8
+//uint8 func(bits) (type_t ptr);
+//
+//// func (ptr type_t) iscomplex() bool
+//bool func(iscomplex) (type_t ptr);
+//
+//struct type_info {
+//    void *desc;
+//    uint8 bits;
+//    uint8 cls;
+//};
+//
+//struct type_info func(get_type_info) (type_t ptr);
+//
+//size_t func(size) (type_t ptr);
