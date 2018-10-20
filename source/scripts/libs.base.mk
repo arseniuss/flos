@@ -16,8 +16,6 @@
 #	License along with this library.
 #
 
-
-# If ROOT is not defined
 ifeq ($(ROOT),)
 ROOT		= /
 endif
@@ -90,35 +88,44 @@ endif
 OBJS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.o))
 DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.d))
 	
-LIBS		= \
-		$(BUILDDIR)/lib/$(NAME).a \
-		$(BUILDDIR)/lib/$(NAME).so
-	
+TARGET		= $(BUILDDIR)/lib/$(NAME).a
+ifeq ($(NOSHARED),)
+TARGET		+= $(BUILDDIR)/lib/$(NAME).so
+endif
+		
 TEST		= $(BUILDDIR)/bin/test_$(NAME).elf
 TEST_MAIN	= scripts/testing.main.c
 
-
+LIBS		:= $(addprefix $(ROOT)/$(ARCH)/lib/,$(LIBS:=.a))
 
 ##### Compilation rules
 
 .PHONY: all test install clean
 
-all: $(LIBS)
-	
+all: $(TARGET)
+
+ifeq ($(UNTESTABLE),)
 test: $(TEST)
 	$(TEST)
 
-$(TEST): $(OBJS) $(TEST_MAIN)
+$(TEST): $(OBJS) $(TEST_MAIN) $(LIBS)
 	@ mkdir -p $(dir $@)
-	$(CC) -DCONFIG=TEST --no-undefined -o $@ $(TEST_MAIN) $(OBJS)
+	$(CC) -DCONFIG=TEST --no-undefined -o $@ $(TEST_MAIN) $(OBJS) $(LIBS)
+	@ mkdir -p $(BUILDDIR)/obj/
 	readelf -a $@ > $(BUILDDIR)/obj/$(notdir $@).elfdump
 	objdump -x -D $@ > $(BUILDDIR)/obj/$(notdir $@).dump
+else
+test:
+	@ echo This library is untestable!
+endif
 	
-install: $(LIBS) $(HDRS)
+install: $(TARGET) $(HDRS)
 	@ echo Installing $(NAME) ...
 	@ mkdir -p $(ROOT)/$(ARCH)/lib
 	@ cp -v $(BUILDDIR)/lib/$(NAME).a $(ROOT)/$(ARCH)/lib/$(NAME).a
+ifeq ($(NOSHARED),)
 	@ cp -v $(BUILDDIR)/lib/$(NAME).so $(ROOT)/$(ARCH)/lib/$(NAME).so
+endif
 	@ for i in $(HDRS); do \
 	    mkdir -p `dirname $(ROOT)/$$i`; \
 	    cp -v $$i $(ROOT)/$$i; \
@@ -140,16 +147,20 @@ indent:
 clean:
 	@ rm -rvf $(BUILDDIR) $(GEN)
 
+$(LIBS): $(ROOT)/$(ARCH)/%.a: 
+	echo $<
+
 	
 $(BUILDDIR)/lib/$(NAME).a: $(OBJS)
 	@ mkdir -p $(dir $@)
 	ar rcs $@ $^
-	
+ifeq ($(NOSHARED),)	
 $(BUILDDIR)/lib/%.so: $(OBJS)
 	@ mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -shared -o $@ $^
 	readelf -a $@ > $(BUILDDIR)/obj/$(notdir $@).elfdump
 	objdump -x -D $@ > $(BUILDDIR)/obj/$(notdir $@).dump
+endif
 
 $(BUILDDIR)/obj/%.c.o: %.c
 	@ mkdir -p $(dir $@)

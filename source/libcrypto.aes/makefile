@@ -1,3 +1,10 @@
 all:
 
 clean:
+install:
+	
+
+
+uninstall:
+	
+

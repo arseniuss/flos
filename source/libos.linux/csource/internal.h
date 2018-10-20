@@ -1,5 +1,5 @@
 /* 
- * This file is part of the libos distribution for cell standard library
+ * Standard Linux layer for cell language
  * Copyright (c) 2018 Armands Arseniuss Skolmeisters
  *
  * This program is free software: you can redistribute it and/or modify

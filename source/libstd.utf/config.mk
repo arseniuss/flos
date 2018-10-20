@@ -1,5 +1,5 @@
 #
-#	Standard UTF-8 encoding library for cell language
+#	Cell programming language compiler
 #	Copyright (c) Armands Arseniuss Skolmeisters, All rights reserved.
 #
 #	This library is free software; you can redistribute it and/or
@@ -22,5 +22,3 @@ LD	    = ld
 
 CFLAGS	    = -Iinclude -Os -Wall -Wextra
 LDFLAGS	    = -s
-
-UNICODE_VER=latest

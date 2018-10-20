@@ -20,8 +20,12 @@
 
 #    include <cell/defs.h>
 
+#    define SYSCALL_NAME(name)                                          os_linux_sys_##name
+
 #    define SYSCALL_PROC1(name, t0, r0)                                 void os_linux_sys_##name(t0 r0)
 #    define SYSCALL_FUNC1(name, rettype, t0, r0)                        rettype os_linux_sys_##name(t0 r0)
 #    define SYSCALL_FUNC3(name, rettype, t0, r0,t1,  r1, t2, r2)        rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2)
+
+#    define SYSCALL_PROC1_CALL(name, r0)                                os_linux_sys##name((r0))
 
 #endif /* __CELL__OS_LINUX_SYSCALL_H__ */

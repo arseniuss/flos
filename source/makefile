@@ -5,6 +5,7 @@ $(error ROOT is not defined!)
 endif
 
 DIRS = $(wildcard */makefile)
+DIRS := $(DIRS:/makefile=)
 
 
 MKFILES = \
@@ -12,10 +13,11 @@ MKFILES = \
 
 .PHONY: $(DIRS)
 
-all: $(DIRS)
+all:
+	for i in $(DIRS); do make -C $$i all; done
 
-$(DIRS): %/makefile:
-	@ make -C $*
+uninstall:
+	for i in $(DIRS); do make -C $$i uninstall || exit; done
 
 clean:
 	for i in $(DIRS); do make -C $$i clean; done

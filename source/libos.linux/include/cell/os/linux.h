@@ -14,15 +14,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef __CELL__OS_LINUX_H__
 #    define __CELL__OS_LINUX_H__
-
 
 #    include <cell/os/linux/defs.h>
 #    include <cell/os/linux/syscall.h>
 
-SYSCALL_PROC1(exit, int, error_code);
+#    pragma weak os_sys_exit = SYSCALL_NAME(exit)
+
+SYSCALL_PROC1(exit, uint32_t, error_code);
 
 SYSCALL_FUNC1(fork, linux_pid_t, struct linux_pt_regs *, regs);
 

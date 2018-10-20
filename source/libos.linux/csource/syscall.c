@@ -1,5 +1,5 @@
 /* 
- * This file is part of the libos distribution for cell standard library
+ * Standard Linux layer for cell language
  * Copyright (c) 2018 Armands Arseniuss Skolmeisters
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include <cell/os/linux.h>
 
 #include "internal.h"
@@ -26,10 +26,11 @@ uintptr_t *os_linux_errno_location() {
     return &errno;
 }
 
-SYSCALL_PROC1(exit, int, error_code);
+
 
 SYSCALL_FUNC1(fork, linux_pid_t, struct linux_pt_regs *, regs);
 
 SYSCALL_FUNC3(read, ssize_t, int, fd, void *, buf, size_t, count)
 SYSCALL_FUNC3(write, ssize_t, int, fd, const void *, buf, size_t, count)
 SYSCALL_FUNC3(open, int, const char *, pathname, int, flags, int, mode)
+SYSCALL_PROC1(exit, uint32_t, error_code)

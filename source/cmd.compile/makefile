@@ -1,10 +1,10 @@
-
-LIBS = libcell.ast libcell.builtin libcell.parser
-
-
-
 all:
-	make -C libcell.builtin
+
+install:
 
 clean:
-	make -C libcell.builtin clean
+
+
+uninstall:
+	
+

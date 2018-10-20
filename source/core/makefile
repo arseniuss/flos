@@ -1,1 +1,8 @@
-all: 
+all:
+
+install:
+
+
+uninstall:
+	
+

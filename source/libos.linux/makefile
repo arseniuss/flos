@@ -31,10 +31,5 @@ SRCS		= \
 		csource/$(ARCH)/syscall.S \
 		csource/syscall.c 
 	
-ifeq ($(CONFIG), TEST)
-SRCS		+= \
-		csource/testing/write.c
-endif
-	
 include scripts/libs.base.mk
 	

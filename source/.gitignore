@@ -1,3 +1,5 @@
 gcc-cc 
 archive
 *~
+bin
+obj

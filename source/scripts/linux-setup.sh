@@ -21,7 +21,7 @@ case $ARCH in
     
     
 export OS=flos
-export HOST=gnu-linux
+export HOST=linux
     
 echo ARCH is $ARCH
 echo OS is $OS
