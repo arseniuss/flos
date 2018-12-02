@@ -24,3 +24,15 @@ TEST(write) {
 
     assert(len > 0);
 }
+
+TEST(write_file) {
+    int fd = os_linux_sys_open("test.test", O_CREAT | O_WRONLY, 0777);
+
+    assert(fd != -1);
+
+    ssize_t sz = os_linux_sys_write(fd, "TEST", 4);
+
+    assert(sz == 4);
+
+    os_linux_sys_close(fd);
+}

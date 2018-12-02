@@ -23,17 +23,13 @@ include config.mk
 
 LIBS		= \
 		cell.parser \
-		std \
-		os \
-		os.$(HOST)
+		cell.token \
+		cell.scanner
 	
 HDRS		=
 
 SRCS		= \
 		    csource/main.c
-	
-SRCS		+= \
-		    csource/$(ARCH)/crt0.S
 
 include scripts/cmd.base.mk
 

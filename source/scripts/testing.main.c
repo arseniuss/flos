@@ -3,7 +3,7 @@
 
 __attribute__((constructor(0)))
 void init(void) {
-  printf("%-20s:%4s %-80s ... %3s\n", "Function", "line", "condition", "result");
+  printf("%-30s:%4s %-80s ... %3s\n", "Function", "line", "condition", "result");
 }
 
 void

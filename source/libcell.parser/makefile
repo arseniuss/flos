@@ -18,7 +18,7 @@
 #	License along with this library.
 #
 
-NAME		= libcell_cell_parser
+NAME		= cell.parser
 
 include config.mk
 

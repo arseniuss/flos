@@ -19,9 +19,11 @@
 #include <cell/type.h>
 #include <cell/string.h>
 
-#include "chartype.h"
+#include "type.h"
 
 #define LEN(x)          (sizeof(x)/sizeof*(x))
+
+// module utf8
 
 // func (c char) <ISCHAR>() bool
 

@@ -16,7 +16,7 @@
 #	License along with this library.
 #
 
-
+CONFIG	    = TEST
 
 CC	    = clang
 AWK	    = awk

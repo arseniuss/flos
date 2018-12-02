@@ -18,18 +18,20 @@
 #	License along with this library.
 #
 
-NAME		= libcell_os
+NAME		= os
 
 include config.mk
 
 LIBS		= \
-		    libcell_os_$(HOST)
+		    cell.builtin \
+		    os.$(HOST)
 
 HDRS		= \
-		   include/cell/os.h
+		   include/cell/os.h \
+		   include/cell/os/error.h
 
 SRCS		= \
-		    csource/os.c \
-		    csource/os.S
+		    csource/$(HOST)/os.c \
+		    csource/$(HOST)/os.S
 
 include scripts/libs.base.mk

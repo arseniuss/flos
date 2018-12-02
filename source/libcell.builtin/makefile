@@ -18,14 +18,15 @@
 #	License along with this library.
 #
 
-NAME		= libcell_builtin
+NAME		= cell.builtin
 
 include config.mk
 
 SRCS		= \
 		csource/libc.c \
 		csource/memory.c \
-		csource/string.c 
+		csource/string.c \
+		csource/error.c 
 	
 ifeq ($(CONFIG),TEST)
 
@@ -33,6 +34,7 @@ HDRS		+= \
 		include/cell/array.h \
 		include/cell/builtin.h \
 		include/cell/defs.h \
+		include/cell/error.h \
 		include/cell/memory.h \
 		include/cell/slice.h \
 		include/cell/string.h \

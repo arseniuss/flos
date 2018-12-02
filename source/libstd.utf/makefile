@@ -18,28 +18,35 @@
 #	License along with this library.
 #
 
-NAME		= libcell_utf
+NAME		= utf8
 
 
 include config.mk
 
 HDRS		= \
-		include/cell/utf.h
+		include/cell/utf8.h
 
 GEN_SRCS	= \
-		csource/char_isalpha.c \
-		csource/char_iscntrl.c \
-		csource/char_isdigit.c \
-		csource/char_islower.c \
-		csource/char_isspace.c \
-		csource/char_istitle.c \
-		csource/char_isupper.c
+		csource/utf8_isalpha.c \
+		csource/utf8_iscntrl.c \
+		csource/utf8_isdigit.c \
+		csource/utf8_islower.c \
+		csource/utf8_isspace.c \
+		csource/utf8_istitle.c \
+		csource/utf8_isupper.c
 	
 SRCS		= \
-		csource/chartype.c
+		csource/type.c \
+		csource/utf8_len.c
+	
 SRCS		+= $(GEN_SRCS)
 
 GEN		+= $(GEN_SRCS)
+
+ifeq ($(CONFIG),TEST)
+SRCS		+= csource/testing/type.c
+LIBS		+= cell.builtin
+endif
 
 include scripts/libs.base.mk
 

@@ -18,7 +18,15 @@
 
 #include <cell/string.h>
 
-#include "chartype.h"
+#include "type.h"
+
+/* lookup table for the number of bytes expected in a sequence */
+const byte __utfcnt[64] = {
+    0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, /* 1100xxxx */
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, /* 1101xxxx */
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, /* 1110xxxx */
+    4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 0, 0, /* 1111xxxx */
+};
 
 int __compare1(const void *v1, const void *v2) {
     char c1 = *(char *)v1;

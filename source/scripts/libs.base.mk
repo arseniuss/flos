@@ -34,6 +34,8 @@ endif
 
 ifeq ($(NAME),)
 $(error NAME is not set.)
+else
+NAME		:= libcell_$(NAME)
 endif
 
 AS		?= as
@@ -86,17 +88,23 @@ endif
 
 
 OBJS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.o))
-DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.d))
-	
+DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.dep))
+
+ifneq ($(OBJS),)	
+
 TARGET		= $(BUILDDIR)/lib/$(NAME).a
 ifeq ($(NOSHARED),)
 TARGET		+= $(BUILDDIR)/lib/$(NAME).so
-endif
+endif # ifeq ($(NOSHARED),)
+endif # ifneq ($(OBJS),)
 		
 TEST		= $(BUILDDIR)/bin/test_$(NAME).elf
 TEST_MAIN	= scripts/testing.main.c
 
-LIBS		:= $(addprefix $(ROOT)/$(ARCH)/lib/,$(LIBS:=.a))
+DEPARVS		= $(foreach lib,$(LIBS),$(shell $(MAKE) -s -C $(ROOT)/source/lib$(lib) libs))	
+ARVS		= $(addprefix $(ROOT)/$(ARCH)/lib/libcell_,$(LIBS:=.a))
+	
+LIBDEPS		= $(sort $(ARVS) $(DEPARVS))
 
 ##### Compilation rules
 
@@ -104,28 +112,37 @@ LIBS		:= $(addprefix $(ROOT)/$(ARCH)/lib/,$(LIBS:=.a))
 
 all: $(TARGET)
 
-ifeq ($(UNTESTABLE),)
-test: $(TEST)
-	$(TEST)
-
-$(TEST): $(OBJS) $(TEST_MAIN) $(LIBS)
-	@ mkdir -p $(dir $@)
-	$(CC) -DCONFIG=TEST --no-undefined -o $@ $(TEST_MAIN) $(OBJS) $(LIBS)
-	@ mkdir -p $(BUILDDIR)/obj/
-	readelf -a $@ > $(BUILDDIR)/obj/$(notdir $@).elfdump
-	objdump -x -D $@ > $(BUILDDIR)/obj/$(notdir $@).dump
-else
+ifneq ($(UNTESTABLE),)
 test:
 	@ echo This library is untestable!
-endif
+else # ifneq ($(UNTESTABLE),)
+ifeq ($(OBJS),)
+test:
+	@ echo Nothing to test.
+else # ifeq ($(OBJS),)
+
+test: $(TEST)
+	LD_LIBRARY_PATH=$(ROOT)/$(ARCH)/lib $(TEST)
+
+$(TEST): $(OBJS) $(TEST_MAIN) $(LIBDEPS)
+	mkdir -p $(dir $@)
+	$(CC) -DCONFIG=TEST --no-undefined -L $(ROOT)/$(ARCH)/lib $(addprefix -lcell_,$(LIBS)) -o $@ $(TEST_MAIN) $(OBJS)
+	@ mkdir -p $(BUILDDIR)/tmp/
+	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
+	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
+	
+endif # ifeq ($(OBJS),)
+endif # ifneq ($(UNTESTABLE),)
 	
 install: $(TARGET) $(HDRS)
 	@ echo Installing $(NAME) ...
 	@ mkdir -p $(ROOT)/$(ARCH)/lib
+ifneq ($(OBJS),)
 	@ cp -v $(BUILDDIR)/lib/$(NAME).a $(ROOT)/$(ARCH)/lib/$(NAME).a
 ifeq ($(NOSHARED),)
 	@ cp -v $(BUILDDIR)/lib/$(NAME).so $(ROOT)/$(ARCH)/lib/$(NAME).so
-endif
+endif # ifeq ($(NOSHARED),)
+endif # ifneq ($(OBJS),)
 	@ for i in $(HDRS); do \
 	    mkdir -p `dirname $(ROOT)/$$i`; \
 	    cp -v $$i $(ROOT)/$$i; \
@@ -146,26 +163,36 @@ indent:
 
 clean:
 	@ rm -rvf $(BUILDDIR) $(GEN)
-
-$(LIBS): $(ROOT)/$(ARCH)/%.a: 
-	echo $<
-
 	
+deplibs:
+	@ echo $(DEPARVS)
+	
+libs:
+	@ echo $(LIBDEPS)
+
+$(LIBDEPS): $(ROOT)/$(ARCH)/lib/libcell_%.a: $(ROOT)/source/lib%/
+	@ make -C $< install
+
 $(BUILDDIR)/lib/$(NAME).a: $(OBJS)
 	@ mkdir -p $(dir $@)
 	ar rcs $@ $^
+	@ mkdir -p $(BUILDDIR)/tmp/
+	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
+	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
+	
 ifeq ($(NOSHARED),)	
 $(BUILDDIR)/lib/%.so: $(OBJS)
 	@ mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -shared -o $@ $^
-	readelf -a $@ > $(BUILDDIR)/obj/$(notdir $@).elfdump
-	objdump -x -D $@ > $(BUILDDIR)/obj/$(notdir $@).dump
-endif
+	@ mkdir -p $(BUILDDIR)/tmp/
+	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
+	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
+endif # ifeq ($(NOSHARED),)
 
 $(BUILDDIR)/obj/%.c.o: %.c
 	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/obj/$<.E
-	$(CC) $(CFLAGS) -M $< -MT $@ > $(BUILDDIR)/obj/$<.d
+	@ $(CC) $(CFLAGS) -E $< > $(BUILDDIR)/obj/$<.E
+	@ $(CC) $(CFLAGS) -M $< -MT $@ > $(BUILDDIR)/obj/$<.dep
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
 $(BUILDDIR)/obj/%.S.o: %.S

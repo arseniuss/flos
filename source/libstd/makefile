@@ -18,7 +18,7 @@
 #	License along with this library.
 #
 
-NAME		= libcell_std
+NAME		= std
 
 UNTESTABLE	= 1
 NOSHARED	= 1
@@ -26,7 +26,7 @@ NOSHARED	= 1
 include config.mk
 
 LIBS		= \
-		    libcell_os_$(HOST)
+		    os.$(HOST)
 
 HDRS		=
 

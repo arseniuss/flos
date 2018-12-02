@@ -16,7 +16,6 @@
 #	License along with this library.
 #
 
-CONFIG	    = TEST
 PREFIX	    = /usr/local
 
 CC	    = clang

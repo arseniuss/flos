@@ -97,10 +97,11 @@ OBJS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.o))
 CRTBEGIN_OBJ	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtbegin.o)
 CRTEND_OBJ	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtend.o)
 	
-DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.d))
+DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.dep))
+LIBS		+= std
 	
-ADEPS		= $(subst .,_,$(LIBS))
-ADEPS		:= $(addprefix $(ROOT)/$(ARCH)/lib/libcell_,$(ADEPS:=.a))
+DEPARVS		= $(sort $(foreach lib,$(LIBS),$(shell $(MAKE) -s -C $(ROOT)/source/lib$(lib) libs)))
+ARVS		= $(addprefix $(ROOT)/$(ARCH)/lib/libcell_,$(LIBS:=.a))
 	
 ##### Compilation rules
 
@@ -108,7 +109,7 @@ ADEPS		:= $(addprefix $(ROOT)/$(ARCH)/lib/libcell_,$(ADEPS:=.a))
 
 all: $(BUILDDIR)/bin/$(NAME)
 	
-install: $(BUILDDIR)/bin/$(NAME) $(HDRS)
+install: $(BUILDDIR)/bin/$(NAME) $(HDRS) $(ARVS) $(DEPARVS)
 	@ echo Installing $(NAME) ...
 	@ mkdir -p $(ROOT)/$(ARCH)/bin
 	@ cp -v $(BUILDDIR)/bin/$(NAME) $(ROOT)/$(ARCH)/bin/$(NAME)
@@ -129,32 +130,35 @@ test:
 
 clean:
 	@ rm -rvf $(BUILDDIR)
+	
+libs:
+	@ echo  $(ARVS) $(DEPARVS)
 
 	
-$(BUILDDIR)/bin/$(NAME): $(OBJS) $(LIBS)
-	mkdir -p $(dir $@)
+$(BUILDDIR)/bin/$(NAME): $(OBJS) $(ARVS) $(DEPARVS)
+	@ mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -print-file-name=crtbegin.o
 	$(CC) $(CFLAGS) -print-file-name=crtend.o
-	$(LD) $(LDFLAGS) -T scripts/cmd.ld -o $@ $(OBJS) $(ADEPS)
-	readelf -a $@ > $(BUILDDIR)/obj/$(notdir $@).elfdump
-	objdump -x -D $@ > $(BUILDDIR)/obj/$(notdir $@).dump
+	$(LD) $(LDFLAGS) -T scripts/cmd.ld -o $@ $(OBJS) $(ARVS) $(DEPARVS)
+	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
+	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
 
 $(BUILDDIR)/obj/%.c.o: %.c
 	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/obj/$<.E
-	$(CC) $(CFLAGS) -M $< -MT $@ > $(BUILDDIR)/obj/$<.d
+	@ mkdir -p $(dir $(BUILDDIR)/tmp/$<)
+	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/tmp/$<.E
+	$(CC) $(CFLAGS) -M $< -MT $@ > $(BUILDDIR)/tmp/$<.dep
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BUILDDIR)/obj/%.S.o: %.S
-	mkdir -p $(dir $@)
+	@ mkdir -p $(dir $@)
 	$(PP) $(PPFLAGS) $< > $@.asm
 	$(PP) -M -MT $@ $(PPFLAGS) $< > $@.dep
 	$(PP) $(PPFLAGS) -E $< > $@.E
 	$(AS) $(ASFLAGS) -o $@ $@.asm
 	objdump -x -D $(DUMPFLAGS) $@ > $@.dump
 
-$(LIBS):
-	make -C $(ROOT)/source/lib$@ install
-
+ $(ARVS) $(DEPARVS): $(ROOT)/$(ARCH)/lib/libcell_%.a: $(ROOT)/source/lib%/
+	@ make -C $< install
 
 -include $(DEPS)

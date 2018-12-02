@@ -1,5 +1,5 @@
-/*
- * Standard UTF-8 encoding library for cell language
+/* 
+ * I/O library for cell language
  * Copyright (c) 2018 Armands Arseniuss Skolmeisters
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -15,9 +15,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __CELL__STD_UTF_H__
-#    define __CELL__STD_UTF_H__
 
+#include <cell/io.h>
+#include <cell/testing.h>
+#include <cell/os.h>
 
+struct file {
+    fd_t fd;
+};
 
-#endif /* __CELL__STD_UTF_H__ */
+error io_close(file * f) {
+    assert(f != NULL);
+
+    int res = os_close(f->fd);
+
+    if(res < 0) {
+        return os_error[res];
+    }
+
+    return NULL;
+}

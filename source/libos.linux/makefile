@@ -18,18 +18,28 @@
 #	License along with this library.
 #
 
-NAME		= libcell_os_linux
+NAME		= os.linux
 
 include config.mk
 
+LIBS		= \
+		cell.builtin
+
 HDRS		= \
 		include/cell/os/linux/defs.h \
+		include/cell/os/linux/error.h \
+		include/cell/os/linux/errors.h \
 		include/cell/os/linux/syscall.h \
 		include/cell/os/linux.h
 	
 SRCS		= \
 		csource/$(ARCH)/syscall.S \
+		csource/error.c \
 		csource/syscall.c 
+	
+ifeq ($(CONFIG),TEST)
+SRCS		+= csource/testing/write.c
+endif
 	
 include scripts/libs.base.mk
 	

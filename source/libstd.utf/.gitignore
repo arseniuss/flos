@@ -1,2 +1,9 @@
 nbproject
 data/
+csource/utf8_isalpha.c
+csource/utf8_iscntrl.c
+csource/utf8_isdigit.c
+csource/utf8_islower.c
+csource/utf8_isspace.c
+csource/utf8_istitle.c
+csource/utf8_isupper.c

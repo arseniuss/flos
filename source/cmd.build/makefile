@@ -4,4 +4,5 @@ install:
 
 uninstall:
 	
+clean:
 
