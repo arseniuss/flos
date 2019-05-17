@@ -16,10 +16,6 @@
 #	License along with this library.
 #
 
-ifeq ($(ROOT),)
-ROOT		    = /
-endif
-
 ifeq ($(ARCH),)
 $(error ARCH is not set)
 endif
@@ -36,6 +32,12 @@ ifeq ($(NAME),)
 $(error NAME is not set.)
 endif
 
+ifeq ($(LOCATION),)
+$(error LOCATION is not set.)
+endif
+
+include /source/scripts/config.mk
+
 AWK		?= awk
 AS		?= as
 CC		?= cc
@@ -43,10 +45,14 @@ LD		?= ld
 PP		?= cpp
 
 BUILDDIR	= $(ARCH)-$(OS)-$(HOST)
+PKGDIR      = $(NAME)-$(ARCH)-$(CONFIG)-$(VERSION)-pkg
+
 
 DEPS		+= __ARCH__=$(ARCH)
 
 ifeq ($(OS),flos)
+
+SHELL=/bin/gnu/sh
 
 ifeq ($(ARCH),amd64)
 CFLAGS		+= -target x86_64-unknown-flos-elf
@@ -56,8 +62,8 @@ ifeq ($(ARCH),)
 $(error Unrecognised architecture!)
 endif
 
-CFLAGS		+= -I $(ROOT)/include 
-PPFLAGS		+= -I $(ROOT)/include
+CFLAGS		+= -I /include 
+PPFLAGS		+= -I /include
 	
 # Enable all warning
 CFLAGS		+= -Wall
@@ -98,48 +104,89 @@ CRTBEGIN_OBJ	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtbegin.o)
 CRTEND_OBJ	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtend.o)
 	
 DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.dep))
-LIBS		+= std
-	
-DEPARVS		= $(sort $(foreach lib,$(LIBS),$(shell $(MAKE) -s -C $(ROOT)/source/lib$(lib) libs)))
-ARVS		= $(addprefix $(ROOT)/$(ARCH)/lib/libcell_,$(LIBS:=.a))
-	
-##### Compilation rules
 
-.PHONY: all
+PKGPATH		= /config/pkg
 
-all: $(BUILDDIR)/bin/$(NAME)
-	
+LIBS		+= libstd/common
+PKGCFGS		:= $(addsuffix .pkg.cfg,$(addprefix $(PKGPATH)/,$(LIBS)))
+
+LIBS		+= $(foreach cfg,$(PKGCFGS),$(shell make --no-print-directory -f /source/scripts/pkg.base.mk CFG="$(cfg)" dep_libraries))
+
+LIBPATHS	= $(addprefix /source/,$(LIBS))
+
+LIBFILES	= $(foreach cfg,$(PKGCFGS),$(shell make --no-print-directory -f /source/scripts/pkg.base.mk CFG="$(cfg)" static_libraries))
+LIBFILES	:= $(sort $(LIBFILES))
+
+.PHONY: all install uninstall package indent clean 
+
+all: $(BUILDDIR)/bin/$(NAME) 
+
+#
+# When installing commands (executables) package configuration must be taken 
+# into account.
+#
+# Default formula for target address is: $PREFIX/$ARCH/$CATEGORY/$DISTRO
+#   $PREFIX
+#   $ARCH - architecture of machine
+#   $CATEGORY - category of files
+#       bin - binaries
+#       config - configuration files
+#       data - data files
+#       docs - documentation
+#       include - headers
+#       lib - libraries
+#       source - sources
+#   $DISTRO - name of distribution and of creator. ex.
+#       '' - empty, default system distribution
+#       'gnu'
+#       'gnu/binutils'
+#
 install: $(BUILDDIR)/bin/$(NAME) $(HDRS) $(ARVS) $(DEPARVS)
 	@ echo Installing $(NAME) ...
-	@ mkdir -p $(ROOT)/$(ARCH)/bin
-	@ cp -v $(BUILDDIR)/bin/$(NAME) $(ROOT)/$(ARCH)/bin/$(NAME)
+	@ mkdir -p /$(ARCH)/bin
+	@ cp -v $(BUILDDIR)/bin/$(NAME) /$(ARCH)/bin/$(NAME)
 	@ for i in $(HDRS); do \
-	    mkdir -p `dirname $(ROOT)/$$i`; \
-	    cp -v $$i $(ROOT)/$$i; \
+	    mkdir -p `dirname /$$i`; \
+	    cp -v $$i /$$i; \
 	done
 	@ echo Done
+
+#
+# Software distribution consists from one or multiple packages. Default formula
+# of package names are: $NAME-$ARCH-$CONFIG-$VERSION.pkg
+#   $NAME - name of package
+#   $ARCH - architecture of machine or 'shared', 'mixed'
+#   $CONFIG - configuration of software: 'release', 'test' etc.
+#   $VERSION - version number
+#
+package:
+	rm -rf $(PKGDIR)
+	mkdir -p $(PKGDIR)
+	echo "NAME = $(NAME)" >> $(PKGDIR)/package.cfg
+	echo "PREFIX = $(PREFIX)" >> $(PKGDIR)/package.cfg
+	echo "ARCH = $(ARCH)" >> $(PKGDIR)/package.cfg
+	echo "DISTRO = $(DISTRO)" >> $(PKGDIR)/package.cfg
+	echo "CONFIG = $(CONFIG)" >> $(PKGDIR)/package.cfg
+	echo "VERSION = $(VERSION)" >> $(PKGDIR)/package.cfg
+	echo "LOCATION = $(LOCATION)" >> $(PKGDIR)/package.cfg
+	
 	
 uninstall:
 	
 
 indent:
-	./scripts/pre-commit.sh
+	/source/scripts/pre-commit.sh
 
 test:
 	@ echo "Nothing to test yet"
 
 clean:
 	@ rm -rvf $(BUILDDIR)
-	
-libs:
-	@ echo  $(ARVS) $(DEPARVS)
-
-	
-$(BUILDDIR)/bin/$(NAME): $(OBJS) $(ARVS) $(DEPARVS)
+		
+$(BUILDDIR)/bin/$(NAME): $(OBJS) $(PKGCFGS)
+	@ echo Building $@ ...
 	@ mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -print-file-name=crtbegin.o
-	$(CC) $(CFLAGS) -print-file-name=crtend.o
-	$(LD) $(LDFLAGS) -T scripts/cmd.ld -o $@ $(OBJS) $(ARVS) $(DEPARVS)
+	$(LD) $(LDFLAGS) -T /source/scripts/cmd.ld --Map $(BUILDDIR)/tmp/$(notdir $@).map -o $@  $(OBJS) $(LIBFILES) 
 	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
 	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
 
@@ -158,7 +205,10 @@ $(BUILDDIR)/obj/%.S.o: %.S
 	$(AS) $(ASFLAGS) -o $@ $@.asm
 	objdump -x -D $(DUMPFLAGS) $@ > $@.dump
 
- $(ARVS) $(DEPARVS): $(ROOT)/$(ARCH)/lib/libcell_%.a: $(ROOT)/source/lib%/
-	@ make -C $< install
+libpaths:
+	@ echo $(LIBPATHS)
+
+$(PKGCFGS): $(PKGPATH)/%.pkg.cfg:
+	@ make -C /source/$*/ all install
 
 -include $(DEPS)

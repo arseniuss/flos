@@ -1,5 +1,7 @@
 #!/bin/gnu/make
 
+SHELL=/bin/gnu/bash
+
 ifeq ($(ROOT),)
 $(error ROOT is not defined!)
 endif

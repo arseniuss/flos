@@ -17,7 +17,7 @@
 #
 
 ifeq ($(ROOT),)
-ROOT		= /
+ROOT		= 
 endif
 
 ifeq ($(ARCH),)
@@ -35,8 +35,10 @@ endif
 ifeq ($(NAME),)
 $(error NAME is not set.)
 else
-NAME		:= libcell_$(NAME)
+LIBNAME		:= $(dir $(NAME))libcell_$(notdir $(NAME))
 endif
+
+include /source/scripts/config.mk
 
 AS		?= as
 PP		?= cpp
@@ -50,9 +52,12 @@ CFLAGS		+= $(addprefix -D,$(DEFS))
 PPFLAGS		+= $(addprefix -D,$(DEFS))
 
 ifeq ($(OS),flos)
+
+SHELL=/bin/gnu/sh
+
 CFLAGS		+= -target x86_64-unknown-flos-elf
-CFLAGS		+= -I $(ROOT)/include 
-PPFLAGS		+= -I $(ROOT)/include
+CFLAGS		+= -I /include 
+PPFLAGS		+= -I /include
 	
 # Enable all warning
 CFLAGS		+= -Wall
@@ -79,128 +84,119 @@ CFLAGS		+= -mno-red-zone
 # Do not use exceptions
 CFLAGS		+= -fno-exceptions -fno-asynchronous-unwind-tables
 
-# Using 2011 C ISO standard
-CFLAGS		+= -std=c11
-
 # Set byte/char to unsigned type
 CFLAGS		+= -funsigned-char
 endif
 
+CFLAGS		+= -pedantic-errors -Wno-gnu -std=gnu17
 
 OBJS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.o))
 DEPS		= $(addprefix $(BUILDDIR)/obj/,$(SRCS:=.dep))
 
 ifneq ($(OBJS),)	
 
-TARGET		= $(BUILDDIR)/lib/$(NAME).a
+TARGET		= $(BUILDDIR)/lib/$(LIBNAME).sa
 ifeq ($(NOSHARED),)
-TARGET		+= $(BUILDDIR)/lib/$(NAME).so
+TARGET		+= $(BUILDDIR)/lib/$(LIBNAME).so
 endif # ifeq ($(NOSHARED),)
 endif # ifneq ($(OBJS),)
-		
-TEST		= $(BUILDDIR)/bin/test_$(NAME).elf
-TEST_MAIN	= scripts/testing.main.c
 
-DEPARVS		= $(foreach lib,$(LIBS),$(shell $(MAKE) -s -C $(ROOT)/source/lib$(lib) libs))	
-ARVS		= $(addprefix $(ROOT)/$(ARCH)/lib/libcell_,$(LIBS:=.a))
-	
-LIBDEPS		= $(sort $(ARVS) $(DEPARVS))
+PKGPATH		= /config/pkg
+
+LIBPATHS	= $(addprefix /source/,$(LIBS))
+PKGCFGS		= $(addsuffix .pkg.cfg,$(addprefix $(PKGPATH)/,$(LIBS)))
 
 ##### Compilation rules
 
-.PHONY: all test install clean
+.PHONY: all install clean
 
-all: $(TARGET)
+all: $(PKGCFGS) $(TARGET)
 
-ifneq ($(UNTESTABLE),)
-test:
-	@ echo This library is untestable!
-else # ifneq ($(UNTESTABLE),)
-ifeq ($(OBJS),)
-test:
-	@ echo Nothing to test.
-else # ifeq ($(OBJS),)
-
-test: $(TEST)
-	LD_LIBRARY_PATH=$(ROOT)/$(ARCH)/lib $(TEST)
-
-$(TEST): $(OBJS) $(TEST_MAIN) $(LIBDEPS)
-	mkdir -p $(dir $@)
-	$(CC) -DCONFIG=TEST --no-undefined -L $(ROOT)/$(ARCH)/lib $(addprefix -lcell_,$(LIBS)) -o $@ $(TEST_MAIN) $(OBJS)
-	@ mkdir -p $(BUILDDIR)/tmp/
-	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
-	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
-	
-endif # ifeq ($(OBJS),)
-endif # ifneq ($(UNTESTABLE),)
-	
 install: $(TARGET) $(HDRS)
 	@ echo Installing $(NAME) ...
-	@ mkdir -p $(ROOT)/$(ARCH)/lib
+	@ mkdir -p $(dir $(ROOT)/$(ARCH)/lib/$(LIBNAME))
+	@ mkdir -p $(dir $(PKGPATH)/$(NAME).pkg.cfg)
+	@ echo PACKAGE=$(NAME) > $(PKGPATH)/$(NAME).pkg.cfg
+	@ echo ARCH=$(ARCH) >> $(PKGPATH)/$(NAME).pkg.cfg
+	@ echo PREFIX= >> $(PKGPATH)/$(NAME).pkg.cfg
 ifneq ($(OBJS),)
-	@ cp -v $(BUILDDIR)/lib/$(NAME).a $(ROOT)/$(ARCH)/lib/$(NAME).a
+	@ cp -v $(BUILDDIR)/lib/$(LIBNAME).sa /$(ARCH)/lib/$(LIBNAME).sa
+	@ echo STATIC_LIBS=$(LIBNAME).sa >> $(PKGPATH)/$(NAME).pkg.cfg
 ifeq ($(NOSHARED),)
-	@ cp -v $(BUILDDIR)/lib/$(NAME).so $(ROOT)/$(ARCH)/lib/$(NAME).so
+	@ cp -v $(BUILDDIR)/lib/$(LIBNAME).so $(ROOT)/$(ARCH)/lib/$(LIBNAME).so
+	@ echo SHARED_LIBS=$(LIBNAME).so>> $(PKGPATH)/$(NAME).pkg.cfg
 endif # ifeq ($(NOSHARED),)
 endif # ifneq ($(OBJS),)
+	@ echo Installing headers ...
 	@ for i in $(HDRS); do \
 	    mkdir -p `dirname $(ROOT)/$$i`; \
+	    rm $(ROOT)/$$i; \
 	    cp -v $$i $(ROOT)/$$i; \
+	    chmod oug-wx $(ROOT)/$$i; \
 	done
+	
+	
+	
 	@ echo Done
 	
 uninstall:
 	@ echo Uninstalling $(NAME) ...
-	@ rm -vf $(ROOT)/$(ARCH)/lib/$(NAME).a
-	@ rm -vf $(ROOT)/$(ARCH)/lib/$(NAME).so
-	@ for i in $(HDRS); do \
+	@-rm -vf /$(ARCH)/lib/$(LIBNAME).sa
+	@-rm -vf /$(ARCH)/lib/$(LIBNAME).so
+	@-for i in $(HDRS); do \
+	    echo Removing $$i;\
 	    rm -vf $(ROOT)/$$i; \
 	done
+	@-rm $(PKGPATH)/$(NAME).pkg.cfg
 	@ echo Done
 	
 indent:
-	./scripts/pre-commit.sh
+	$(ROOT)/source/scripts/pre-commit.sh
 
 clean:
-	@ rm -rvf $(BUILDDIR) $(GEN)
+	@-rm -rvf $(BUILDDIR) $(GEN)
 	
 deplibs:
 	@ echo $(DEPARVS)
-	
-libs:
-	@ echo $(LIBDEPS)
 
-$(LIBDEPS): $(ROOT)/$(ARCH)/lib/libcell_%.a: $(ROOT)/source/lib%/
-	@ make -C $< install
+libpaths:
+	@ echo $(LIBPATHS)
 
-$(BUILDDIR)/lib/$(NAME).a: $(OBJS)
-	@ mkdir -p $(dir $@)
-	ar rcs $@ $^
-	@ mkdir -p $(BUILDDIR)/tmp/
+pkgs:
+	echo $(PKGCFGS)
+
+$(PKGCFGS): $(PKGPATH)/%.pkg.cfg: 
+	@ make -C /source/$*/ clean 
+	@ make -C /source/$*/ all install
+
+$(BUILDDIR)/lib/$(LIBNAME).sa: $(OBJS)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -r -o $@ $^
+	mkdir -p $(BUILDDIR)/tmp/
 	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
-	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
+	$(OBJDUMP) -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
 	
 ifeq ($(NOSHARED),)	
 $(BUILDDIR)/lib/%.so: $(OBJS)
-	@ mkdir -p $(dir $@)
+	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -shared -o $@ $^
-	@ mkdir -p $(BUILDDIR)/tmp/
+	mkdir -p $(BUILDDIR)/tmp/
 	readelf -a $@ > $(BUILDDIR)/tmp/$(notdir $@).elfdump
-	objdump -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
+	$(OBJDUMP) -x -D $@ > $(BUILDDIR)/tmp/$(notdir $@).dump
 endif # ifeq ($(NOSHARED),)
 
 $(BUILDDIR)/obj/%.c.o: %.c
-	@ mkdir -p $(dir $@)
-	@ $(CC) $(CFLAGS) -E $< > $(BUILDDIR)/obj/$<.E
-	@ $(CC) $(CFLAGS) -M $< -MT $@ > $(BUILDDIR)/obj/$<.dep
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -E $< > $(BUILDDIR)/obj/$<.E
+	$(CC) $(CFLAGS) -M $< -MT $@ > $(BUILDDIR)/obj/$<.dep
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
 $(BUILDDIR)/obj/%.S.o: %.S
-	@ mkdir -p $(dir $@)
+	mkdir -p $(dir $@)
 	$(PP) $(PPFLAGS) $< > $@.asm
 	$(PP) -M -MT $@ $(PPFLAGS) $< > $@.dep
 	$(PP) $(PPFLAGS) -E $< > $@.E
 	$(AS) $(ASFLAGS) -o $@ $@.asm
-	objdump -x -D $(DUMPFLAGS) $@ > $@.dump
+	$(OBJDUMP) -x -D $(DUMPFLAGS) $@ > $@.dump
 	
 -include $(DEPS)

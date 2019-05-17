@@ -1,0 +1,11 @@
+alias uname="echo flos"
+
+export OSTYPE=flos
+export SHELL=/bin/gnu/bash
+export ROOT=
+export PATH=/bin/gnu:/amd64/clang+llvm-8.0.0/bin
+export ARCH=amd64
+export OS=flos
+export HOST=linux
+export TMPDIR=/tmp
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/amd64/llvm+clang-7.0.1/lib
