@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/gnu/bash
 
 #**
 #* @file    scripts/pre-commit.sh
@@ -75,7 +75,7 @@ __indent_C() {
         fi
  
         "$INDENT" $INDENT_PARAMETERS "$1"
-        git add "$1"
+        #git add "$1"
 }
 
 find . -not -path './gcc-cc/*' -not -path './.*' | while read file;
