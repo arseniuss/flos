@@ -1,0 +1,144 @@
+function usage() {
+    cat <<EOF >&2
+usage: pkg-config <package> <command>
+commands:
+    cflags          gets needed C compiler flags
+    ppflags
+    static_libs     gets static library dependencies from package
+EOF
+    exit 1
+}
+
+function cfg-get() {
+    local FILE="$1"
+    local NAME="$2"
+    
+    IFS=
+    while read -r LINE; do
+        KEY="${LINE%=*}"
+        VALUE="${LINE##*=}"
+        [ ! -z "$VERBOSE" ] && echo $KEY = \"$VALUE\" >&2
+        if [ "$KEY" == "$NAME" ]; then
+            echo $VALUE
+            exit 0
+        fi
+    done < "$FILE"
+    
+    echo error: configuration value $NAME not found: $FILE >&2
+    exit 1
+}
+
+function get-target() {
+    case "$ARCH" in
+    amd64)
+        echo x86_64-unknown-flos-elf
+    ;;
+    *)
+        echo error: unrecognised architecture: $ARCH >&2
+        exit 1
+    ;;
+    esac
+}
+
+function get-includes() {
+    echo -I $ROOT/include
+}
+
+function get-common-cflags() {
+# Enable all warning
+	 echo "-Wall"
+
+# Enable stack protector warnings
+	 echo "-Wstack-protector"
+
+# Ignore unused attributes
+	 echo "-Wno-attributes"
+
+# Assert that compilation targets a freestanding environment
+	 echo "-ffreestanding"
+	
+# Do not use the standard system startup files or libraries when linking
+	 echo "-nostdlib"
+	
+# Do not use a so-called “red zone” for x86-64 code
+	 echo "-mno-red-zone"
+
+# Do not use exceptions
+	 echo "-fno-exceptions -fno-asynchronous-unwind-tables"
+
+# Using 2011 C ISO standard
+	 echo "-std=c11"
+
+# Set byte/char to unsigned type
+	 echo "-funsigned-char"
+}
+
+[ -z "$ROOT" ] && ROOT=
+[ -z "$PKGPATH" ] && PKGPATH=$ROOT/config/pkg
+
+PKG="$1"
+shift
+
+case "$PKG" in
+default)    
+    case "$1" in
+    cflags)
+        echo `get-common-cflags` -target `get-target` `get-includes`
+        exit 0
+    ;;
+    ppflags)
+        echo `get-includes`
+        exit 0
+    ;;
+    ldflags)
+        exit 0
+    ;;
+    static_libs)
+        echo 
+        exit 0
+    ;;
+    esac
+;;
+debug)
+    case "$1" in
+    cflags)
+        echo `get-common-cflags` -g -target `get-target` `get-includes`
+        exit 0
+    ;;
+    ppflags)
+        echo `get-includes`
+        exit 1
+    ;;
+    ldflags)
+        exit 0
+    ;;
+    static_libs)
+        echo 
+        exit 0
+    ;;
+    esac
+;;
+*)
+    PKGCFG=$PKGPATH/$PKG.pkg.cfg
+    if [ ! -f "$PKGCFG" ]; then
+        echo error: package $PKG is not installed >&2
+        exit 1
+    fi
+    
+    case "$1" in
+    cflags)
+    ;;
+    static_libs)
+        cfg-get "$PKGCFG" STATIC_LIBS
+    ;;
+    esac
+;;
+esac
+
+
+if [ -z "$@" ]; then
+    echo error: no arguments >&2
+else
+    echo error: unrecognised command: $@ >&2
+fi
+usage

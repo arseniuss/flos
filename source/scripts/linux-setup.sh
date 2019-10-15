@@ -1,5 +1,3 @@
-#!/bin/bash
-
 unset ROOT
 unset ARCH
 unset OS

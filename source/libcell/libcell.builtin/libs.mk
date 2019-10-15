@@ -1,2 +1,0 @@
-LIBS += \
-    libstd/libstd.mem

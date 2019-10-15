@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # TODO
 ./source/scripts/ubuntu-setup.sh -verbose
 

@@ -1,0 +1,28 @@
+#!/bin/gnu/bash
+
+function usage() {
+    cat <<EOF >&2
+usage: pkg-make <package>
+EOF
+    exit 1
+}
+
+
+[ -z "$ROOT" ] && ROOT=
+[ -z "$PKGPATH" ] && PKGPATH=$ROOT/config/pkg
+
+[ ! -z "$VERBOSE" ] && echo ROOT=$ROOT
+[ ! -z "$VERBOSE" ] && echo PKGPATH=$PKGPATH
+
+PKG="$1"
+PKGDIR=$ROOT/source/$PKG
+
+if [ ! -d "$PKGDIR" ]; then
+    echo error: directory do not exist: $PKGDIR >&2
+    exit 1
+fi
+
+echo Checking dependencies ...
+make -C "$PKGDIR" libs
+echo Building and installing ...
+make -C "$PKGDIR" all install

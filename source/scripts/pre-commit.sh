@@ -1,5 +1,3 @@
-#!/bin/gnu/bash
-
 #**
 #* @file    scripts/pre-commit.sh
 #* @brief   Pre commition script
@@ -74,7 +72,7 @@ __indent_C() {
             return;
         fi
  
-        "$INDENT" $INDENT_PARAMETERS "$1"
+        VERSION_CONTROL=none "$INDENT" $INDENT_PARAMETERS "$1"
         #git add "$1"
 }
 

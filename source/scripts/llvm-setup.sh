@@ -1,5 +1,3 @@
-#!/bin/bash
-
 function arch-make-config() {
     local arch="$1"
     local target="$2"

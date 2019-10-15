@@ -1,5 +1,3 @@
-#!/bin/bash
-
 CMD=$@
 FILEDIR=$(dirname $0)
 

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function usage() {
+    cat<<EOF >&2
+usage: pkg-install <path-to-config.mk>
+EOF
+    exit 1
+}
+
+
+CFGFILE=
+if [ -d "$1" ]; then
+    CFGFILE="$1/config.mk"
+fi
+
+if [ ! -f "$CFGFILE" ]; then
+    echo error: config.mk do not exist: $CFGFILE >&2
+    usage
+fi
+
+make -f 
