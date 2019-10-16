@@ -119,7 +119,7 @@ typedef __SIZE_TYPE__ cell_size;
 #        error __SIZE_TYPE__ not defined!
 #    endif
 
-#    define CELL_NULL ((void *)0)
+#    define CELL_NULL 0
 
 
 

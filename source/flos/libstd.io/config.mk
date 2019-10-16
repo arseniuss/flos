@@ -22,7 +22,9 @@ std_io_DISTRO = flos
 
 std_io_LIBS = \
 	flos/libcell.builtin \
-	flos/libos
+	flos/libos \
+	flos/libstd.fmt \
+	flos/libstd.io
 
 std_io_CFLAGS = -Iinclude
 
@@ -30,7 +32,8 @@ std_io_HDRS = \
 	include/cell/std/io.h
 
 std_io_SRCS = \
-	csource/file.c
+	csource/file.c \
+	csource/print.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

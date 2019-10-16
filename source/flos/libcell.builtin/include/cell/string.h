@@ -21,7 +21,6 @@
 
 // module builtin.string
 
-#    include <cell/array.h>
 #    include <cell/builtin.h>
 #    include <cell/memory.h>
 

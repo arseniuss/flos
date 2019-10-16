@@ -36,6 +36,6 @@ SYSCALL_FUNC3(open, int, const char *, pathname, int, flags, int, mode);
 
 SYSCALL_FUNC1(close, long, unsigned int, fd);
 
-SYSCALL_FUNC1(brk, int, void *, ptr);
+SYSCALL_FUNC1(brk, cell_uint64, cell_uintptr, ptr);
 
 #endif /* __CELL__OS_LINUX_H__ */

@@ -56,4 +56,7 @@ cell_error file_read(file * f, const cell_byte data[], cell_size len);
 // func (f *file) close() error
 cell_error *file_close(file * f);
 
+// func printf(fmt string, ...) error
+cell_error *io_printf(cell_string fmt, ...);
+
 #endif /* __CELL__STD_IO_H__ */

@@ -18,7 +18,7 @@
 
 #include <cell/array.h>
 #include <cell/error.h>
-#include <cell/fmt.h>
+#include <cell/std/fmt.h>
 #include <cell/assert.h>
 #include <cell/os.h>
 
@@ -85,6 +85,7 @@ static void format_assert(const cell_c_char * result,
 }
 
 TEST(format_hex) {
+    format_assert("TEST", "TEST");
     format_assert("%", "%%");
     format_assert("123", "%d", 123);
     format_assert("+123  ", "%-+6d", 123);
@@ -98,6 +99,7 @@ TEST(format_hex) {
     format_assert("ABC", "%s", "ABC");
     format_assert("123         ", "%-12d", 123);
     format_assert("         123", "%12d", 123);
+    format_assert("\n123\n123\n", "\n%d\n%d\n", 123, 123);
 
     format_assert(CELL_NULL, "%", "invalid format");
     format_assert(CELL_NULL, "%+-", "invalid format");

@@ -19,7 +19,7 @@
 #include <cell/args.h>
 #include <cell/ascii.h>
 #include <cell/error.h>
-#include <cell/fmt.h>
+#include <cell/std/fmt.h>
 #include <cell/utf8.h>
 
 #define ERROR_FUNC_DEF(errno, text) \
@@ -104,8 +104,11 @@ cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p,
                         num = (cell_uint16) cell_va_arg(list, int);
                     }
                 } else if(args->flags & fmt_w64) {
-                    // TODO: 64bits
-                    return &__error_INVPAR;
+                    if(args->flags & fmt_signed) {
+                        num = (cell_int32) cell_va_arg(list, cell_int64);
+                    } else {
+                        num = (cell_uint32) cell_va_arg(list, cell_uint64);
+                    }
                 } else {
                     if(args->flags & fmt_signed) {
                         num = (cell_int32) cell_va_arg(list, cell_int32);
@@ -114,7 +117,14 @@ cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p,
                     }
                 }
 
-                cell_int64 n = num < 0 ? -num : num;
+                cell_uint64 n;
+
+                if(args->flags & fmt_signed) {
+                    n = num < 0 ? -num : num;
+                } else {
+                    n = num;
+                }
+
                 do {
                     cell_uint64 temp;
 
@@ -327,7 +337,7 @@ cell_error *fmt_format_list(cell_array * buffer,
 
             if((chlen =
                 utf8_tochar(&args.ch, &format.buffer[i], format.len - i)) > 0) {
-                i += chlen;
+                i += chlen - 1;
                 switch (args.ch) {
                     case 'd':
                     case 'i':
@@ -349,6 +359,9 @@ cell_error *fmt_format_list(cell_array * buffer,
                 }
 
             }
+        } else {
+            if((ret = __emit_in_buffer(buffer, format.buffer[i])) != CELL_NULL)
+                return ret;
         }
     }
 

@@ -44,6 +44,14 @@ os_linux_amd64_CFLAGS =
 os_linux_ASFLAGS =
 
 os_linux_HAS_TESTS = 1
+
+os_linux_TEST_LIBS = \
+    flos/libstd.fmt \
+    flos/libstd.io \
+    flos/libos \
+    flos/libstd.utf \
+    flos/libstd.ascii
+
 os_linux_TESTS = \
 	csource/tests/os_sbrk_test.c
 

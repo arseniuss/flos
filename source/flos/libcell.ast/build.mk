@@ -259,7 +259,7 @@ SECTIONS
   .jcr            : { KEEP (*(.jcr)) }
   .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*) }
   .dynamic        : { *(.dynamic) }
-  .got            : { *(.got) *(.igot) }
+  //.got            : { *(.got) *(.igot) }
   . = DATA_SEGMENT_RELRO_END (SIZEOF (.got.plt) >= 24 ? 24 : 0, .);
   .got.plt        : { *(.got.plt)  *(.igot.plt) }
   .data           :
@@ -470,6 +470,8 @@ endif #($$(strip $$($(1)_$(2)_$(3)_$(4)_SRCS)),)
 
 CLEAN += clean-$(1)-$(2)-$(3)-$(4)
 
+ifeq ($$(RECURSION),)
+
 $(1)_$(2)_$(3)_$(4)_CSRCS = $$(filter %.c,$$($(1)_$(2)_$(3)_$(4)_SRCS))
 $(1)_$(2)_$(3)_$(4)_SSRCS = $$(filter %.S,$$($(1)_$(2)_$(3)_$(4)_SRCS))
 
@@ -485,7 +487,7 @@ $(1)_$(2)_$(3)_$(4)_LIBS += $$($(1)_$(3)_LIBS)
 $(1)_$(2)_$(3)_$(4)_LIBS += $$($(1)_$(4)_LIBS)
 
 $(1)_$(2)_$(3)_$(4)_LINK = $$(addprefix $(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_LIBS))
-$(1)_$(2)_$(3)_$(4)_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_LINK),$$(shell make -s -C $$(__lib) static-lib))
+$(1)_$(2)_$(3)_$(4)_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_LINK),$$(shell make -s -C $$(__lib) static-lib RECURSION=1))
 $(1)_$(2)_$(3)_$(4)_LINK := $$(sort $$($(1)_$(2)_$(3)_$(4)_LINK))
 
 $(1)_$(2)_$(3)_$(4)_CFLAGS += $$(addsuffix /include,$$(addprefix -I$(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_LIBS)))
@@ -496,7 +498,8 @@ $(1)_$(2)_$(3)_$(4)_LIB_MKS := $$(addsuffix /makefile,$$($(1)_$(2)_$(3)_$(4)_LIB
 DEPS += deps-$(1)-$(2)-$(3)-$(4)
 
 ifeq ($$($(1)_HAS_TESTS),1)
-$(1)_$(2)_$(3)_$(4)_CFLAGS += -D"TEST(x)=void x(void); void (*x\#\#ptr)(void) __attribute__((section(\".init_array\"))) = &x; void x(void)" 
+$(1)_$(2)_$(3)_$(4)_TEST_CFLAGS = $$($(1)_$(2)_$(3)_$(4)_CFLAGS)
+$(1)_$(2)_$(3)_$(4)_TEST_CFLAGS += -D"TEST(x)=void x(void); void (*x\#\#ptr)(void) __attribute__((section(\".init_array\"))) = &x; void x(void)" 
 
 TESTS += test-$(1)_$(2)_$(3)_$(4)
 RUN_TESTS += run-tests-$(1)_$(2)_$(3)_$(4)
@@ -507,6 +510,17 @@ $(1)_$(2)_$(3)_$(4)_TESTS += $$($(1)_$(2)_TESTS)
 $(1)_$(2)_$(3)_$(4)_TESTS += $$($(1)_$(3)_TESTS)
 $(1)_$(2)_$(3)_$(4)_TESTS += $$($(1)_$(4)_TESTS)
 
+$(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_TEST_LIBS)
+$(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(2)_TEST_LIBS)
+$(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(3)_TEST_LIBS)
+$(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(4)_TEST_LIBS)
+
+$(1)_$(2)_$(3)_$(4)_TEST_LINK = $$(addprefix $(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_TEST_LIBS))
+$(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_TEST_LINK),$$(shell make -s -C $$(__lib) static-lib))
+$(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(sort $$($(1)_$(2)_$(3)_$(4)_TEST_LINK))
+
+$(1)_$(2)_$(3)_$(4)_TEST_CFLAGS += $$(addsuffix /include,$$(addprefix -I$(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_TEST_LIBS)))
+
 $(1)_$(2)_$(3)_$(4)_C_TESTS = $$(filter %.c,$$($(1)_$(2)_$(3)_$(4)_TESTS))
 $(1)_$(2)_$(3)_$(4)_S_TESTS = $$(filter %.S,$$($(1)_$(2)_$(3)_$(4)_TESTS))
 
@@ -516,6 +530,7 @@ $(1)_$(2)_$(3)_$(4)_S_TEST_OBJS = $$(addprefix $$($(1)_$(2)_$(3)_$(4)_OBJDIR)/,$
 $(1)_$(2)_$(3)_$(4)_TEST_OBJS = $$($(1)_$(2)_$(3)_$(4)_C_TEST_OBJS) $$($(1)_$(2)_$(3)_$(4)_S_TEST_OBJS)
 
 endif
+endif # RECURSION
 
 endef
 
@@ -596,10 +611,13 @@ uninstall-$(1)-$(2)-$(3)-$(4)-pkgcfg:
 
 ifeq ($$($(1)_HAS_TESTS),1)
 
-$$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test: $$($(1)_$(2)_$(3)_$(4)_TEST_OBJS) $$($(1)_$(2)_$(3)_$(4)_OBJS) $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/linker.script $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/
+$$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test: $$($(1)_$(2)_$(3)_$(4)_TEST_OBJS) $$($(1)_$(2)_$(3)_$(4)_OBJS) \
+	$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/linker.script $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/
 	@ echo LD [$(1)] $$(notdir $$@) $$^
 	@ mkdir -p $$(dir $$@)
-	$(Q) $$(LD) $$($(1)_$(2)_$(3)_$(4)_LDFLAGS) -T$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/linker.script -Map=$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.map -o $$@ $$($(1)_$(2)_$(3)_$(4)_TEST_OBJS) $$($(1)_$(2)_$(3)_$(4)_OBJS) $$($(1)_$(2)_$(3)_$(4)_LINK) $(HOST_LIBC)
+	$(Q) $$(LD) $$($(1)_$(2)_$(3)_$(4)_LDFLAGS) -T$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/linker.script \
+	-Map=$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.map -o $$@ $$($(1)_$(2)_$(3)_$(4)_TEST_OBJS) \
+	$$($(1)_$(2)_$(3)_$(4)_OBJS) $$($(1)_$(2)_$(3)_$(4)_LINK) $$($(1)_$(2)_$(3)_$(4)_TEST_LINK)
 	$(Q) $$(OBJDUMP) -d -f -h -S -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.dump
 	$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.elfdump
 
@@ -610,12 +628,12 @@ run-tests-$(1)_$(2)_$(3)_$(4): $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test
 	$$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test; echo "$$$$?"
 
 $$($(1)_$(2)_$(3)_$(4)_C_TEST_OBJS): $$($(1)_$(2)_$(3)_$(4)_OBJDIR)/%.c.o: %.c
-	@ echo CC [$(1)] $$(notdir $$@) $$< [$$^,$$%]
+	@ echo TEST CC [$(1)] $$(notdir $$@) $$< [$$^,$$%]
 	@ mkdir -p $$(dir $$@)
 	@ mkdir -p $$(dir $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<)
-	$(Q) $$(CC) $$($(1)_$(2)_$(3)_$(4)_CFLAGS) -E $$< > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.E
-	$(Q) $$(CC) $$($(1)_$(2)_$(3)_$(4)_CFLAGS) -M $$< -MT $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dep
-	$(Q) $$(CC) $$($(1)_$(2)_$(3)_$(4)_CFLAGS) -c -o $$@ $$<
+	$(Q) $$(CC) $$($(1)_$(2)_$(3)_$(4)_TEST_CFLAGS) -E $$< > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.E
+	$(Q) $$(CC) $$($(1)_$(2)_$(3)_$(4)_TEST_CFLAGS) -M $$< -MT $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dep
+	$(Q) $$(CC) $$($(1)_$(2)_$(3)_$(4)_TEST_CFLAGS) -c -o $$@ $$<
 	$(Q) $$(OBJDUMP) -d -h -s -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dump
 	$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.elfdump
 
