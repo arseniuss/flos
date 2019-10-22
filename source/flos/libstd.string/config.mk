@@ -15,6 +15,16 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this library  If not, see <https://www.gnu.org/licenses/>.
 
-include config.mk
+LIBRARIES = std_string
 
-include build.mk
+std_string_DISTRO = flos
+
+#
+# $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)
+#
+std_string_BUILDDIR = $(1)-$(2)-$(3)/$(4)
+
+#
+# $_INSTALLDIR(1 - arch, 2 - os, 3 - host, 4 - category, 5 - distro)
+#
+std_string_INSTALLDIR = $(ROOT)/$(1)/$(2)/$(4)
