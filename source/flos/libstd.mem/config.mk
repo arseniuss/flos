@@ -25,7 +25,7 @@ std_mem_LIBS = \
 	flos/libos
 
 std_mem_linux_LIBS = \
-	flos/libos.linux 
+	flos/libos.linux
 
 std_mem_CFLAGS = \
     -Iinclude
@@ -35,6 +35,17 @@ std_mem_SRCS = \
 
 std_mem_HDRS = \
 	include/cell/std/memory.h
+	
+std_mem_HAS_TESTS = 1
+
+std_mem_TEST_LIBS = \
+    flos/libstd.io \
+    flos/libstd.fmt \
+    flos/libstd.utf \
+    flos/libstd.ascii
+
+std_mem_TESTS = \
+    csource/tests/mem_alloc.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

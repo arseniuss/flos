@@ -1,10 +1,10 @@
 #include <cell/builtin.h>
 #include <cell/os.h>
 #include <cell/os/linux/error.h>
+#include <cell/os.h>
 
 #define HAVE_MORECORE           1
-#define MORECORE(sz)            \
-                ({ void * ptr = CELL_NULL; cell_error*err = os_sbrk(sz, &ptr); if(err) os_exit(err->string()); ptr; })
+#define MORECORE(sz)            __morecore(sz)
 #define USE_LOCKS               1
 #define LACKS_SYS_TYPES_H       1
 #define ABORT                   os_exit(cell_string_c("abort"))
@@ -55,6 +55,17 @@
 #define dlindependent_calloc   __independent_calloc
 #define dlindependent_comalloc __independent_comalloc
 #define dlbulk_free            mem_array_free
+
+static void *__morecore(cell_size sz) {
+    void *ptr = CELL_NULL;
+    cell_error *err;
+
+    if((err = os_sbrk(sz, &ptr)) != CELL_NULL) {
+        return (void *)(~(size_t) 0);
+    }
+
+    return ptr;
+}
 
 static void *memset(void *str, int c, size_t n) {
     char *p = (char *)str;
