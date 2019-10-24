@@ -11,5 +11,5 @@ TEST(mem_alloc_test) {
         } else {
             io_printf(cell_string_c("mem_alloc(%d) returned %#x\n"), sz, ptr);
         }
-    }l
+    }
 }
