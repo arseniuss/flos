@@ -34,13 +34,15 @@ cell_error *os_open(fd_t * fd, const cell_string file, cell_byte omode) {
 
     flags |= omode & 0x3;              // read, write same as POSIX
 
-    int res = os_linux_sys_open((const char *)file.buffer, flags, mode);
+    fd_t res = os_linux_sys_open((const char *)file.buffer, flags, mode);
 
     if(res < 0) {
         return os_error[-os_linux_sys_errno];
     }
 
-    return (*fd = res, CELL_NULL);
+    *fd = res;
+
+    return CELL_NULL;
 }
 
 void os_exit(const cell_string msg) {
@@ -63,29 +65,28 @@ cell_error *os_write(fd_t fd, const void *buf, cell_size bytes,
     return CELL_NULL;
 }
 
-extern char edata;
-
 cell_error *os_sbrk(cell_uint32 inc, void **ptr) {
-    int res;
-    static void *last_position = CELL_NULL;
+    cell_uint64 res;
+    static cell_uintptr last_position = CELL_NULL;
 
     if(last_position == CELL_NULL) {
-
-        if((res = os_linux_sys_brk(&edata)) != 0) {
+        if(((cell_int64) (res = os_linux_sys_brk(last_position))) -
+           last_position < 0) {
             return os_error[-os_linux_sys_errno];
         }
-        last_position = &edata;
+        last_position = res;
     }
 
-    void *new_addr = (void *)((cell_uintptr) last_position + inc);
-    if((res = os_linux_sys_brk(new_addr)) != 0) {
+    cell_uintptr new_addr = last_position + inc;
+
+    if(((cell_int64) (res = os_linux_sys_brk(new_addr))) - last_position < 0) {
         return os_error[-os_linux_sys_errno];
     }
 
-    last_position = new_addr;
-
     if(ptr)
-        *ptr = new_addr;
+        *ptr = (void *)last_position;
+
+    last_position = new_addr;
 
     return CELL_NULL;
 }

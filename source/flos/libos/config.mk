@@ -35,6 +35,17 @@ os_HDRS = \
 
 os_CFLAGS = \
 	-Iinclude
+	
+os_HAS_TESTS = 1
+
+os_TEST_LIBS = \
+    flos/libstd.io \
+    flos/libstd.fmt \
+    flos/libstd.utf \
+    flos/libstd.ascii
+
+os_TESTS = \
+    csource/tests/os_sbrk_test.c
 
 
 #
