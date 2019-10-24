@@ -382,7 +382,7 @@ ifndef NDEBUG
 CFLAGS += -g
 endif
 
-CFLAGS += -ffunction-sections -fdata-sections -Wall -pedantic
+CFLAGS += -ffunction-sections -fdata-sections -Wall
 
 ## TODO
 ARCH_LD_START = 0x40000000
