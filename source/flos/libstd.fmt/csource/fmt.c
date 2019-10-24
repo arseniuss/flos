@@ -95,6 +95,7 @@ cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p,
             {
                 cell_byte *no = &tmp[129];
 
+
                 *no = '\0';
 
                 if(args->flags & fmt_w16) {
@@ -150,6 +151,21 @@ cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p,
                     } else if(args->flags & fmt_show_sign) {
                         *(--no) = '+';
                         width++;
+                    }
+                }
+
+                if(args->flags & fmt_alter) {
+                    switch (radix) {
+                        case 16:
+                            *(width++, --no) = 'x';
+                            *(width++, --no) = '0';
+                            break;
+                        case 8:
+                            *(width++, --no) = '0';
+                            break;
+                        case 2:
+                            *(width++, --no) = 'b';
+                            *(width++, --no) = '0';
                     }
                 }
 

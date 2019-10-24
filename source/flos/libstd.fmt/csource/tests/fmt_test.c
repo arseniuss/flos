@@ -88,6 +88,7 @@ TEST(format_hex) {
     format_assert("TEST", "TEST");
     format_assert("%", "%%");
     format_assert("123", "%d", 123);
+    format_assert("0x123", "%#x", 0x123);
     format_assert("+123  ", "%-+6d", 123);
     format_assert("FFE", "%X", 4094);
     format_assert("ffe", "%x", 4094);
