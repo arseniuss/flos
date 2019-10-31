@@ -32,11 +32,12 @@ os_linux_amd64_SRCS = \
 	csource/amd64/start.S
 
 os_linux_HDRS = \
-	include/cell/os/linux.h \
+	include/cell/os/linux/amd64/syscalls.inc.h \
 	include/cell/os/linux/defs.h \
 	include/cell/os/linux/error.h \
 	include/cell/os/linux/errors.h \
-	include/cell/os/linux/syscall.h
+	include/cell/os/linux/syscall.h \
+	include/cell/os/linux.h
 
 
 os_linux_CFLAGS = -Iinclude

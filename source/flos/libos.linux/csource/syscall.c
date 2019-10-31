@@ -1,6 +1,6 @@
 /**
  *  Linux layer library
- *  Copyright (C) 2018 - 2019  Armands Arseniuss Skolmeisters
+ *  Copyright (C) 2019 Armands Arseniuss Skolmeisters
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 #include <cell/os/linux.h>
+#include <cell/os/linux/defs.h>
 
 #include "internal.h"
-#include "syscall.h"
 
 cell_uintptr os_linux_sys_errno = 0;
 
@@ -27,136 +27,72 @@ cell_uintptr *os_linux_errno_location() {
     return &os_linux_sys_errno;
 }
 
-SYSCALL_FUNC1(fork, linux_pid_t, struct linux_pt_regs *, regs)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SYSCALL_FUNC3(read, cell_ssize, int, fd, void *, buf, cell_size, count)
-SYSCALL_FUNC3(write, cell_ssize, int, fd, const void *, buf, cell_size, count)
-SYSCALL_FUNC3(open, int, const char *, pathname, int, flags, int, mode)
-SYSCALL_FUNC1(close, long, unsigned int, fd)
-SYSCALL_PROC1(exit, cell_uint32, error_code)
-SYSCALL_FUNC1(brk, cell_uint64, cell_uintptr, ptr)
+#ifdef SYSCALL_DEF
+#    undef SYSCALL_DEF
+#endif /* SYSCALL_DEF */
+
+#define SYSCALL_DEF(no, name, param_count, ret_type, ...) \
+        SYSCALL_DEF##param_count(no, name, ret_type, ##__VA_ARGS__)
+
+#ifdef SYSCALL_DEF1
+#    undef SYSCALL_DEF1
+#endif
+
+#define SYSCALL_DEF1(no, name, rettype, t0, r0) \
+    rettype os_linux_sys_##name(t0 r0) \
+    {\
+        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, 0, 0, 0, 0, 0);\
+        \
+        ret = os_linux_check_syscall(ret);\
+        \
+        return ret; \
+    }
+
+#ifdef SYSCALL_DEF2
+#    undef SYSCALL_DEF2
+#endif
+
+#define SYSCALL_DEF2(no, name, rettype, t0, r0, t1, r1) \
+    rettype os_linux_sys_##name(t0 r0, t1 r1) \
+    {\
+        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, 0, 0, 0, 0);\
+        \
+        ret = os_linux_check_syscall(ret); \
+        \
+        return ret;\
+    }
+
+#ifdef SYSCALL_DEF3
+#    undef SYSCALL_DEF3
+#endif
+
+#define SYSCALL_DEF3(no, name, rettype, t0, r0, t1, r1, t2, r2) \
+    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2) \
+    {\
+        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, 0, \
+            0, 0);\
+        \
+        ret = os_linux_check_syscall(ret); \
+        \
+        return ret;\
+    }
+
+#ifdef SYSCALL_DEF6
+#    undef SYSCALL_DEF6
+#endif
+
+#define SYSCALL_DEF6(no, name, rettype, t0, r0, t1, r1, t2, r2, t3, r3, t4, r4, t5, r5) \
+    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5) \
+    {\
+        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, \
+            (cell_uintptr)r3, (cell_uintptr)r4, (cell_uintptr)r5);\
+        \
+        ret = os_linux_check_syscall(ret); \
+        \
+        return ret;\
+    }
+
+
+#include <cell/os/linux/syscalls.inc.h>
+
+#undef SYSCALL_DEF

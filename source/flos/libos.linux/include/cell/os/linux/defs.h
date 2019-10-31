@@ -43,9 +43,12 @@
 #    define S_IXOTH 00001
 
 typedef int linux_pid_t;
+typedef int off_t;              // TODO
 
 struct linux_pt_regs {
     long reg[8];
 };
+
+struct linux_stat;              // TODO
 
 #endif /* __CELL__OS_LINUX_DEFS_H__ */

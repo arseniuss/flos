@@ -24,18 +24,51 @@
 
 extern cell_uintptr os_linux_sys_errno;
 
-SYSCALL_PROC1(exit, cell_uint32, error_code);
+#    ifdef SYSCALL_DEF
+#        undef SYSCALL_DEF
+#    endif
+       /*
+        * SYSCALL_DEF 
+        */
 
-SYSCALL_FUNC1(fork, linux_pid_t, struct linux_pt_regs *, regs);
+#    define SYSCALL_DEF(no, name, param_count, ret_type, ...) \
+        SYSCALL_DEF##param_count(no, name, ret_type, ##__VA_ARGS__)
 
-SYSCALL_FUNC3(read, cell_ssize, int, fd, void *, buf, cell_size, count);
+#    ifdef SYSCALL_DEF1
+#        undef SYSCALL_DEF1
+#    endif
 
-SYSCALL_FUNC3(write, cell_ssize, int, fd, const void *, buf, cell_size, count);
+#    define SYSCALL_DEF1(no, name, rettype, t0, r0) \
+    rettype os_linux_sys_##name(t0 r0);
 
-SYSCALL_FUNC3(open, int, const char *, pathname, int, flags, int, mode);
+#    ifdef SYSCALL_DEF2
+#        undef SYSCALL_DEF2
+#    endif
 
-SYSCALL_FUNC1(close, long, unsigned int, fd);
+#    define SYSCALL_DEF2(no, name, rettype, t0, r0, t1, r1) \
+    rettype os_linux_sys_##name(t0 r0, t1 r1);
 
-SYSCALL_FUNC1(brk, cell_uint64, cell_uintptr, ptr);
+#    ifdef SYSCALL_DEF3
+#        undef SYSCALL_DEF3
+#    endif
+
+#    define SYSCALL_DEF3(no, name, rettype, t0, r0, t1, r1, t2, r2) \
+    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2);
+
+#    ifdef SYSCALL_DEF6
+#        undef SYSCALL_DEF6
+#    endif
+
+#    define SYSCALL_DEF6(no, name, rettype, t0, r0, t1, r1, t2, r2, t3, r3, t4, r4, t5, r5) \
+    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5);
+
+
+#    include <cell/os/linux/amd64/syscalls.inc.h>
+
+#    undef SYSCALL_DEF
+#    undef SYSCALL_DEF1
+#    undef SYSCALL_DEF2
+#    undef SYSCALL_DEF3
+#    undef SYSCALL_DEF6
 
 #endif /* __CELL__OS_LINUX_H__ */

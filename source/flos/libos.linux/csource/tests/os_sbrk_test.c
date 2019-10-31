@@ -32,8 +32,7 @@ TEST(os_sbrk_test) {
 
     cell_uint64 ret3 = os_linux_sys_brk(ret2 + 100);
 
-    io_printf(cell_string_c("os.linux.sys.brk(ret + 100) returned 0x%llX\n"),
-              ret3);
+    io_printf(cell_string_c("os.linux.sys.brk(ret + 100) returned 0x%llX\n"), ret3);
 
     cell_assert(ret2 + 100 == ret3);
 
