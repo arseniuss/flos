@@ -35,6 +35,7 @@ case `$INDENT --version` in
 esac
 
 INDENT_PARAMETERS="\
+        -pmt \
         --braces-after-struct-decl-line \
         --braces-on-func-def-line \
         --braces-on-if-line \
@@ -52,7 +53,7 @@ INDENT_PARAMETERS="\
         --indent-level4 \
         --leave-optional-blank-lines \
         --leave-preprocessor-space \
-        --line-length80 \
+        --line-length120 \
         --no-parameter-indentation \
         --no-space-after-casts \
         --no-space-after-for \
