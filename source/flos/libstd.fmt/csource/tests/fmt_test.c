@@ -30,8 +30,7 @@ static cell_bool equal(const cell_c_char * result, cell_array buffer) {
     return 1;
 }
 
-static void format_assert(const cell_c_char * result,
-                          const cell_c_char * format, ...) {
+static void format_assert(const cell_c_char * result, const cell_c_char * format, ...) {
     cell_va_list list;
 
     cell_va_start(list, format);

@@ -61,8 +61,7 @@ static inline cell_error *__emit_in_buffer(void *p, cell_byte ch) {
 
 cell_size cell_c_strlen(const char *);
 
-cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p,
-                        cell_error * (*emit) (void *, cell_byte)) {
+cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p, cell_error * (*emit) (void *, cell_byte)) {
     cell_uint16 radix;
     cell_int64 num;
     cell_size width = 0;
@@ -230,8 +229,7 @@ cell_error *__do_format(fmt_format_args * args, cell_va_list list, void *p,
 }
 
 cell_error *__do_custom_format(fmt_format_args * args, cell_va_list list,
-                               void *p, cell_error * (*emit) (void *,
-                                                              cell_byte)) {
+                               void *p, cell_error * (*emit) (void *, cell_byte)) {
     return &__error_INVFMT;
 }
 
@@ -247,8 +245,7 @@ cell_error *fmt_format(cell_array * buffer, cell_string format, ...) {
     return err;
 }
 
-cell_error *fmt_format_list(cell_array * buffer,
-                            cell_string format, cell_va_list list) {
+cell_error *fmt_format_list(cell_array * buffer, cell_string format, cell_va_list list) {
     cell_error *ret = CELL_NULL;
     fmt_format_args args;
 
@@ -322,8 +319,7 @@ cell_error *fmt_format_list(cell_array * buffer,
                 } else {
                     args.precision = 0;
                     while(ascii_isdigit(format.buffer[i])) {
-                        args.precision = args.precision * 10 +
-                            (format.buffer[i] - '0');
+                        args.precision = args.precision * 10 + (format.buffer[i] - '0');
                         if(++i >= format.len)
                             return &__error_INVFMT;
                     }
@@ -351,8 +347,7 @@ cell_error *fmt_format_list(cell_array * buffer,
 
             int chlen;
 
-            if((chlen =
-                utf8_tochar(&args.ch, &format.buffer[i], format.len - i)) > 0) {
+            if((chlen = utf8_tochar(&args.ch, &format.buffer[i], format.len - i)) > 0) {
                 i += chlen - 1;
                 switch (args.ch) {
                     case 'd':
@@ -367,9 +362,7 @@ cell_error *fmt_format_list(cell_array * buffer,
                         __do_format(&args, list, buffer, &__emit_in_buffer);
                         break;
                     default:
-                        if((ret = __do_custom_format(&args, list, buffer,
-                                                     &__emit_in_buffer)) !=
-                           CELL_NULL)
+                        if((ret = __do_custom_format(&args, list, buffer, &__emit_in_buffer)) != CELL_NULL)
                             return ret;
                         break;
                 }

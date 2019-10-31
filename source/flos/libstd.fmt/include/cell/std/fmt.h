@@ -46,7 +46,6 @@ typedef struct {
 } fmt_format_args;
 
 cell_error *fmt_format(cell_array * buffer, cell_string format, ...);
-cell_error *fmt_format_list(cell_array * buffer, cell_string format,
-                            cell_va_list list);
+cell_error *fmt_format_list(cell_array * buffer, cell_string format, cell_va_list list);
 
 #endif /* __CELL__STD_FMT_H__ */
