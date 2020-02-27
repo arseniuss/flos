@@ -20,18 +20,18 @@ BINARIES = cellc
 cellc_DISTRO = flos
 
 cellc_LIBS = \
-	flos/libos \
+	flos/libcell.os \
 	flos/libcell.builtin \
-	flos/libstd.mem \
+	flos/libcell.mem \
 	flos/libcell.scanner \
-	flos/libstd.io \
+	flos/libcell.io \
 	flos/libcell.token \
 	flos/libcell.ast \
 	flos/libcell.parser \
 	flos/libcell.ir
 
 cellc_linux_LIBS = \
-	flos/libos.linux
+	flos/libcell.linux
 
 cellc_CFLAGS = -Iinclude
 

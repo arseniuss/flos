@@ -22,14 +22,8 @@
 
 // module builtin.slice
 
-
-/** Slice structure */
-struct slice {
-    void *buffer;
-    size_t len;
-    size_t cap;
-};
-
-struct slice_desc {
-    type_t of_type;
-};
+typedef struct {
+    cell_size len;
+    cell_size cap;
+    cell_byte *buffer;
+} cell_slice;

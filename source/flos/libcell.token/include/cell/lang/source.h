@@ -22,11 +22,22 @@
 
 #    include <cell/builtin.h>
 #    include <cell/string.h>
+#    include <cell/error.h>
 
-struct cell_lang_source_s;
+typedef struct cell_lang_source_s *cell_lang_source;
 
-typedef struct cell_lang_source_s cell_lang_source;
+struct cell_lang_source_s {
+    // func (src source) read() (int16, error)
+    cell_error(*read) (const cell_lang_source src, cell_array * buffer);
 
-cell_lang_source *cell_lang_source_file(cell_string str);
+    void *data;
+};
+
+typedef struct cell_lang_source_s *cell_lang_source;
+
+// func (src *source) new(filepath string) error
+
+// func new(filepath string) (error, source)
+cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src);
 
 #endif /* __CELL__LANG_SOURCE_H__ */

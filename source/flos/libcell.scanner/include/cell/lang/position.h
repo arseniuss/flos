@@ -21,11 +21,14 @@
 
 #    include <cell/string.h>
 
-typedef struct {
+struct cell_lang_position_s {
     int line;
     int offset;
-} cell_lang_position;
+};
 
-cell_string cell_lang_position_string(cell_lang_position *);
+typedef struct cell_lang_position_s cell_lang_position;
+
+// func (p *pos) string() string
+cell_string cell_lang_pos_string(cell_lang_position *);
 
 #endif /* __CELL__LANG_POSITION_H__ */

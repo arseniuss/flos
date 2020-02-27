@@ -16,15 +16,59 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+#include <cell/array.h>
+#include <cell/assert.h>
 #include <cell/builtin.h>
+#include <cell/error.h>
 #include <cell/lang/source.h>
-#include <cell/std/memory.h>
+#include <cell/mem.h>
+#include <cell/os/file.h>
 
 #include "internal.h"
 
-cell_lang_source *cell_lang_source_file(cell_string str) {
-    cell_lang_source *src = mem_alloc(sizeof(cell_lang_source));
+// func new(filepath string) (error, source)
 
-    return src;
+cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src) {
+    if(!src)
+        return __default_error;
+
+    cell_error err;
+    struct lang_source_file_s *s;
+
+    if((err = cell_mem_alloc(sizeof(struct cell_lang_source_s), (void **)src)) != CELL_NULL) {
+        return err;
+    }
+
+    if((err = cell_mem_alloc(sizeof(struct lang_source_file_s), (void **)&s)) != CELL_NULL) {
+        cell_mem_free(*src);
+        return err;
+    }
+
+    if((err = cell_os_open(filepath, &s->file)) != CELL_NULL) {
+        cell_mem_free(s);
+        return err;
+    }
+
+
+    (*src)->read = &lang_source_file_read;
+    (*src)->data = s;
+
+    return CELL_NULL;
+}
+
+cell_error lang_source_file_read(const cell_lang_source src, cell_array * buffer) {
+    struct lang_source_file_s *f = (struct lang_source_file_s *)src->data;
+    cell_error err;
+
+    cell_size cap = buffer->cap;
+    buffer->cap = 1;
+
+    if((err = cell_os_read(f->file, buffer)) != CELL_NULL) {
+        buffer->cap = cap;
+        return err;
+    }
+
+    buffer->cap = cap;
+
+    return CELL_NULL;
 }

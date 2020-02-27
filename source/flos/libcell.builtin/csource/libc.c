@@ -18,12 +18,12 @@
 
 #include <cell/type.h>
 
-cell_size c_strlen(const char *c_str) {
+cell_size cell_c_strlen(const char *c_str) {
     cell_size size = 0;
 
     if(c_str) {
-        while(*c_str++)
-            size++;
+        while(*c_str)
+            size++, c_str++;
     }
 
     return size;

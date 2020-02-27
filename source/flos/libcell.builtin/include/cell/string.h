@@ -23,6 +23,7 @@
 
 #    include <cell/builtin.h>
 #    include <cell/memory.h>
+#    include <cell/array.h>
 
 #    ifdef char
 #        error char is already defined!
@@ -44,6 +45,7 @@ typedef struct {
 
 
 cell_string cell_string_c(const char *restrict c_string);
+cell_string cell_string_a(cell_array a);
 
 cell_size cell_c_strlen(const char *);
 
@@ -61,6 +63,9 @@ cell_size cell_string_size(const cell_string s);
  * @return length of string in bytes
  */
 // func (s string) len() size_t
-cell_size string_len(const cell_string s);
+cell_size cell_string_len(const cell_string s);
+
+// func (s1, s2 string) eq() bool
+cell_bool cell_string_eq(const cell_string * s1, const cell_string * s2);
 
 #endif /* __CELL__STRING_H__ */

@@ -21,10 +21,10 @@
 
 #    include <cell/builtin.h>
 
-#    define __(x)       CELL_LANG_T##x,
+#    define __(x)   LANG_T##x,
 
 enum cell_lang_token {
-    CELL_LANG_TINVALID = 0,
+    LANG_TINVALID = -2,
 #    include <cell/lang/tokens.inc.h>
 };
 

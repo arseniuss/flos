@@ -25,7 +25,7 @@
 
 /** Allocate memory from stack */
 // func salloc(s size_t) safe*
-#    define memory_salloc(x)       __builtin_alloca(x)
+#    define cell_mem_salloc(x)       __builtin_alloca(x)
 
 #    ifdef HAS_MEMORY_ALLOC
 

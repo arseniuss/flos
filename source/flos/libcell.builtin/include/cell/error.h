@@ -21,14 +21,31 @@
 
 #    include <cell/string.h>
 
+#    define CELL_ERROR_NAME(name)   __##name##_error
+
+#    define CELL_DECL_ERROR(name) \
+        extern cell_error CELL_ERROR_NAME(name);
+
+#    define CELL_DEF_ERROR(name, str) \
+    cell_string __##name##_error_str(struct cell_error_s* err); \
+    cell_error __##name##_error = &(struct cell_error_s){ .string = __##name##_error_str }; \
+    cell_string __##name##_error_str(struct cell_error_s* err) { return cell_string_c(str); }
+
 // type error struct {
 //      string()
 // }
 
 typedef struct cell_error_s {
-    cell_string(*string) (void);
-} cell_error;
+    cell_string(*string) (struct cell_error_s *);
+} *cell_error;
 
 extern cell_error __default_error;
+extern cell_error __this_error;
+extern cell_error __ret1_error;
+extern cell_error __ret2_error;
+extern cell_error __ret3_error;
+extern cell_error __ret4_error;
+extern cell_error __ret5_error;
+extern cell_error __ret6_error;
 
 #endif /* __CELL__ERROR_H__ */

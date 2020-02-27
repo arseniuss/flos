@@ -16,7 +16,7 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cell/std/io.h>
+#include <cell/mem.h>
 #include <cell/lang/scanner.h>
 #include <cell/utf8.h>
 
@@ -24,20 +24,17 @@
 
 #define BOM             0xFEFF
 
+cell_error cell_lang_scanner_new(cell_lang_scanner * scn, cell_lang_source src) {
+    cell_error err;
+    cell_lang_scanner s;
 
+    if((err = cell_mem_alloc(sizeof(struct cell_lang_scanner_s), (void **)&s)) != CELL_NULL) {
+        return err;
+    }
 
-void scanner_error(cell_lang_scanner * scn, int offset, const cell_byte * msg) {
+    s->src = src;
 
-}
+    *scn = s;
 
-void scanner_next(cell_lang_scanner * scn) {
-
-}
-
-void scanner_init(cell_lang_scanner * scn) {
-
-}
-
-void scanner_comment(cell_lang_scanner * scn) {
-
+    return CELL_NULL;
 }

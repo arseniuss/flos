@@ -23,6 +23,6 @@
 #    include <cell/lang/source.h>
 #    include <cell/lang/ast.h>
 
-cell_error *cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast);
+cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast);
 
 #endif /* __CELL__PARSER_H__ */

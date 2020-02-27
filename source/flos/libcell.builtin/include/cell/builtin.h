@@ -121,6 +121,4 @@ typedef __SIZE_TYPE__ cell_size;
 
 #    define CELL_NULL 0
 
-
-
 #endif /* __CELL__BUILTINT_H__ */

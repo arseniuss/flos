@@ -21,8 +21,10 @@
 
 #    include <cell/string.h>
 
-void os_exit(cell_string str);
+void cell_os_exit(cell_string str);
 
-#    define cell_assert(x)      do { if(!(x)) os_exit(cell_string_c(#x)); } while(0)
+#    define cell_assert(x)      do { if(!(x)) cell_os_exit(cell_string_c(#x)); } while(0)
+
+#    define cell_static_assert(x, msg) typedef char static_assertion_##msg[(x)?1:-1]
 
 #endif /* !__CELL__ASSERT_H__ */

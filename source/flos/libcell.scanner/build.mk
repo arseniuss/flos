@@ -28,7 +28,12 @@
 #
 #       For more information, please refer to <http://unlicense.org>
 
+ifneq ($(ROOT),)
+-include $(ROOT)/home/$(USER)/.config.mk
+else
 -include ~/.config.mk
+endif
+
 -include config.mk
 
 ifeq ($(VERBOSE),1)
@@ -41,7 +46,7 @@ endif
 ###############################################################################
 
 # func assert(1 variable)
-assert = $(if $($(1)),,$(error error: variable not defined: $(1)))
+assert = $(if $$($(1)),,$$(error error: variable not defined: $$(1)))
 
 define uniq =
   $(eval seen :=)
@@ -257,7 +262,7 @@ SECTIONS
     KEEP (*(.dtors))
   }
   .jcr            : { KEEP (*(.jcr)) }
-  .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*) }
+  //.data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*) }
   .dynamic        : { *(.dynamic) }
   //.got            : { *(.got) *(.igot) }
   . = DATA_SEGMENT_RELRO_END (SIZEOF (.got.plt) >= 24 ? 24 : 0, .);
@@ -492,7 +497,7 @@ $(1)_$(2)_$(3)_$(4)_LIBS += $$($(1)_$(3)_LIBS)
 $(1)_$(2)_$(3)_$(4)_LIBS += $$($(1)_$(4)_LIBS)
 
 $(1)_$(2)_$(3)_$(4)_LINK = $$(addprefix $(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_LIBS))
-$(1)_$(2)_$(3)_$(4)_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_LINK),$$(shell make -s -C $$(__lib) static-lib RECURSION=1))
+$(1)_$(2)_$(3)_$(4)_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_LINK),$$(shell make -s -C $$(__lib) static-lib ROOT=$$(ROOT) RECURSION=1))
 $(1)_$(2)_$(3)_$(4)_LINK := $$(sort $$($(1)_$(2)_$(3)_$(4)_LINK))
 
 $(1)_$(2)_$(3)_$(4)_CFLAGS += $$(addsuffix /include,$$(addprefix -I$(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_LIBS)))
@@ -521,7 +526,7 @@ $(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(3)_TEST_LIBS)
 $(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(4)_TEST_LIBS)
 
 $(1)_$(2)_$(3)_$(4)_TEST_LINK = $$(addprefix $(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_TEST_LIBS))
-$(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_TEST_LINK),$$(shell make -s -C $$(__lib) static-lib))
+$(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_TEST_LINK),$$(shell make -s -C $$(__lib) static-lib ROOT=$$(ROOT)))
 $(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(sort $$($(1)_$(2)_$(3)_$(4)_TEST_LINK))
 
 $(1)_$(2)_$(3)_$(4)_TEST_CFLAGS += $$(addsuffix /include,$$(addprefix -I$(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_TEST_LIBS)))
@@ -557,7 +562,7 @@ install-$(1)-$(2)-$(3)-$(4)-bin: $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)
 	@ echo cp $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1) $(call $(1)_INSTALLDIR,$(2),$(3),$(3),bin,$($(1)_DISTRO))
 
 uninstall-$(1)-$(2)-$(3)-$(4)-bin: 
-	@ echo rm $(call $(1)_INSTALLDIR,$(2),$(3),$(3),bin,$($(1)_DISTRO))/$(1)
+	@ echo INFO rm $(call $(1)_INSTALLDIR,$(2),$(3),$(3),bin,$($(1)_DISTRO))/$(1)
 endif
 
 ifneq ($$(findstring $(1),$$(LIBRARIES)),)
@@ -584,6 +589,7 @@ install-$(1)-$(2)-$(3)-$(4)-static-libs: $$($(1)_$(2)_$(3)_$(4)_LIBDIR)/lib$(1).
 	$(Q) cp $$($(1)_$(2)_$(3)_$(4)_LIBDIR)/lib$(1).sa $(call $(1)_INSTALLDIR,$(2),$(3),$(3),lib,$($(1)_DISTRO))
 
 uninstall-$(1)-$(2)-$(3)-$(4)-static-libs:
+	@ echo RM [ $(call $(1)_INSTALLDIR,$(2),$(3),$(3),lib,$($(1)_DISTRO))/lib$(1).sa ];
 	$(Q) rm -f $(call $(1)_INSTALLDIR,$(2),$(3),$(3),lib,$($(1)_DISTRO))/lib$(1).sa
 endif
 
@@ -612,6 +618,7 @@ install-$(1)-$(2)-$(3)-$(4)-pkgcfg:
 	$(Q) touch $(ROOT)/config/flos/pkg/$($(1)_DISTRO)/$(1).pkg.cfg
 
 uninstall-$(1)-$(2)-$(3)-$(4)-pkgcfg:
+	@ echo RM [ $(ROOT)/config/flos/pkg/$($(1)_DISTRO)/$(1).pkg.cfg ];
 	$(Q) rm -f $(ROOT)/config/flos/pkg/$($(1)_DISTRO)/$(1).pkg.cfg
 
 ifeq ($$($(1)_HAS_TESTS),1)
@@ -622,7 +629,7 @@ $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test: $$($(1)_$(2)_$(3)_$(4)_TEST_OBJS) $$($
 	@ mkdir -p $$(dir $$@)
 	$(Q) $$(LD) $$($(1)_$(2)_$(3)_$(4)_LDFLAGS) -T$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/linker.script \
 	-Map=$$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.map -o $$@ $$($(1)_$(2)_$(3)_$(4)_TEST_OBJS) \
-	$$($(1)_$(2)_$(3)_$(4)_OBJS) $$($(1)_$(2)_$(3)_$(4)_LINK) $$($(1)_$(2)_$(3)_$(4)_TEST_LINK)
+	$$($(1)_$(2)_$(3)_$(4)_LIBDIR)/lib$(1).sa $$($(1)_$(2)_$(3)_$(4)_LINK) $$($(1)_$(2)_$(3)_$(4)_TEST_LINK)
 	$(Q) $$(OBJDUMP) -d -f -h -S -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.dump
 	$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$(1)-test.elfdump
 
@@ -630,6 +637,7 @@ test-$(1)_$(2)_$(3)_$(4): $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test
 
 run-tests-$(1)_$(2)_$(3)_$(4): $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test
 	@ chmod +x $$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test
+	$$($(1)_TEST_CMD) \
 	$$($(1)_$(2)_$(3)_$(4)_BINDIR)/$(1)-test; echo "$$$$?"
 
 $$($(1)_$(2)_$(3)_$(4)_C_TEST_OBJS): $$($(1)_$(2)_$(3)_$(4)_OBJDIR)/%.c.o: %.c
@@ -646,11 +654,11 @@ $$($(1)_$(2)_$(3)_$(4)_S_TEST_OBJS): $$($(1)_$(2)_$(3)_$(4)_OBJDIR)/%.S.o: %.S
 	@ echo CC [$(1)] $$(notdir $$@) $$< 
 	@ mkdir -p $$(dir $$@)
 	@ mkdir -p $$(dir $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<)
-	$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_PPFLAGS) $$< > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.E
-	$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_CFLAGS) -M $$< -MT $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dep
-	$(Q) $$(AS) $$($(1)_$(2)_$(3)_$(4)_ASFLAGS) -c -o $$@ $$<
-	$(Q) $$(OBJDUMP) -d -h -s -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dump
-	$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.elfdump
+	$$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_PPFLAGS) $$< > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.E
+	$$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_CFLAGS) -M $$< -MT $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dep
+	$$(Q) $$(AS) $$($(1)_$(2)_$(3)_$(4)_ASFLAGS) -c -o $$@ $$<
+	$$(Q) $$(OBJDUMP) -d -h -s -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dump
+	$$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.elfdump
 
 
 endif
@@ -670,17 +678,17 @@ $$($(1)_$(2)_$(3)_$(4)_SOBJS): $$($(1)_$(2)_$(3)_$(4)_OBJDIR)/%.S.o: %.S
 	@ echo CC [$(1)] $$(notdir $$@) $$< 
 	@ mkdir -p $$(dir $$@)
 	@ mkdir -p $$(dir $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<)
-	$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_PPFLAGS) $$< > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.E
-	$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_CFLAGS) -M $$< -MT $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dep
-	$(Q) $$(AS) $$($(1)_$(2)_$(3)_$(4)_ASFLAGS) -c -o $$@ $$<
-	$(Q) $$(OBJDUMP) -d -h -s -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dump
-	$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.elfdump
+	$$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_PPFLAGS) $$< > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.E
+	$$(Q) $$(PP) $$($(1)_$(2)_$(3)_$(4)_PPFLAGS) -M $$< -MT $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dep
+	$$(Q) $$(AS) $$($(1)_$(2)_$(3)_$(4)_ASFLAGS) -c -o $$@ $$<
+	$$(Q) $$(OBJDUMP) -d -h -s -x $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.dump
+	$$(Q) readelf -a $$@ > $$($(1)_$(2)_$(3)_$(4)_TMPDIR)/$$<.elfdump
 
 -include $$($(1)_$(2)_$(3)_$(4)_DEPS)
 
 deps-$(1)-$(2)-$(3)-$(4): $$($(1)_$(2)_$(3)_$(4)_LIB_MKS)
 	@ for lib in $$($(1)_$(2)_$(3)_$(4)_LIBS); do \
-	make -C $(ROOT)/source/$$$$lib install VERBOSE=0 ARCH=$(2) OS=$(3) HOST=$(4); \
+	make -s -C $(ROOT)/source/$$$$lib install VERBOSE=0 ARCH=$(2) OS=$(3) HOST=$(4); \
 	done
 
 

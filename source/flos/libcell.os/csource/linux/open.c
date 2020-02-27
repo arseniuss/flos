@@ -1,0 +1,44 @@
+/**
+ *  OS layer library
+ *  Copyright (C) 2019 Armands Arseniuss Skolmeisters
+ *
+ *  This library is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include <cell/mem.h>
+#include <cell/os/error.h>
+#include <cell/os/file.h>
+#include <cell/os/linux.h>
+
+#include "internal.h"
+
+cell_error cell_os_open(cell_string name, cell_os_file * ret1) {
+    if(!ret1)
+        return __ret1_error;
+
+    int res;
+
+    if((res = os_linux_sys_open(name.buffer, O_RDONLY, 0)) < 0) {
+        return cell_os_error[os_linux_sys_errno];
+    }
+
+    cell_error err;
+    if((err = cell_mem_alloc(sizeof(struct os_file_s), (void **)ret1)) != CELL_NULL) {
+        return err;
+    }
+
+    (*ret1)->fd = res;
+
+    return CELL_NULL;
+}

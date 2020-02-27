@@ -33,7 +33,16 @@ cell_token_SRCS = \
 
 cell_token_LIBS = \
 	flos/libcell.builtin \
-	flos/libstd.mem
+	flos/libcell.os \
+	flos/libcell.mem
+	
+cell_token_linux_LIBS = \
+	flos/libcell.linux
+	
+cell_token_HAS_TESTS = 1
+
+cell_token_TESTS = \
+    csource/tests/source_test.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

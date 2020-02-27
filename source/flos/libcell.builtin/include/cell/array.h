@@ -44,7 +44,7 @@ typedef struct {
 } cell_array;
 
 
-#    include <cell/assert.h>
+//#    include <cell/assert.h>
 // func make(len, cap size_t) []?
 #    define cell_array_make(name, l, c) \
     cell_assert(l <= c); \

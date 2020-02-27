@@ -19,6 +19,6 @@
 #include <cell/lang/ir.h>
 #include <cell/lang/ast.h>
 
-cell_error *cell_lang_asm(cell_lang_ast * ast, cell_lang_target * target) {
+cell_error cell_lang_asm(cell_lang_ast * ast, cell_lang_target * target) {
     return CELL_NULL;
 }

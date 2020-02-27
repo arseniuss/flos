@@ -23,7 +23,7 @@
 #    include <cell/lang/ast.h>
 #    include <cell/lang/target.h>
 
-cell_error *cell_lang_asm(cell_lang_ast * ast, cell_lang_target * target);
+cell_error cell_lang_asm(cell_lang_ast * ast, cell_lang_target * target);
 
 
 #endif /* !__CELL__LANG_IR_H__ */

@@ -8,5 +8,10 @@ all:
 
 clean:
 	@ for i in $(MKFILES); do \
-		make -C $$(dirname $$i) clean || exit 1; \
+		make -C $$(dirname $$i) clean; \
+	done
+
+uninstall:
+	@ for i in $(MKFILES); do \
+		make -C $$(dirname $$i) uninstall; \
 	done

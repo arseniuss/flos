@@ -19,6 +19,11 @@ LIBRARIES = cell_builtin
 
 cell_builtin_DISTRO = flos
 
+cell_builtin_LIBS = \
+	flos/libcell.fmt \
+	flos/libcell.utf \
+	flos/libcell.ascii
+
 cell_builtin_SRCS = \
 	csource/libc.c \
 	csource/memory.c \
@@ -26,6 +31,7 @@ cell_builtin_SRCS = \
 	csource/error.c
 
 cell_builtin_HDRS = \
+	include/cell/args.h \
 	include/cell/array.h \
 	include/cell/assert.h \
 	include/cell/builtin.h \
@@ -36,7 +42,19 @@ cell_builtin_HDRS = \
 	include/cell/type.h
 
 cell_builtin_CFLAGS = \
-	-Iinclude
+	-O0 -Iinclude -fmacro-backtrace-limit=0
+	
+#cell_builtin_HAS_TESTS = 1
+
+cell_builtin_TEST_LIBS = \
+	flos/libcell.os
+	
+cell_builtin_linux_TEST_LIBS = \
+	flos/libcell.linux
+
+cell_builtin_TESTS = \
+	csource/tests/error_test.c \
+	csource/tests/string_test.c
 
 
 #

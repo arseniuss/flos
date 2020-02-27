@@ -19,25 +19,21 @@
 #include <cell/string.h>
 #include <cell/memory.h>
 
-extern cell_size c_strlen(const char *c_str);
+extern cell_size cell_c_strlen(const char *c_str);
 
 cell_string cell_string_c(const char *restrict c_string) {
 
     cell_string s = {
         .buffer = (cell_byte *) c_string,   // safe
-        .len = c_strlen(c_string)
+        .len = cell_c_strlen(c_string) + 1
     };
 
     return s;
 }
 
-cell_size cell_c_strlen(const char *p) {
-    cell_size sz = 0;
-
-    while(*p++)
-        sz++;
-
-    return sz;
+cell_string cell_string_a(cell_array a) {
+    return (cell_string) {
+    .buffer = a.buffer,.len = a.len};
 }
 
 cell_size cell_string_size(const cell_string s) {
@@ -46,4 +42,19 @@ cell_size cell_string_size(const cell_string s) {
 
 cell_size cell_string_len(const cell_string s) {
     return s.len;
+}
+
+static cell_bool __eq(void *b1, void *b2, cell_size sz) {
+    const char *s1 = b1;
+    const char *s2 = b2;
+
+    while(sz--)
+        if(*s1++ != *s2++)
+            return 0;
+
+    return 1;
+}
+
+cell_bool cell_string_eq(const cell_string * s1, const cell_string * s2) {
+    return s1 != CELL_NULL && s2 != CELL_NULL && s1->len == s2->len && __eq(s1->buffer, s2->buffer, s1->len);
 }

@@ -20,9 +20,12 @@
 #    define __CELL__TOKEN_INTERNAL_H__
 
 #    include <cell/lang/source.h>
+#    include <cell/os/file.h>
 
-struct cell_lang_source_s {
-
+struct lang_source_file_s {
+    cell_os_file file;
 };
+
+cell_error lang_source_file_read(const cell_lang_source src, cell_array * buffer);
 
 #endif /* !__CELL__TOKEN_INTERNAL_H__ */

@@ -24,8 +24,8 @@
 #include <cell/lang/scanner.h>
 #include <cell/lang/source.h>
 #include <cell/lang/target.h>
-#include <cell/os.h>
-#include <cell/std/memory.h>
+#include <cell/mem.h>
+#include <cell/os/proc.h>
 
 struct list {
     char *str;
@@ -35,7 +35,7 @@ struct list {
 struct list *files = CELL_NULL;
 
 int main(int argc, char *argv[]) {
-    cell_error *err;
+    cell_error err;
     cell_bool param = 0;
 
     for(int i = 1; i < argc; i++) {
@@ -48,7 +48,11 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        struct list *f = mem_alloc(sizeof(struct list));
+        struct list *f;
+
+        if((err = cell_mem_alloc(sizeof(struct list), (void **)&f))) {
+            cell_os_exit(err->string(err));
+        }
 
         f->next = files;
         f->str = argv[i];
@@ -56,21 +60,24 @@ int main(int argc, char *argv[]) {
     }
 
     if(files == CELL_NULL)
-        os_exit(cell_string_c("error: no input files\n"));
+        cell_os_exit(cell_string_c("error: no input files\n"));
 
     for(struct list * p = files; p; p = p->next) {
-        cell_lang_source *src = cell_lang_source_file(cell_string_c(p->str));
+        cell_lang_source src;
+
+        cell_lang_source_new(cell_string_c(p->str), &src);
+
         cell_lang_target *trg = cell_lang_target_file(cell_string_c(p->str));
 
         cell_lang_ast *ast;
 
-        err = cell_lang_parse(src, &ast);
+        err = cell_lang_parse(&src, &ast);
         if(err)
-            os_exit(err->string());
+            cell_os_exit(err->string(err));
 
         err = cell_lang_asm(ast, trg);
         if(err)
-            os_exit(err->string());
+            cell_os_exit(err->string(err));
     }
 
     return 0;

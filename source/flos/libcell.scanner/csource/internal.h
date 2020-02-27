@@ -19,13 +19,10 @@
 #ifndef __CELL__SCANNER_INTERNAL_H__
 #    define __CELL__SCANNER_INTERNAL_H__
 
-struct cell_lang_source {
-    int len;
-    cell_byte(*read) (int off);
-};
+#    include <cell/lang/source.h>
 
-struct cell_lang_scanner {
-    struct cell_lang_source src;
+struct cell_lang_scanner_s {
+    cell_lang_source src;
 
     void (*err_handler) (const cell_byte * msg);
 

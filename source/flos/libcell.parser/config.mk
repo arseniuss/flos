@@ -22,8 +22,8 @@ cell_parser_LIBS = \
 	flos/libcell.token \
 	flos/libcell.ast \
 	flos/libcell.scanner \
-	flos/libstd.io \
-	flos/libos
+	flos/libcell.io \
+	flos/libcell.os
 
 cell_parser_CFLAGS = -Iinclude
 

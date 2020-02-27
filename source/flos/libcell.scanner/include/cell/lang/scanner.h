@@ -19,19 +19,23 @@
 #ifndef __CELL__LANG_SCANNER_H__
 #    define __CELL__LANG_SCANNER_H__
 
-#    include <cell/std/io.h>
+// import cell.token
 
+#    include <cell/error.h>
 #    include <cell/lang/position.h>
 #    include <cell/lang/token.h>
+#    include <cell/lang/source.h>
 
 struct cell_lang_scanner;
 
-typedef struct cell_lang_scanner cell_lang_scanner;
+// type scanner
+typedef struct cell_lang_scanner_s *cell_lang_scanner;
 
-cell_lang_scanner *cell_lang_scanner_new(void);
+// func new(src* source) (error, scanner)
+cell_error cell_lang_scanner_newl(cell_lang_scanner * scn, cell_lang_source src);
 
-cell_lang_token cell_lang_scanner_scan(cell_lang_scanner * scn,
-                                       cell_lang_position * pos,
-                                       cell_string * str);
+
+// func (scn scanner) scan() (token, position, string)
+cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position * pos, cell_string * str);
 
 #endif /* __CELL__LANG_SCANNER_H__ */
