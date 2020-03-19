@@ -1,5 +1,5 @@
 /**
- *  Cell language token library
+ *  Cell language parser library
  *  Copyright (C) 2019  Armands Arseniuss Skolmeisters
  *
  *  This library is free software: you can redistribute it and/or modify
@@ -16,23 +16,24 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __CELL__TOKEN_INTERNAL_H__
-#    define __CELL__TOKEN_INTERNAL_H__
+#include <cell/lang/parser.h>
+#include <cell/lang/scanner.h>
+#include <cell/lang/source.h>
 
-#    include <cell/lang/source.h>
-#    include <cell/os/file.h>
+cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast) {
+    cell_error err;
+    cell_lang_scanner scn;
 
-struct __source_file_s {
-    cell_os_file file;
-};
+    if((err = cell_lang_scanner_new(&scn, *src)) != CELL_NULL)
+        return err;
 
-struct __source_str_s {
-    cell_string str;
-    cell_byte *ptr;
-};
+    cell_lang_parser prs;
 
-cell_error __source_file_read(const cell_lang_source src, cell_array * buffer);
+    if((err = cell_lang_parser_new(&prs)) != CELL_NULL)
+        return err;
 
-cell_error __source_str_read(const cell_lang_source src, cell_array * buffer);
+    if((err = cell_lang_parser_parse(prs)) != CELL_NULL)
+        return err;
 
-#endif /* !__CELL__TOKEN_INTERNAL_H__ */
+    return CELL_NULL;
+}

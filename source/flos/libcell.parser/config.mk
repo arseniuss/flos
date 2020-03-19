@@ -23,7 +23,8 @@ cell_parser_LIBS = \
 	flos/libcell.ast \
 	flos/libcell.scanner \
 	flos/libcell.io \
-	flos/libcell.os
+	flos/libcell.os \
+	flos/libcell.mem
 
 cell_parser_CFLAGS = -Iinclude
 
@@ -32,6 +33,20 @@ cell_parser_SRCS = \
 
 cell_parser_HDRS = \
 	include/cell/lang/parser.h
+	
+cell_parser_HAS_TESTS = 1
+
+cell_parser_TEST_LIBS = \
+    flos/libcell.io \
+    flos/libcell.fmt \
+    flos/libcell.utf \
+    flos/libcell.ascii
+
+cell_parser_linux_TEST_LIBS = \
+    flos/libcell.linux
+
+cell_parser_TESTS = \
+    csource/tests/test.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

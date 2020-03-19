@@ -17,10 +17,17 @@
 
 LIBRARIES = cell_ast
 
+cell_ast_LIBS = \
+	flos/libcell.builtin \
+	flos/libcell.scanner
+
 cell_ast_CFLAGS = -Iinclude
 
 cell_ast_HDRS = \
 	include/cell/lang/ast.h
+	
+cell_ast_SRCS = \
+    csource/ast.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

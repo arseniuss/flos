@@ -40,4 +40,7 @@ typedef struct cell_lang_source_s *cell_lang_source;
 // func new(filepath string) (error, source)
 cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src);
 
+// func string(str string) (error, source)
+cell_error cell_lang_source_string(cell_string str, cell_lang_source * src);
+
 #endif /* __CELL__LANG_SOURCE_H__ */

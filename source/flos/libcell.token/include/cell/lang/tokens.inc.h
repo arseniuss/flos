@@ -20,3 +20,50 @@
 __(EOF)
     __(COMMENT)
     __(IDENT)
+    __(INT)
+    __(FLOAT)
+    __(CHAR)
+    __(STR)
+
+    __(LPAREN)                         // (
+    __(LQBRACK)                        // [
+    __(LCBRACK)                        // {
+    __(RPAREM)                         // )
+    __(RQBRACK)                        // ]
+    __(RCBRACK)                        // }
+    __(PLUS)                           // +
+    __(MINUS)                          // -
+    __(MUL)                            // *
+    __(DIV)                            // /
+    __(XOR)                            // ^
+    __(AND)                            // &
+    __(OR)                             // |
+    __(LT)                             // <
+    __(GT)                             // >
+    __(RDIV)                           // '\'
+    __(TILDE)                          // ~
+    __(PERIOD)                         // .
+    __(COMMA)                          // ,
+    __(COLON)                          // :
+    __(SEMICOLON)                      // ;
+    __(QUEST)                          // ?
+    __(EXCLAM)                         // !
+    __(AT)                             // @
+    __(MODULE)
+    __(IMPORT)
+    __(FROM)
+    __(VAR)
+    __(TYPE)
+    __(ALIAS)
+    __(STRUCT)
+    __(FUNC)
+    __(INTERFACE)
+    __(CONST)
+    __(RETURN)
+    __(BREAK)
+    __(CASE)
+    __(CONTINUE)
+    __(DEFAULT)
+    __(IF)
+    __(ELSE)
+    __(FOR)

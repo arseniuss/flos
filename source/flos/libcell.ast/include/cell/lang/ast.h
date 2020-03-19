@@ -20,8 +20,17 @@
 #ifndef __CELL__LANG_AST_H__
 #    define __CELL__LANG_AST_H__
 
-struct cell_lang_ast_s;
+#include <cell/lang/position.h>
 
-typedef struct cell_lang_ast_s cell_lang_ast;
+typedef struct {
+    cell_lang_position start;
+    cell_lang_position end;
+} cell_lang_ast_node;
+
+typedef struct {
+    cell_lang_ast_node node;
+    
+    cell_string name;
+} cell_lang_ast_ident;
 
 #endif /* __CELL__LANG_AST_H__ */

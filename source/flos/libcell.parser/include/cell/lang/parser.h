@@ -22,7 +22,16 @@
 #    include <cell/error.h>
 #    include <cell/lang/source.h>
 #    include <cell/lang/ast.h>
+#    include <cell/lang/scanner.h>
 
-cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast);
+typedef struct cell_lang_parser_s *cell_lang_parser;
+
+//cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast);
+
+
+cell_error cell_lang_parser_new(cell_lang_parser * prs, cell_lang_scanner scn);
+
+cell_error cell_lang_parser_parse(cell_lang_parser prs);
+
 
 #endif /* __CELL__PARSER_H__ */

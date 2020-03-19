@@ -68,4 +68,7 @@ cell_size cell_string_len(const cell_string s);
 // func (s1, s2 string) eq() bool
 cell_bool cell_string_eq(const cell_string * s1, const cell_string * s2);
 
+// func (str string) copy() string
+void cell_string_copy(const cell_string * str, cell_string * ret);
+
 #endif /* __CELL__STRING_H__ */

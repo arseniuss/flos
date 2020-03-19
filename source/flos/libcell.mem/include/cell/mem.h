@@ -18,6 +18,7 @@
 #ifndef __CELL__MEM_H_
 #    define __CELL__MEM_H_
 
+#    include <cell/assert.h>
 #    include <cell/builtin.h>
 #    include <cell/error.h>
 
@@ -26,5 +27,11 @@ cell_error cell_mem_alloc(cell_size sz, void **ptr);
 
 // func (* ptr) free() error
 cell_error cell_mem_free(void *ptr);
+
+#    define CELL_MEM_COPY(x, y) \
+        { \
+            cell_assert(__builtin_types_compatible_p(typeof(x), typeof(y))); \
+            __builtin_memcpy(&(y), &(x), sizeof(typeof(x))); \
+        }
 
 #endif /* __CELL__MEM_H_ */

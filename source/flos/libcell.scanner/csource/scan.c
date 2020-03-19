@@ -35,23 +35,20 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
     cell_array_make(tmp, 0, 256);
 
     if((err = scn->src->read(scn->src, &tmp)) != CELL_NULL)
-        return LANG_TINVALID;
+        return CELL_LANG_TINVALID;
 
-    if(cell_ascii_isalpha(tmp.buffer[0])) {
+    if(tmp.len > 0 &&  cell_ascii_isalpha(tmp.buffer[0])) {
         while(cell_ascii_isalnum(tmp.buffer[tmp.len - 1])) {
             if((err = scn->src->read(scn->src, &tmp)) != CELL_NULL)
-                return LANG_TINVALID;
+                return CELL_LANG_TINVALID;
         }
 
         void *str;
 
         cell_mem_alloc(tmp.len, &str);
 
-        return LANG_TIDENT;
+        return CELL_LANG_TIDENT;
     }
 
-
-
-
-    return LANG_TEOF;
+    return CELL_LANG_TEOF;
 }

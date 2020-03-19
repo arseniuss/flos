@@ -1,6 +1,6 @@
 /**
  *  Cell language parser library
- *  Copyright (C) 2019  Armands Arseniuss Skolmeisters
+ *  Copyright (C) 2020  Armands Arseniuss Skolmeisters
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,13 +16,105 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cell/lang/ast.h>
 #include <cell/lang/parser.h>
-#include <cell/lang/source.h>
 #include <cell/lang/scanner.h>
+#include <cell/mem.h>
 
-cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast) {
-    //cell_lang_scanner* src = cell_lang_scanner_new();
-    
+
+struct cell_lang_parser_s {
+    cell_lang_scanner scn;
+
+    cell_lang_token tok;
+    cell_lang_position pos;
+    cell_string str;
+};
+
+// func new(scn scanner) (error, parser)
+
+cell_error cell_lang_parser_new(cell_lang_parser * prs, cell_lang_scanner scn) {
+    cell_error err;
+    cell_lang_parser p;
+
+    if((err = cell_mem_alloc(sizeof(struct cell_lang_parser_s), (void **)&p)) != CELL_NULL)
+        return err;
+
+    p->scn = scn;
+
+    *prs = p;
+
     return CELL_NULL;
-    
+}
+
+void cell_lang_parser_next(cell_lang_parser prs) {
+    prs->tok = cell_lang_scanner_scan(prs->scn, &prs->pos, &prs->str);
+}
+
+void cell_lang_parser_expected(cell_lang_parser prs, cell_lang_position pos, cell_lang_token tok) {
+    //TODO: add to error list
+}
+
+cell_lang_position cell_lang_parser_expect(cell_lang_parser prs, cell_lang_token tok) {
+    cell_lang_position pos = prs->pos;
+
+    if(prs->tok != tok) {
+        cell_lang_parser_expected(prs, pos, tok);
+    }
+
+    cell_lang_parser_next(prs);
+
+    return pos;
+}
+
+void cell_lang_parser_expect_semi(cell_lang_parser prs) {
+    if(prs->tok != CELL_LANG_TRPAREM && prs->tok != CELL_LANG_TRCBRACK) {
+        switch (prs->tok) {
+            case CELL_LANG_TCOMMA:
+                cell_lang_parser_expected(prs, prs->pos, CELL_LANG_TSEMICOLON);
+            case CELL_LANG_TSEMICOLON:
+                cell_lang_parser_next(prs);
+                break;
+            default:
+                cell_lang_parser_expected(prs, prs->pos, CELL_LANG_TSEMICOLON);
+                // TODO: goto statement end
+                break;
+        }
+    }
+}
+
+cell_error cell_lang_parser_parse_ident(cell_lang_parser prs, cell_lang_ast_ident ** ident) {
+    if(prs->tok != CELL_LANG_TIDENT) {
+        cell_lang_parser_expect(prs, CELL_LANG_TIDENT);
+    } else {
+        cell_error err;
+
+        if((err = cell_mem_alloc(sizeof(cell_lang_ast_ident), (void **)ident)))
+            return err;
+
+        cell_string_copy(&((*ident)->name), &prs->str);
+        CELL_MEM_COPY(prs->pos, (*ident)->node.start);
+
+        cell_lang_parser_next(prs);
+    }
+
+    return CELL_NULL;
+}
+
+cell_error cell_lang_parser_parse(cell_lang_parser prs) {
+    cell_error err;
+
+    cell_lang_parser_expect(prs, CELL_LANG_TMODULE);
+
+    cell_lang_ast_ident *ident;
+
+    if((err = cell_lang_parser_parse_ident(prs, &ident)) != CELL_NULL)
+        return err;
+
+    while(prs->tok == CELL_LANG_TPERIOD) {
+
+    }
+
+    cell_lang_parser_expect_semi(prs);
+
+    return CELL_NULL;
 }

@@ -58,3 +58,8 @@ static cell_bool __eq(void *b1, void *b2, cell_size sz) {
 cell_bool cell_string_eq(const cell_string * s1, const cell_string * s2) {
     return s1 != CELL_NULL && s2 != CELL_NULL && s1->len == s2->len && __eq(s1->buffer, s2->buffer, s1->len);
 }
+
+void cell_string_copy(const cell_string * str, cell_string * ret) {
+    ret->buffer = str->buffer;
+    ret->len = str->len;
+}

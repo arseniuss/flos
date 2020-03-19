@@ -32,7 +32,7 @@ struct cell_lang_scanner;
 typedef struct cell_lang_scanner_s *cell_lang_scanner;
 
 // func new(src* source) (error, scanner)
-cell_error cell_lang_scanner_newl(cell_lang_scanner * scn, cell_lang_source src);
+cell_error cell_lang_scanner_new(cell_lang_scanner * scn, cell_lang_source src);
 
 
 // func (scn scanner) scan() (token, position, string)

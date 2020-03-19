@@ -1,6 +1,6 @@
 /**
- *  Cell language token library
- *  Copyright (C) 2019  Armands Arseniuss Skolmeisters
+ *  Cell language AST library
+ *  Copyright (C) 2020  Armands Arseniuss Skolmeisters
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,23 +16,5 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __CELL__TOKEN_INTERNAL_H__
-#    define __CELL__TOKEN_INTERNAL_H__
+#include <cell/lang/ast.h>
 
-#    include <cell/lang/source.h>
-#    include <cell/os/file.h>
-
-struct __source_file_s {
-    cell_os_file file;
-};
-
-struct __source_str_s {
-    cell_string str;
-    cell_byte *ptr;
-};
-
-cell_error __source_file_read(const cell_lang_source src, cell_array * buffer);
-
-cell_error __source_str_read(const cell_lang_source src, cell_array * buffer);
-
-#endif /* !__CELL__TOKEN_INTERNAL_H__ */
