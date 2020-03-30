@@ -387,7 +387,7 @@ ifndef NDEBUG
 CFLAGS += -g
 endif
 
-CFLAGS += -ffunction-sections -fdata-sections -Wall
+CFLAGS += -ffunction-sections -fdata-sections -Wall -Wno-unused-local-typedefs -std=gnu18
 
 ## TODO
 ARCH_LD_START = 0x40000000
