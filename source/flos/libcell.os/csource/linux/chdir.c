@@ -19,7 +19,7 @@
 #include <cell/builtin.h>
 #include <cell/error.h>
 #include <cell/os/error.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 #include <cell/os/file.h>
 #include <cell/string.h>
 #include <cell/mem.h>
@@ -27,8 +27,8 @@
 cell_error cell_os_chdir(cell_string dir) {
     int res;
 
-    if((res = os_linux_sys_chdir(dir.buffer)) != 0) {
-        return cell_os_error[os_linux_sys_errno];
+    if((res = cell_linux_sys_chdir(dir.buffer)) != 0) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     return CELL_NULL;

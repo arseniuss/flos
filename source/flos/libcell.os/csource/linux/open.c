@@ -19,7 +19,7 @@
 #include <cell/mem.h>
 #include <cell/os/error.h>
 #include <cell/os/file.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 
 #include "internal.h"
 
@@ -29,8 +29,8 @@ cell_error cell_os_open(cell_string name, cell_os_file * ret1) {
 
     int res;
 
-    if((res = os_linux_sys_open(name.buffer, O_RDONLY, 0)) < 0) {
-        return cell_os_error[os_linux_sys_errno];
+    if((res = cell_linux_sys_open(name.buffer, CELL_LINUX_O_RDONLY, 0)) < 0) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     cell_error err;

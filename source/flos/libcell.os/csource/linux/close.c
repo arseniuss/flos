@@ -19,7 +19,7 @@
 #include <cell/error.h>
 #include <cell/os/error.h>
 #include <cell/os/file.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 
 #include "internal.h"
 
@@ -29,8 +29,8 @@ cell_error cell_os_close(cell_os_file __this) {
 
     int res;
 
-    if((res = os_linux_sys_close(__this->fd)) < 0) {
-        return cell_os_error[os_linux_sys_errno];
+    if((res = cell_linux_sys_close(__this->fd)) < 0) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     __this->fd = -1;

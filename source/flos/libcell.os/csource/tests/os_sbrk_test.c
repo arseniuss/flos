@@ -28,7 +28,7 @@ TEST(os_sbrk_test) {
     if((err = cell_os_sbrk(0, &p1)) != CELL_NULL) {
         cell_os_exit(err->string(err));
     } else {
-        cell_io_printf(cell_string_c("os_sbrk(0) returned %#x\n"), p1);
+        cell_io_printf_s(cell_string_c("os_sbrk(0) returned %#x\n"), p1);
     }
 
     if((err = cell_os_sbrk(100, &p2)) != CELL_NULL) {
@@ -36,7 +36,7 @@ TEST(os_sbrk_test) {
         return;
     }
 
-    cell_io_printf(cell_string_c("os_sbrk(100) returned %#x\n"), p2);
+    cell_io_printf_s(cell_string_c("os_sbrk(100) returned %#x\n"), p2);
 
     if((err = cell_os_sbrk(100, &p3)) != CELL_NULL) {
         cell_os_exit(err->string(err));
@@ -46,8 +46,8 @@ TEST(os_sbrk_test) {
     if(p2 + 100 != p3) {
         cell_os_exit(cell_string_c("error"));
     } else {
-        cell_io_printf(cell_string_c("os_sbrk(100) returned %#x\n"), p3);
+        cell_io_printf_s(cell_string_c("os_sbrk(100) returned %#x\n"), p3);
     }
 
-    cell_io_printf(cell_string_c("os_sbrk OK\n"));
+    cell_io_printf_s(cell_string_c("os_sbrk OK\n"));
 }

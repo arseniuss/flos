@@ -16,23 +16,23 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cell/os/time.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 #include <cell/os/error.h>
+#include <cell/os/time.h>
 
 #define MAX_NSECS   1000000000
 
 cell_error cell_os_sleep(cell_uint64 milisecs) {
-    struct linux_timespec req;
-    struct linux_timespec rem;
+    struct cell_linux_timespec req;
+    struct cell_linux_timespec rem;
 
     milisecs *= 1000000;
 
     req.tv_sec = milisecs / MAX_NSECS;
     req.tv_nsec = milisecs % MAX_NSECS;
 
-    if(os_linux_sys_nanosleep(&req, &rem) != 0) {
-        return cell_os_error[os_linux_sys_errno];
+    if(cell_linux_sys_nanosleep(&req, &rem) != 0) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     return CELL_NULL;

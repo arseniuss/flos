@@ -17,10 +17,10 @@
  */
 
 #include <cell/string.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 
 void cell_os_exit(const cell_string msg) {
-    os_linux_sys_write(1, msg.buffer, msg.len);
+    cell_linux_sys_write(1, msg.buffer, msg.len);
 
-    os_linux_sys_exit(msg.len == 0 ? 0 : 1);
+    cell_linux_sys_exit(msg.len == 0 ? 0 : 1);
 }

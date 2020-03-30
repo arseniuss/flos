@@ -19,7 +19,7 @@
 #ifndef __CELL__OS_FILE_H__
 #    define __CELL__OS_FILE_H__
 
-#    include <cell/array.h>
+#    include <cell/slice.h>
 #    include <cell/builtin.h>
 #    include <cell/error.h>
 #    include <cell/string.h>
@@ -60,14 +60,14 @@ cell_error cell_os_close(cell_os_file __this);
  * 
  */
 // cell: func (f file) write(a array) error
-cell_error cell_os_write_a(cell_os_file __this, cell_array arg1);
+cell_error cell_os_write_a(cell_os_file __this, const cell_slice_type * arg1);
 
 cell_error cell_os_write_s(cell_os_file __this, cell_string arg1);
 
 
 #    define cell_os_write(o, arg)        \
                 _Generic((arg), \
-                    cell_array: cell_os_write_a, \
+                    cell_slice_type*: cell_os_write_a, \
                     cell_string: cell_os_write_s \
                 )(o, arg)
 
@@ -75,6 +75,6 @@ cell_error cell_os_write_s(cell_os_file __this, cell_string arg1);
  * 
  */
 // cell: func (f file) read() ([], error)
-cell_error cell_os_read(cell_os_file __this, cell_array * ret1);
+cell_error cell_os_read(cell_os_file __this, cell_slice_type * ret1);
 
 #endif /* !__CELL__OS_FILE_H__ */

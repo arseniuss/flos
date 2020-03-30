@@ -18,18 +18,18 @@
 
 #include <cell/os/error.h>
 #include <cell/os/file.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 
 #include "internal.h"
 
-cell_error cell_os_read(cell_os_file __this, cell_array * ret1) {
+cell_error cell_os_read(cell_os_file __this, cell_slice_type * ret1) {
     if(!__this)
         return __this_error;
 
     cell_ssize sz;
 
-    if((sz = os_linux_sys_read(__this->fd, &ret1->buffer[ret1->len], ret1->cap - ret1->len)) == -1) {
-        return cell_os_error[os_linux_sys_errno];
+    if((sz = cell_linux_sys_read(__this->fd, &ret1->buf[ret1->len], ret1->cap - ret1->len)) == -1) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     ret1->len += sz;

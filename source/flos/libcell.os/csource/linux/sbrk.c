@@ -18,7 +18,7 @@
 
 #include <cell/error.h>
 #include <cell/os/error.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 #include <cell/os/mem.h>
 
 cell_error cell_os_sbrk(cell_uint32 inc, void **ptr) {
@@ -26,16 +26,16 @@ cell_error cell_os_sbrk(cell_uint32 inc, void **ptr) {
     static cell_uintptr last_position = CELL_NULL;
 
     if(last_position == CELL_NULL) {
-        if(((cell_int64) (res = os_linux_sys_brk(last_position))) - last_position < 0) {
-            return cell_os_error[os_linux_sys_errno];
+        if(((cell_int64) (res = cell_linux_sys_brk(last_position))) - last_position < 0) {
+            return cell_os_error[cell_linux_sys_errno];
         }
         last_position = res;
     }
 
     cell_uintptr new_addr = last_position + inc;
 
-    if(((cell_int64) (res = os_linux_sys_brk(new_addr))) - last_position < 0) {
-        return cell_os_error[os_linux_sys_errno];
+    if(((cell_int64) (res = cell_linux_sys_brk(new_addr))) - last_position < 0) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     if(ptr)

@@ -17,30 +17,30 @@
  */
 
 #include <cell/error.h>
-#include <cell/os/file.h>
-#include <cell/os/linux.h>
 #include <cell/os/error.h>
+#include <cell/os/file.h>
+#include <cell/linux.h>
 
 #include "internal.h"
 
-cell_error cell_os_write_a(cell_os_file __this, cell_array arg1) {
+cell_error cell_os_write_a(cell_os_file __this, const cell_slice_type * arg1) {
     if(__this == CELL_NULL)
         return __this_error;
 
-    cell_ssize res = os_linux_sys_write(__this->fd, arg1.buffer, arg1.len);
+    cell_ssize res = cell_linux_sys_write(__this->fd, arg1->buf, arg1->len);
     if(res < 0)
-        return cell_os_error[os_linux_sys_errno];
+        return cell_os_error[cell_linux_sys_errno];
 
     return CELL_NULL;
 }
 
-cell_error cell_os_write_s(cell_os_file __this, cell_string arg1) {
+cell_error cell_os_write_s(cell_os_file __this, const cell_string arg1) {
     if(__this == CELL_NULL)
         return __this_error;
 
-    cell_ssize res = os_linux_sys_write(__this->fd, arg1.buffer, arg1.len);
+    cell_ssize res = cell_linux_sys_write(__this->fd, arg1.buffer, arg1.len);
     if(res < 0)
-        return cell_os_error[os_linux_sys_errno];
+        return cell_os_error[cell_linux_sys_errno];
 
     return CELL_NULL;
 }

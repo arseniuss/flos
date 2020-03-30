@@ -29,5 +29,5 @@ TEST(os_open_test) {
         cell_os_exit(err->string(err));
     }
 
-    cell_io_printf(cell_string_c("os_open OK\n"));
+    cell_io_printf_s(cell_string_c("os_open OK\n"));
 }

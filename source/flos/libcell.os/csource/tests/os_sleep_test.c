@@ -20,7 +20,7 @@
 #include <cell/io.h>
 
 TEST(os_sleep_test) {
-    cell_io_printf(cell_string_c("os_sleep(2000)\n"));
+    cell_io_printf_s(cell_string_c("os_sleep(2000)\n"));
     cell_os_sleep(2000);
-    cell_io_printf(cell_string_c("os_sleep done\n"));
+    cell_io_printf_s(cell_string_c("os_sleep done\n"));
 }

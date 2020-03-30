@@ -19,7 +19,7 @@
 #include <cell/error.h>
 #include <cell/os/error.h>
 #include <cell/os/file.h>
-#include <cell/os/linux.h>
+#include <cell/linux.h>
 
 #include "internal.h"
 
@@ -29,8 +29,8 @@ cell_error cell_os_create(cell_string name, cell_os_file * ret1) {
 
     int res;
 
-    if((res = os_linux_sys_open(name.buffer, O_CREAT | O_RDWR, 0666)) < 0) {
-        return cell_os_error[os_linux_sys_errno];
+    if((res = cell_linux_sys_open(name.buffer, CELL_LINUX_O_CREAT | CELL_LINUX_O_RDWR, 0666)) < 0) {
+        return cell_os_error[cell_linux_sys_errno];
     }
 
     (*ret1)->fd = res;
