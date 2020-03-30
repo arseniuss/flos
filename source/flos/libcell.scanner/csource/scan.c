@@ -32,14 +32,15 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
     if(pos)
         pos->line = 0, pos->offset = 0;
 
-    cell_array_make(tmp, 0, 256);
+    cell_array_make(tmp, 256, cell_byte);
+    cell_array_sliceof(tmp, 0, 256, s);
 
-    if((err = scn->src->read(scn->src, &tmp)) != CELL_NULL)
+    if((err = scn->src->read(scn->src, (cell_slice_type *)&s)) != CELL_NULL)
         return CELL_LANG_TINVALID;
 
-    if(tmp.len > 0 &&  cell_ascii_isalpha(tmp.buffer[0])) {
-        while(cell_ascii_isalnum(tmp.buffer[tmp.len - 1])) {
-            if((err = scn->src->read(scn->src, &tmp)) != CELL_NULL)
+    if(tmp.len > 0 &&  cell_ascii_isalpha(tmp.buf[0])) {
+        while(cell_ascii_isalnum(tmp.buf[tmp.len - 1])) {
+            if((err = scn->src->read(scn->src, (cell_slice_type *)&s)) != CELL_NULL)
                 return CELL_LANG_TINVALID;
         }
 
