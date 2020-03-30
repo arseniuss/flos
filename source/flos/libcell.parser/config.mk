@@ -29,6 +29,7 @@ cell_parser_LIBS = \
 cell_parser_CFLAGS = -Iinclude
 
 cell_parser_SRCS = \
+	csource/interface.c \
 	csource/parser.c
 
 cell_parser_HDRS = \

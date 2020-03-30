@@ -21,6 +21,10 @@
 #include <cell/lang/scanner.h>
 #include <cell/mem.h>
 
+typedef struct {
+    cell_lang_position pos;
+    cell_string msg;
+} cell_lang_parser_error;
 
 struct cell_lang_parser_s {
     cell_lang_scanner scn;
@@ -28,6 +32,8 @@ struct cell_lang_parser_s {
     cell_lang_token tok;
     cell_lang_position pos;
     cell_string str;
+
+      cell_array(cell_lang_parser_error) errors;
 };
 
 // func new(scn scanner) (error, parser)
@@ -40,6 +46,10 @@ cell_error cell_lang_parser_new(cell_lang_parser * prs, cell_lang_scanner scn) {
         return err;
 
     p->scn = scn;
+    p->tok = CELL_LANG_TINVALID;
+    cell_lang_position_init(&p->pos);
+    cell_string_init(&p->str);
+
 
     *prs = p;
 
@@ -52,6 +62,8 @@ void cell_lang_parser_next(cell_lang_parser prs) {
 
 void cell_lang_parser_expected(cell_lang_parser prs, cell_lang_position pos, cell_lang_token tok) {
     //TODO: add to error list
+
+
 }
 
 cell_lang_position cell_lang_parser_expect(cell_lang_parser prs, cell_lang_token tok) {
@@ -105,13 +117,25 @@ cell_error cell_lang_parser_parse(cell_lang_parser prs) {
 
     cell_lang_parser_expect(prs, CELL_LANG_TMODULE);
 
+    cell_lang_ast_node *module_path = CELL_NULL;
     cell_lang_ast_ident *ident;
 
     if((err = cell_lang_parser_parse_ident(prs, &ident)) != CELL_NULL)
         return err;
 
-    while(prs->tok == CELL_LANG_TPERIOD) {
+    module_path = &ident->node;
 
+    while(prs->tok == CELL_LANG_TPERIOD) {
+        cell_lang_parser_next(prs);
+
+        if(prs->tok != CELL_LANG_TIDENT)
+            break;
+
+        if((err = cell_lang_parser_parse_ident(prs, &ident)) != CELL_NULL)
+            return err;
+
+        ident->node.next = module_path;
+        module_path = &ident->node;
     }
 
     cell_lang_parser_expect_semi(prs);

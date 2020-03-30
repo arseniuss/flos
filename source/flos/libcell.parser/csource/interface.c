@@ -20,7 +20,7 @@
 #include <cell/lang/scanner.h>
 #include <cell/lang/source.h>
 
-cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast) {
+cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast_node ** ast) {
     cell_error err;
     cell_lang_scanner scn;
 
@@ -29,7 +29,7 @@ cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast) {
 
     cell_lang_parser prs;
 
-    if((err = cell_lang_parser_new(&prs)) != CELL_NULL)
+    if((err = cell_lang_parser_new(&prs, scn)) != CELL_NULL)
         return err;
 
     if((err = cell_lang_parser_parse(prs)) != CELL_NULL)
