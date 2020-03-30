@@ -20,6 +20,19 @@ cell_error cell_mem_alloc(cell_size sz, void **ptr) {
     return CELL_NULL;
 }
 
+cell_error cell_mem_realloc(cell_size sz, void **ptr) {
+    mem_error = CELL_NULL;
+
+    void *res = __realloc(*ptr, sz);
+
+    if(res == CELL_NULL)
+        return mem_error;
+
+    *ptr = res;
+
+    return CELL_NULL;
+}
+
 cell_error cell_mem_free(void *ptr) {
     __free(ptr);
 

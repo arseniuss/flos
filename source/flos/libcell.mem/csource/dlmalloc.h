@@ -12,7 +12,7 @@ extern "C" {
 #    include <cell/os/proc.h>
 #    include <cell/os/mem.h>
 #    include <cell/error.h>
-#    include <cell/os/linux/error.h>
+#    include <cell/linux/error.h>
 
 #    undef R
 #    undef A

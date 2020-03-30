@@ -25,6 +25,8 @@
 // func alloc(sz size) (*, error)
 cell_error cell_mem_alloc(cell_size sz, void **ptr);
 
+cell_error cell_mem_realloc(cell_size sz, void **ptr);
+
 // func (* ptr) free() error
 cell_error cell_mem_free(void *ptr);
 
