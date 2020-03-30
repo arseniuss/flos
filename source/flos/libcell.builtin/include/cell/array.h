@@ -19,37 +19,23 @@
 #ifndef __CELL__ARRAY_H__
 #    define __CELL__ARRAY_H__
 
-#    include <cell/builtin.h>
-#    include <cell/memory.h>
 #    include <cell/type.h>
 
 // module builtin.array
 
-/**
- * Array descriptor
- */
-// type array_desc struct {
-//      of_type type
-//      len     size_type
-// }
-typedef struct {
-    cell_type of_type;
-    cell_size count;
-} cell_array_desc;
+#    define cell_array(_type) \
+    typeof(struct{_type* buf; cell_size len;})
 
-typedef struct {
-    cell_size len;
-    cell_size cap;
-    cell_byte *buffer;
-} cell_array;
+#    define cell_array_make(__name, __len, __type) \
+    typedef __type __name##_type; \
+    typedef struct { __type* buf;  cell_size len; } __name##_array_type; \
+    __name##_array_type __name = { .len = __len, .buf = cell_mem_salloc(__len * sizeof(__type)) }; \
+    __builtin_memset((void *)__name.buf, 0, __len);
 
 
-//#    include <cell/assert.h>
-// func make(len, cap size_t) []?
-#    define cell_array_make(name, l, c) \
-    cell_assert(l <= c); \
-    cell_byte * __##name##__buffer = __builtin_alloca(c); \
-    cell_array name; \
-    name.len = l; name.cap = c; name.buffer = __##name##__buffer;
+typedef cell_array(cell_byte) cell_array_byte;
+
+#    define cell_array_byte_make(__name, __len) \
+    cell_array_byte __name = { .len = __len, .buf = cell_mem_salloc(__len * sizeof(cell_byte)) };
 
 #endif /* __CELL__ARRAY_H__ */

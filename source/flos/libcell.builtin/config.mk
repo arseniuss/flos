@@ -22,11 +22,13 @@ cell_builtin_DISTRO = flos
 cell_builtin_LIBS = \
 	flos/libcell.fmt \
 	flos/libcell.utf \
-	flos/libcell.ascii
+	flos/libcell.ascii \
+	flos/libcell.mem
 
 cell_builtin_SRCS = \
 	csource/libc.c \
 	csource/memory.c \
+	csource/slice.c \
 	csource/string.c \
 	csource/error.c
 
@@ -44,17 +46,17 @@ cell_builtin_HDRS = \
 cell_builtin_CFLAGS = \
 	-O0 -Iinclude -fmacro-backtrace-limit=0
 	
-#cell_builtin_HAS_TESTS = 1
+cell_builtin_HAS_TESTS = 1
 
 cell_builtin_TEST_LIBS = \
+	flos/libcell.io \
 	flos/libcell.os
 	
 cell_builtin_linux_TEST_LIBS = \
 	flos/libcell.linux
 
 cell_builtin_TESTS = \
-	csource/tests/error_test.c \
-	csource/tests/string_test.c
+    csource/tests/slice_tests.c
 
 
 #

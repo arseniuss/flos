@@ -43,9 +43,15 @@ typedef struct {
     cell_byte *buffer;
 } cell_string;
 
+// func (str *string) init()
+static inline void cell_string_init(cell_string * str) {
+    str->len = 0;
+    str->buffer = CELL_NULL;
+}
+
 
 cell_string cell_string_c(const char *restrict c_string);
-cell_string cell_string_a(cell_array a);
+cell_string cell_string_a(cell_array_byte a);
 
 cell_size cell_c_strlen(const char *);
 

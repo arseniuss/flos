@@ -31,9 +31,9 @@ cell_string cell_string_c(const char *restrict c_string) {
     return s;
 }
 
-cell_string cell_string_a(cell_array a) {
+cell_string cell_string_a(cell_array_byte a) {
     return (cell_string) {
-    .buffer = a.buffer,.len = a.len};
+    .buffer = a.buf,.len = a.len};
 }
 
 cell_size cell_string_size(const cell_string s) {

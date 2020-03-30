@@ -28,3 +28,23 @@ cell_size cell_c_strlen(const char *c_str) {
 
     return size;
 }
+
+void *memcpy(void *dest, const void *src, cell_size sz) {
+    char *d = (char *)dest;
+    const char *s = (const char *)src;
+
+    while(sz--)
+        *d++ = *s++;
+
+    return (void *)d;
+}
+
+void *memset(void *str, int c, cell_size n) {
+    char *d = (char *)str;
+
+    while(n--) {
+        *d++ = c;
+    }
+
+    return str;
+}

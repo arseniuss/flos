@@ -43,7 +43,7 @@
 #define TYPE_BIT64       4             // 100
 #define TYPE_BIT128      5             // 101
 #define TYPE_BIT_RES1    6             // 110
-#define TYPE_BIT_RES2
+#define TYPE_BIT_RES2    7             // 111
 
 #define TYPE_BIT_MASK    7             // 111
 #define TYPE_BIT_BITS    3
@@ -88,24 +88,24 @@
  */
 typedef cell_uintptr cell_type;
 
-//// func (ptr type_t) desc() *void
-//void *func(desc) (type_t ptr);
-//
-//// func (ptr type_t) class() uint8
-//uint8 func(class) (type_t ptr);
-//
-//// func (ptr type_t) bits() uint8
-//uint8 func(bits) (type_t ptr);
-//
-//// func (ptr type_t) iscomplex() bool
-//bool func(iscomplex) (type_t ptr);
-//
-//struct type_info {
-//    void *desc;
-//    uint8 bits;
-//    uint8 cls;
-//};
-//
-//struct type_info func(get_type_info) (type_t ptr);
-//
-//size_t func(size) (type_t ptr);
+typedef struct cell_type_desc_s {
+    cell_size elem_size;        /// one element size
+} cell_type_desc;
+
+
+static inline cell_size cell_type_simple_size(cell_type t) {
+    return (1 << (t & TYPE_BIT_MASK));
+}
+
+static inline cell_bool cell_type_is_simple(cell_type t) {
+    return ((t >> TYPE_BIT_BITS) & TYPE_CLASS_MASK) >= 5;
+}
+
+static inline cell_size cell_type_size(cell_type t) {
+    if(cell_type_is_simple(t))
+        return cell_type_simple_size(t);
+
+    cell_type_desc *desc = (cell_type_desc *) (t & ~((cell_uintptr) TYPE_MASK));
+
+    return desc->elem_size;
+}
