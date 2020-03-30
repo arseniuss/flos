@@ -56,7 +56,7 @@ cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src) {
     return CELL_NULL;
 }
 
-cell_error __source_file_read(const cell_lang_source src, cell_array * buffer) {
+cell_error __source_file_read(const cell_lang_source src, cell_slice_type * buffer) {
     struct __source_file_s *f = (struct __source_file_s *)src->data;
     cell_error err;
 
@@ -92,10 +92,12 @@ cell_error cell_lang_source_string(cell_string str, cell_lang_source * src) {
     (*src)->read = &__source_str_read;
     (*src)->data = s;
 
+    // TODO
+
     return CELL_NULL;
 }
 
-cell_error __source_str_read(const cell_lang_source src, cell_array * buffer) {
+cell_error __source_str_read(const cell_lang_source src, cell_slice_type * buffer) {
     struct __source_str_s *s = (struct __source_str_s *)src->data;
 
     if(s->ptr >= s->str.buffer + s->str.len) {
@@ -104,9 +106,11 @@ cell_error __source_str_read(const cell_lang_source src, cell_array * buffer) {
         return __default_error;
     } else {
         buffer->len = 1;
-        buffer->buffer[0] = *s->ptr;
+        buffer->buf[0] = *s->ptr;
         s->ptr++;
     }
+
+    // TODO
 
     return CELL_NULL;
 }
