@@ -22,7 +22,9 @@
 
 #include <cell/lang/position.h>
 
-typedef struct {
+typedef struct cell_lang_ast_node_s {
+    struct cell_lang_ast_node_s *next;
+    
     cell_lang_position start;
     cell_lang_position end;
 } cell_lang_ast_node;
