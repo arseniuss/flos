@@ -32,6 +32,11 @@ cell_io_HDRS = \
 
 cell_io_SRCS = \
 	csource/print.c
+	
+cell_io_HAS_TESTS = 1
+
+cell_io_TESTS = \
+    csource/tests/printf.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)
