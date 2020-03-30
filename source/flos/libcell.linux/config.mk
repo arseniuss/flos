@@ -34,12 +34,12 @@ cell_linux_amd64_SRCS = \
 	csource/amd64/start.S
 
 cell_linux_HDRS = \
-	include/cell/os/linux/amd64/syscalls.inc.h \
-	include/cell/os/linux/defs.h \
-	include/cell/os/linux/error.h \
-	include/cell/os/linux/errors.h \
-	include/cell/os/linux/syscall.h \
-	include/cell/os/linux.h
+	include/cell/linux/amd64/syscalls.inc.h \
+	include/cell/linux/defs.h \
+	include/cell/linux/error.h \
+	include/cell/linux/errors.h \
+	include/cell/linux/syscall.h \
+	include/cell/linux.h
 
 
 cell_linux_CFLAGS = -Iinclude
@@ -56,7 +56,8 @@ cell_linux_TEST_LIBS = \
     flos/libcell.ascii
 
 cell_linux_TESTS = \
-	csource/tests/os_sbrk_test.c
+	csource/tests/sys_brk.c \
+	csource/tests/sys_write.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

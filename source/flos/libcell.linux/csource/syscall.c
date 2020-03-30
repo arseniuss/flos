@@ -16,15 +16,15 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cell/os/linux.h>
-#include <cell/os/linux/defs.h>
+#include <cell/linux.h>
+#include <cell/linux/defs.h>
 
 #include "internal.h"
 
-cell_uintptr os_linux_sys_errno = 0;
+cell_uintptr cell_linux_sys_errno = 0;
 
-cell_uintptr *os_linux_errno_location() {
-    return &os_linux_sys_errno;
+cell_uintptr *cell_linux_errno_location() {
+    return &cell_linux_sys_errno;
 }
 
 #ifdef SYSCALL_DEF
@@ -39,11 +39,11 @@ cell_uintptr *os_linux_errno_location() {
 #endif
 
 #define SYSCALL_DEF1(no, name, rettype, t0, r0) \
-    rettype os_linux_sys_##name(t0 r0) \
+    rettype cell_linux_sys_##name(t0 r0) \
     {\
-        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, 0, 0, 0, 0, 0);\
+        cell_uintptr ret = cell_linux_syscall(no, (cell_uintptr)r0, 0, 0, 0, 0, 0);\
         \
-        ret = os_linux_check_syscall(ret);\
+        ret = cell_linux_check_syscall(ret);\
         \
         return ret; \
     }
@@ -53,11 +53,11 @@ cell_uintptr *os_linux_errno_location() {
 #endif
 
 #define SYSCALL_DEF2(no, name, rettype, t0, r0, t1, r1) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1) \
+    rettype cell_linux_sys_##name(t0 r0, t1 r1) \
     {\
-        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, 0, 0, 0, 0);\
+        cell_uintptr ret = cell_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, 0, 0, 0, 0);\
         \
-        ret = os_linux_check_syscall(ret); \
+        ret = cell_linux_check_syscall(ret); \
         \
         return ret;\
     }
@@ -67,12 +67,12 @@ cell_uintptr *os_linux_errno_location() {
 #endif
 
 #define SYSCALL_DEF3(no, name, rettype, t0, r0, t1, r1, t2, r2) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2) \
+    rettype cell_linux_sys_##name(t0 r0, t1 r1, t2 r2) \
     {\
-        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, 0, \
+        cell_uintptr ret = cell_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, 0, \
             0, 0);\
         \
-        ret = os_linux_check_syscall(ret); \
+        ret = cell_linux_check_syscall(ret); \
         \
         return ret;\
     }
@@ -82,17 +82,17 @@ cell_uintptr *os_linux_errno_location() {
 #endif
 
 #define SYSCALL_DEF6(no, name, rettype, t0, r0, t1, r1, t2, r2, t3, r3, t4, r4, t5, r5) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5) \
+    rettype cell_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5) \
     {\
-        cell_uintptr ret = os_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, \
+        cell_uintptr ret = cell_linux_syscall(no, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, \
             (cell_uintptr)r3, (cell_uintptr)r4, (cell_uintptr)r5);\
         \
-        ret = os_linux_check_syscall(ret); \
+        ret = cell_linux_check_syscall(ret); \
         \
         return ret;\
     }
 
 
-#include <cell/os/linux/syscalls.inc.h>
+#include <cell/linux/syscalls.inc.h>
 
 #undef SYSCALL_DEF

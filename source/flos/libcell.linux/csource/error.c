@@ -20,19 +20,19 @@
 
 #define F(def, num, text)       CELL_DEF_ERROR(def, text)
 
-#include <cell/os/linux/errors.h>
+#include <cell/linux/errors.h>
 
 #undef F
 
-cell_error *cell_os_linux_errno[] = {
+cell_error *cell_linux_errno[] = {
 #define UNIQUE
 #define F(def, num, text)   [num] = &CELL_ERROR_NAME(def),
 
-#include <cell/os/linux/errors.h>
+#include <cell/linux/errors.h>
 
 #undef F
 #undef UNIQUE
 };
 
 
-cell_error *cell_os_error = (cell_error *) cell_os_linux_errno;
+cell_error *cell_os_error = (cell_error *) cell_linux_errno;

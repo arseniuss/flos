@@ -16,8 +16,25 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __CELL__OS_LINUX_SYSCALL_H__
-#    define __CELL__OS_LINUX_SYSCALL_H__
+#include <cell/assert.h>
+#include <cell/fmt.h>
+#include <cell/io.h>
+#include <cell/linux.h>
 
+TEST(sys_brk) {
+    cell_uint64 ret1 = cell_linux_sys_brk(CELL_NULL);
 
-#endif /* __CELL__OS_LINUX_SYSCALL_H__ */
+    cell_io_printf(cell_string_c("os.linux.sys.brk(null) returned 0x%llX\n"), ret1);
+
+    cell_uint64 ret2 = cell_linux_sys_brk(CELL_NULL);
+
+    cell_io_printf(cell_string_c("os.linux.sys.brk(null) returned 0x%llX\n"), ret2);
+
+    cell_uint64 ret3 = cell_linux_sys_brk(ret2 + 100);
+
+    cell_io_printf(cell_string_c("os.linux.sys.brk(ret + 100) returned 0x%llX\n"), ret3);
+
+    cell_assert(ret2 + 100 == ret3);
+
+    cell_io_printf(cell_string_c("OK"));
+}

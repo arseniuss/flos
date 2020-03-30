@@ -18,18 +18,18 @@
 
 #pragma once
 
-#include <cell/os/linux/defs.h>
-#include <cell/os/linux/syscall.h>
+#include <cell/linux/defs.h>
+#include <cell/linux/syscall.h>
 
-cell_uintptr os_linux_syscall(cell_uintptr num, cell_uintptr a, cell_uintptr b,
-                              cell_uintptr c, cell_uintptr d, cell_uintptr e, cell_uintptr f);
+cell_uintptr cell_linux_syscall(cell_uintptr num, cell_uintptr a, cell_uintptr b,
+                                cell_uintptr c, cell_uintptr d, cell_uintptr e, cell_uintptr f);
 
-cell_uintptr *os_linux_errno_location();
+cell_uintptr *cell_linux_errno_location();
 
-static inline cell_uintptr os_linux_check_syscall(cell_uintptr ret) {
+static inline cell_uintptr cell_linux_check_syscall(cell_uintptr ret) {
     if(ret >= (cell_uintptr) - 4095) {
         cell_uintptr err = ret;
-        *(os_linux_errno_location()) = (-err);
+        *(cell_linux_errno_location()) = (-err);
         ret = (cell_uintptr) - 1;
     }
 
@@ -43,11 +43,11 @@ static inline cell_uintptr os_linux_check_syscall(cell_uintptr ret) {
 #endif
 
 #define SYSCALL_PROC1(name, t0, r0)     \
-    void os_linux_sys_##name(t0 r0) \
+    void cell_linux_sys_##name(t0 r0) \
     {\
-        cell_uintptr ret = os_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, 0, 0, 0, 0, 0); \
+        cell_uintptr ret = cell_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, 0, 0, 0, 0, 0); \
         \
-        os_linux_check_syscall(ret); \
+        cell_linux_check_syscall(ret); \
     }
 
 #ifdef SYSCALL_FUNC1
@@ -55,11 +55,11 @@ static inline cell_uintptr os_linux_check_syscall(cell_uintptr ret) {
 #endif
 
 #define SYSCALL_FUNC1(name, rettype, t0, r0) \
-    rettype os_linux_sys_##name(t0 r0) \
+    rettype cell_linux_sys_##name(t0 r0) \
     {\
-        cell_uintptr ret = os_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, 0, 0, 0, 0, 0);\
+        cell_uintptr ret = cell_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, 0, 0, 0, 0, 0);\
         \
-        ret = os_linux_check_syscall(ret);\
+        ret = cell_linux_check_syscall(ret);\
         \
         return ret; \
     }
@@ -69,11 +69,11 @@ static inline cell_uintptr os_linux_check_syscall(cell_uintptr ret) {
 #endif
 
 #define SYSCALL_FUNC2(name, rettype, t0, r0, t1, r1) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1) \
+    rettype cell_linux_sys_##name(t0 r0, t1 r1) \
     {\
-        cell_uintptr ret = os_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, (cell_uintptr)r1, 0, 0, 0, 0);\
+        cell_uintptr ret = cell_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, (cell_uintptr)r1, 0, 0, 0, 0);\
         \
-        ret = os_linux_check_syscall(ret); \
+        ret = cell_linux_check_syscall(ret); \
         \
         return ret;\
     }
@@ -83,12 +83,12 @@ static inline cell_uintptr os_linux_check_syscall(cell_uintptr ret) {
 #endif
 
 #define SYSCALL_FUNC3(name, rettype, t0, r0, t1, r1, t2, r2) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2) \
+    rettype cell_linux_sys_##name(t0 r0, t1 r1, t2 r2) \
     {\
-        cell_uintptr ret = os_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, 0, \
+        cell_uintptr ret = cell_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, 0, \
             0, 0);\
         \
-        ret = os_linux_check_syscall(ret); \
+        ret = cell_linux_check_syscall(ret); \
         \
         return ret;\
     }
@@ -98,12 +98,12 @@ static inline cell_uintptr os_linux_check_syscall(cell_uintptr ret) {
 #endif
 
 #define SYSCALL_FUNC6(name, rettype, t0, r0, t1, r1, t2, r2, t3, r3, t4, r4, t5, r5) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5) \
+    rettype cell_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5) \
     {\
-        cell_uintptr ret = os_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, \
+        cell_uintptr ret = cell_linux_syscall(SYSCALL_##name, (cell_uintptr)r0, (cell_uintptr)r1, (cell_uintptr)r2, \
             (cell_uintptr)r3, (cell_uintptr)r4, (cell_uintptr)r5);\
         \
-        ret = os_linux_check_syscall(ret); \
+        ret = cell_linux_check_syscall(ret); \
         \
         return ret;\
     }

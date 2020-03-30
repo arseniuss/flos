@@ -19,10 +19,10 @@
 #ifndef __CELL__OS_LINUX_H__
 #    define __CELL__OS_LINUX_H__
 
-#    include <cell/os/linux/defs.h>
-#    include <cell/os/linux/syscall.h>
+#    include <cell/linux/defs.h>
+#    include <cell/linux/syscall.h>
 
-extern cell_uintptr os_linux_sys_errno;
+extern cell_uintptr cell_linux_sys_errno;
 
 #    ifdef SYSCALL_DEF
 #        undef SYSCALL_DEF
@@ -39,31 +39,31 @@ extern cell_uintptr os_linux_sys_errno;
 #    endif
 
 #    define SYSCALL_DEF1(no, name, rettype, t0, r0) \
-    rettype os_linux_sys_##name(t0 r0);
+    rettype cell_linux_sys_##name(t0 r0);
 
 #    ifdef SYSCALL_DEF2
 #        undef SYSCALL_DEF2
 #    endif
 
 #    define SYSCALL_DEF2(no, name, rettype, t0, r0, t1, r1) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1);
+    rettype cell_linux_sys_##name(t0 r0, t1 r1);
 
 #    ifdef SYSCALL_DEF3
 #        undef SYSCALL_DEF3
 #    endif
 
 #    define SYSCALL_DEF3(no, name, rettype, t0, r0, t1, r1, t2, r2) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2);
+    rettype cell_linux_sys_##name(t0 r0, t1 r1, t2 r2);
 
 #    ifdef SYSCALL_DEF6
 #        undef SYSCALL_DEF6
 #    endif
 
 #    define SYSCALL_DEF6(no, name, rettype, t0, r0, t1, r1, t2, r2, t3, r3, t4, r4, t5, r5) \
-    rettype os_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5);
+    rettype cell_linux_sys_##name(t0 r0, t1 r1, t2 r2, t3 r3, t4 r4, t5 r5);
 
 
-#    include <cell/os/linux/amd64/syscalls.inc.h>
+#    include <cell/linux/amd64/syscalls.inc.h>
 
 #    undef SYSCALL_DEF
 #    undef SYSCALL_DEF1
