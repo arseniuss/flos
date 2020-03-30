@@ -19,10 +19,10 @@
 #    define __CELL__STD_FMT_H__
 
 #    include <cell/args.h>
+#    include <cell/error.h>
+#    include <cell/slice.h>
 #    include <cell/string.h>
 #    include <cell/type.h>
-#    include <cell/error.h>
-#    include <cell/array.h>
 
 const cell_uint32 cell_fmt_width;
 const cell_uint32 cell_fmt_left;
@@ -45,7 +45,7 @@ typedef struct {
     cell_uint32 flags;
 } fmt_format_args;
 
-cell_error cell_fmt_format(cell_array * buffer, cell_string format, ...);
-cell_error cell_fmt_format_list(cell_array * buffer, cell_string format, cell_va_list list);
+cell_error cell_fmt_format(cell_slice_type * buffer, cell_string format, ...);
+cell_error cell_fmt_format_list(cell_slice_type * buffer, cell_string format, cell_va_list list);
 
 #endif /* __CELL__STD_FMT_H__ */

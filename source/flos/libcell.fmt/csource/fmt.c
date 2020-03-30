@@ -21,6 +21,7 @@
 #include <cell/error.h>
 #include <cell/fmt.h>
 #include <cell/utf8.h>
+#include <cell/slice.h>
 
 CELL_DEF_ERROR(BUFCAP, "buffer cap limit");
 CELL_DEF_ERROR(INVPAR, "invalid parameter");
@@ -39,13 +40,13 @@ const cell_uint32 cell_fmt_w64 = cell_fmt_w32 << 1;
 const cell_uint32 cell_fmt_capital = cell_fmt_w64 << 1;
 
 static inline cell_error __emit_in_buffer(void *p, cell_byte ch) {
-    cell_array *buffer = (cell_array *) p;
+    cell_slice_type *buffer = (cell_slice_type *) p;
 
     if(buffer == CELL_NULL)
         return CELL_ERROR_NAME(INVPAR);
 
     if(buffer->len < buffer->cap) {
-        buffer->buffer[buffer->len++] = ch;
+        buffer->buf[buffer->len++] = ch;
         return CELL_NULL;
     }
 
@@ -225,7 +226,7 @@ cell_error __do_custom_format(fmt_format_args * args, cell_va_list list, void *p
     return CELL_ERROR_NAME(INVFMT);
 }
 
-cell_error cell_fmt_format(cell_array * buffer, cell_string format, ...) {
+cell_error cell_fmt_format(cell_slice_type * buffer, cell_string format, ...) {
     cell_va_list list;
 
     cell_va_start(list, format);
@@ -237,7 +238,7 @@ cell_error cell_fmt_format(cell_array * buffer, cell_string format, ...) {
     return err;
 }
 
-cell_error cell_fmt_format_list(cell_array * buffer, cell_string format, cell_va_list list) {
+cell_error cell_fmt_format_list(cell_slice_type * buffer, cell_string format, cell_va_list list) {
     cell_error ret = CELL_NULL;
     fmt_format_args args;
 
@@ -342,6 +343,7 @@ cell_error cell_fmt_format_list(cell_array * buffer, cell_string format, cell_va
             if((chlen = cell_utf8_tochar(&args.ch, &format.buffer[i], format.len - i)) > 0) {
                 i += chlen - 1;
                 switch (args.ch) {
+                case 'u':
                     case 'd':
                     case 'i':
                     case 'x':
