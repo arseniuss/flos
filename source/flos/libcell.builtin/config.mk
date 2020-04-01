@@ -38,6 +38,7 @@ cell_builtin_HDRS = \
 	include/cell/assert.h \
 	include/cell/builtin.h \
 	include/cell/error.h \
+	include/cell/goto.h \
 	include/cell/memory.h \
 	include/cell/slice.h \
 	include/cell/string.h \
@@ -56,6 +57,8 @@ cell_builtin_linux_TEST_LIBS = \
 	flos/libcell.linux
 
 cell_builtin_TESTS = \
+    csource/tests/error_tests.c \
+    csource/tests/goto_tests.c \
     csource/tests/slice_tests.c
 
 

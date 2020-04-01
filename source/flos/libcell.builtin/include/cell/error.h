@@ -20,6 +20,7 @@
 #    define __CELL__ERROR_H__
 
 #    include <cell/string.h>
+#    include <cell/goto.h>
 
 #    define CELL_ERROR_NAME(name)   __##name##_error
 
@@ -47,5 +48,14 @@ extern cell_error __ret3_error;
 extern cell_error __ret4_error;
 extern cell_error __ret5_error;
 extern cell_error __ret6_error;
+
+typedef struct {
+    cell_label label;
+    cell_error err;
+} cell_error_label;
+
+#    define cell_error_label_init(lbl) ({ lbl.err = CELL_NULL; cell_label_init(lbl.label); })
+
+#    define cell_error_label_throw(lbl, e) lbl.err = e; cell_label_goto(lbl.label);
 
 #endif /* __CELL__ERROR_H__ */
