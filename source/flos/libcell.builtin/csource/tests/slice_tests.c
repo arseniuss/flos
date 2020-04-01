@@ -19,12 +19,12 @@ TEST(slice_append_test) {
 
     cell_array_sliceof(arr, 1, 2, s);
 
-    cell_assert(s.len == 2);
+    cell_assert(s.len == 1);
     cell_assert(s.cap == 9);
 
     cell_slice_append(s, 12, s);
 
-    cell_assert(s.len == 3);
+    cell_assert(s.len == 2);
 
     cell_slice_for3(i, e, s) {
         if((err = cell_io_printf(cell_string_c("s[%u] = %d"), i, e)) != CELL_NULL) {
@@ -35,8 +35,6 @@ TEST(slice_append_test) {
         if(i == 0)
             cell_assert(e == 0);
         else if(i == 1)
-            cell_assert(e == 0);
-        else if(i == 2)
             cell_assert(e == 12);
         else
             cell_assert(0);

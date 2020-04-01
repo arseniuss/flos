@@ -27,9 +27,7 @@
 #    define cell_array_sliceof(__arr, __start, __end, __name) \
     typedef __arr##_type __name##_type; \
     typedef struct { __arr##_type* buf; cell_size cap; cell_size len; } __name##_slice_type; \
-    __name##_slice_type __name = { .buf = &__arr.buf[__start], .cap = __arr.len - __start, .len = __end - __start + 1  };
-
-#    define coounter(x) x##__COUNTER__
+    __name##_slice_type __name = { .buf = &__arr.buf[__start], .cap = __arr.len - __start, .len = __end - __start  };
 
 #    define cell_slice_append(__slice, __value, __ret) \
     typeof(__value) ptr##__COUNTER__ = __value; \
