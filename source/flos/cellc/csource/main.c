@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 
         cell_lang_target *trg = cell_lang_target_file(cell_string_c(p->str));
 
-        cell_lang_ast *ast;
+        cell_lang_ast_node *ast;
 
         err = cell_lang_parse(&src, &ast);
         if(err)
