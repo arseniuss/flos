@@ -26,6 +26,9 @@ cell_error cell_os_read(cell_os_file __this, cell_slice_type * ret1) {
     if(!__this)
         return __this_error;
 
+    if(ret1->cap - ret1->len == 0)
+        return __ret1_error;           // empty buffer
+
     cell_ssize sz;
 
     if((sz = cell_linux_sys_read(__this->fd, &ret1->buf[ret1->len], ret1->cap - ret1->len)) == -1) {
