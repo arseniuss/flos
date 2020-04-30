@@ -18,15 +18,15 @@
 
 #include <cell/error.h>
 
-#define F(def, num, text)       CELL_DEF_ERROR(def, text)
+#define F(def, num, text)       cell_error_def(def, text)
 
 #include <cell/linux/errors.h>
 
 #undef F
 
-cell_error *cell_linux_errno[] = {
+cell_error cell_linux_errno[] = {
 #define UNIQUE
-#define F(def, num, text)   [num] = &CELL_ERROR_NAME(def),
+#define F(def, num, text)   [num] = &CELL_ERROR_NAME_S(def),
 
 #include <cell/linux/errors.h>
 
@@ -35,4 +35,4 @@ cell_error *cell_linux_errno[] = {
 };
 
 
-cell_error *cell_os_error = (cell_error *) cell_linux_errno;
+cell_error *cell_os_error = &cell_linux_errno[0];

@@ -22,7 +22,7 @@ cell_linux_NSHARED = 1
 
 cell_linux_LIBS = \
 	flos/libcell.builtin \
-	flos/libcell.os
+	flos/libcell.mem
 
 cell_linux_SRCS = \
 	csource/crti.c \
