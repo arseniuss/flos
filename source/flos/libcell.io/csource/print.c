@@ -39,11 +39,11 @@ cell_error cell_io_printf_s(cell_string fmt, ...) {
 
 cell_error cell_io_printf_p(const char* fmt, ...) {
     cell_va_list v;
-    cell_array_make(a, 4096, cell_byte);
-    cell_error err;
-    
     cell_va_start(v, fmt);
     
+    cell_error err;
+    
+    cell_array_make(a, 4096, cell_byte);
     cell_array_sliceof(a, 0, 0, s);
     
     if((err = cell_fmt_format_list((cell_slice_type *)&s, cell_string_c(fmt), v)) != CELL_NULL) return err;
