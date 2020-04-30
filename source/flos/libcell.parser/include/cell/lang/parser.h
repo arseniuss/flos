@@ -24,12 +24,21 @@
 #    include <cell/lang/ast.h>
 #    include <cell/lang/scanner.h>
 
+typedef struct {
+    cell_lang_position pos;
+    cell_string msg;
+} cell_lang_parser_error;
+
 typedef struct cell_lang_parser_s *cell_lang_parser;
 
-//cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast ** ast);
+cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast_node ** ast);
 
 
 cell_error cell_lang_parser_new(cell_lang_parser * prs, cell_lang_scanner scn);
+
+cell_bool cell_lang_parser_has_error(cell_lang_parser prs);
+
+void cell_lang_parser_for_error(cell_lang_parser prs, void (*fn) (cell_lang_parser_error * err));
 
 cell_error cell_lang_parser_parse(cell_lang_parser prs);
 
