@@ -22,7 +22,8 @@ cell_ir_CFLAGS = -Iinclude
 cell_ir_LIBS = \
     flos/libcell.builtin \
     flos/libcell.ast \
-    flos/libcell.token
+    flos/libcell.token \
+    flos/libcell.scanner
 
 cell_ir_SRCS = \
     csource/asm.c
