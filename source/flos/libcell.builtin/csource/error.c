@@ -18,11 +18,11 @@
 
 #include <cell/error.h>
 
-CELL_DEF_ERROR(default, "error");
-CELL_DEF_ERROR(this, "this is null");
-CELL_DEF_ERROR(ret1, "1st return value is null");
-CELL_DEF_ERROR(ret2, "2nd return value is null");
-CELL_DEF_ERROR(ret3, "3rd return value is null");
-CELL_DEF_ERROR(ret4, "4th return value is null");
-CELL_DEF_ERROR(ret5, "5th return value is null");
-CELL_DEF_ERROR(ret6, "6th return value is null");
+cell_error_def(default, "error");
+cell_error_def(this, "this is null");
+cell_error_def(ret1, "1st return value is null");
+cell_error_def(ret2, "2nd return value is null");
+cell_error_def(ret3, "3rd return value is null");
+cell_error_def(ret4, "4th return value is null");
+cell_error_def(ret5, "5th return value is null");
+cell_error_def(ret6, "6th return value is null");

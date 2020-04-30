@@ -49,3 +49,8 @@ cell_error __cell_slice_append(cell_slice_type * s, cell_size elem_size, void *v
 
     return CELL_NULL;
 }
+
+cell_string cell_string_s(cell_slice_type s) {
+    return (cell_string) {
+    .buffer = s.buf,.len = s.len};
+}

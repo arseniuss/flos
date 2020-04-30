@@ -21,9 +21,9 @@
 
 // module builtin.string
 
+#    include <cell/array.h>
 #    include <cell/builtin.h>
 #    include <cell/memory.h>
-#    include <cell/array.h>
 
 #    ifdef char
 #        error char is already defined!
@@ -72,9 +72,27 @@ cell_size cell_string_size(const cell_string s);
 cell_size cell_string_len(const cell_string s);
 
 // func (s1, s2 string) eq() bool
-cell_bool cell_string_eq(const cell_string * s1, const cell_string * s2);
+#    define cell_string_eq(arg1, arg2)  \
+    _Generic((arg1),    \
+        cell_string*: _Generic((arg2),  \
+            cell_string*: cell_string_eq_ss,    \
+            char*: cell_string_eq_spb,  \
+            const char*: cell_string_eq_spb \
+        ),  \
+        char*: _Generic((arg2), \
+            cell_string*: cell_string_eq_pbs,   \
+            char*: cell_string_eq_pbpb, \
+            const char*: cell_string_eq_pbpb    \
+        )   \
+    )(arg1, arg2)
 
-// func (str string) copy() string
-void cell_string_copy(const cell_string * str, cell_string * ret);
+
+cell_bool cell_string_eq_ss(const cell_string * s1, const cell_string * s2);
+
+cell_bool cell_string_eq_spb(const cell_string * s1, const char *s2);
+
+cell_bool cell_string_eq_pbs(const char *s1, const cell_string * s2);
+
+cell_bool cell_string_eq_pbpb(const char *s1, const char *s2);
 
 #endif /* __CELL__STRING_H__ */

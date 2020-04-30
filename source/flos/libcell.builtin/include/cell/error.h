@@ -23,13 +23,15 @@
 #    include <cell/goto.h>
 
 #    define CELL_ERROR_NAME(name)   __##name##_error
+#    define CELL_ERROR_NAME_S(name)   __##name##_error_s
 
-#    define CELL_DECL_ERROR(name) \
+#    define cell_error_decl(name) \
         extern cell_error CELL_ERROR_NAME(name);
 
-#    define CELL_DEF_ERROR(name, str) \
+#    define cell_error_def(name, str) \
     cell_string __##name##_error_str(struct cell_error_s* err); \
-    cell_error __##name##_error = &(struct cell_error_s){ .string = __##name##_error_str }; \
+    struct cell_error_s __##name##_error_s = { .string = &__##name##_error_str }; \
+    cell_error __##name##_error = &__##name##_error_s; \
     cell_string __##name##_error_str(struct cell_error_s* err) { return cell_string_c(str); }
 
 // type error struct {

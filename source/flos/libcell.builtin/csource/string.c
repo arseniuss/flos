@@ -16,8 +16,10 @@
  *   along with this library  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cell/error.h>
+#include <cell/mem.h>
+#include <cell/slice.h>
 #include <cell/string.h>
-#include <cell/memory.h>
 
 extern cell_size cell_c_strlen(const char *c_str);
 
@@ -55,11 +57,46 @@ static cell_bool __eq(void *b1, void *b2, cell_size sz) {
     return 1;
 }
 
-cell_bool cell_string_eq(const cell_string * s1, const cell_string * s2) {
+static cell_bool __eq2(const cell_byte * b1, const cell_byte * s1, cell_size sz) {
+    while(sz--) {
+        if(*b1 == 0 || *s1 == 0)
+            return 0;
+        if(*b1++ != *s1++)
+            return 0;
+    }
+
+    if(*s1 != 0)
+        return 0;
+
+    return 1;
+}
+
+cell_bool cell_string_eq_ss(const cell_string * s1, const cell_string * s2) {
     return s1 != CELL_NULL && s2 != CELL_NULL && s1->len == s2->len && __eq(s1->buffer, s2->buffer, s1->len);
 }
 
-void cell_string_copy(const cell_string * str, cell_string * ret) {
-    ret->buffer = str->buffer;
-    ret->len = str->len;
+cell_bool cell_string_eq_spb(const cell_string * s1, const char *s2) {
+    return s1 != CELL_NULL && s2 != CELL_NULL && __eq2(s1->buffer, s2, s1->len);
+}
+
+cell_bool cell_string_eq_pbs(const char *s1, const cell_string * s2) {
+    return s1 != CELL_NULL && s2 != CELL_NULL && __eq2(s2->buffer, s1, s2->len);
+}
+
+cell_bool cell_string_eq_pbpb(const char *s1, const char *s2) {
+    while(*s1 && s2)
+        if(*s1++ != *s2++)
+            return 0;
+
+    return 1;
+}
+
+cell_error cell_string_set(cell_string * str, cell_slice_type slice) {
+    cell_error err;
+
+    cell_byte *b;
+    if((err = cell_mem_alloc(slice.len, (void **)&b)) != CELL_NULL)
+        return err;
+
+    return CELL_NULL;
 }
