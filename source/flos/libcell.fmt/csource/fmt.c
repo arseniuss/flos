@@ -23,9 +23,9 @@
 #include <cell/utf8.h>
 #include <cell/slice.h>
 
-CELL_DEF_ERROR(BUFCAP, "buffer cap limit");
-CELL_DEF_ERROR(INVPAR, "invalid parameter");
-CELL_DEF_ERROR(INVFMT, "invalid format");
+cell_error_def(BUFCAP, "buffer cap limit");
+cell_error_def(INVPAR, "invalid parameter");
+cell_error_def(INVFMT, "invalid format");
 
 const cell_uint32 cell_fmt_width = 1;
 const cell_uint32 cell_fmt_left = cell_fmt_width << 1;
@@ -189,10 +189,12 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
             goto DO_STRING;
         case 'S':
         {
-            cell_string *str = (cell_string *) cell_va_arg(list, void *);
+            cell_string str;
 
-            ptr = str->buffer;
-            width = str->len;
+            str = (cell_string) cell_va_arg(list, cell_string);
+
+            ptr = str.buffer;
+            width = str.len;
 
             goto DO_STRING;
         }
@@ -343,7 +345,7 @@ cell_error cell_fmt_format_list(cell_slice_type * buffer, cell_string format, ce
             if((chlen = cell_utf8_tochar(&args.ch, &format.buffer[i], format.len - i)) > 0) {
                 i += chlen - 1;
                 switch (args.ch) {
-                case 'u':
+                    case 'u':
                     case 'd':
                     case 'i':
                     case 'x':

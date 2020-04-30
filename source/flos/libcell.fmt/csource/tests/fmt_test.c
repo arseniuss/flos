@@ -47,7 +47,7 @@ static void format_assert(const cell_c_char * result, const cell_c_char * format
         cell_va_start(list, format);
 
         cell_array_make(buffer, cell_c_strlen(result) + 1, cell_byte);
-        cell_array_sliceof(buffer, 0, cell_c_strlen(result) + 1, s);
+        cell_array_sliceof(buffer, 0, 0, s);
         cell_error err = cell_fmt_format_list((cell_slice_type *) & s, cell_string_c(format), list);
 
         cell_os_write(stdout, cell_string_c("\""));
@@ -101,6 +101,7 @@ TEST(format_hex) {
     format_assert("123            ", "%-12d", 123); // TODO: incorrect
     format_assert("         123", "%12d", 123);
     format_assert("\n123\n123\n", "\n%d\n%d\n", 123, 123);
+    format_assert("TEST", "%S", cell_string_c("TEST"));
 
     format_assert(CELL_NULL, "%", "invalid format");
     format_assert(CELL_NULL, "%+-", "invalid format");
