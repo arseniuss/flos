@@ -177,7 +177,7 @@ extern "C" {
 
     extern cell_error mem_error;
 
-      CELL_DECL_ERROR(no_memory);
+      cell_error_decl(no_memory);
 
     void *dlmalloc(size_t);
 

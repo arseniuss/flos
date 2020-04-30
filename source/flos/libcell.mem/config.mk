@@ -31,8 +31,10 @@ cell_mem_CFLAGS = \
     -Iinclude
 
 cell_mem_SRCS = \
-	csource/wrapper.c \
-	csource/dlmalloc.c
+	csource/dlmalloc.c \
+	csource/slice.c \
+	csource/string.c \
+	csource/wrapper.c
 
 cell_mem_HDRS = \
 	include/cell/mem.h

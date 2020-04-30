@@ -3,7 +3,7 @@
 
 #include "dlmalloc.h"
 
-CELL_DEF_ERROR(no_memory, "no memory");
+cell_error_def(no_memory, "no memory");
 
 cell_error mem_error = CELL_NULL;
 

@@ -16,25 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CELL__MEM_H__
-#    define __CELL__MEM_H__
+#ifndef __CELL__MEM_STRING_H__
+#    define __CELL__MEM_STRING_H__
 
-#    include <cell/assert.h>
-#    include <cell/builtin.h>
+#    include <cell/string.h>
+#    include <cell/slice.h>
 #    include <cell/error.h>
 
-// func alloc(sz size) (*, error)
-cell_error cell_mem_alloc(cell_size sz, void **ptr);
+cell_error cell_string_copy(cell_string * str, const cell_slice_type * slice, cell_size sz);
+cell_error cell_string_copy_s(cell_string * s1, const cell_string * s2);
 
-cell_error cell_mem_realloc(cell_size sz, void **ptr);
-
-// func (* ptr) free() error
-cell_error cell_mem_free(void *ptr);
-
-#    define CELL_MEM_COPY(x, y) \
-        { \
-            cell_assert(__builtin_types_compatible_p(typeof(x), typeof(y))); \
-            __builtin_memcpy(&(y), &(x), sizeof(typeof(x))); \
-        }
-
-#endif /* __CELL__MEM_H__ */
+#endif /* !__CELL__MEM_STRING_H__ */

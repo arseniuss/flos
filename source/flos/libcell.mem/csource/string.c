@@ -16,25 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CELL__MEM_H__
-#    define __CELL__MEM_H__
+#include <cell/mem/string.h>
+#include <cell/mem.h>
 
-#    include <cell/assert.h>
-#    include <cell/builtin.h>
-#    include <cell/error.h>
+cell_error cell_string_copy(cell_string * str, const cell_slice_type * slice, cell_size sz) {
+    cell_error err;
 
-// func alloc(sz size) (*, error)
-cell_error cell_mem_alloc(cell_size sz, void **ptr);
+    if((err = cell_mem_alloc(sz, (void **)&str->buffer))) {
+        return err;
+    }
 
-cell_error cell_mem_realloc(cell_size sz, void **ptr);
+    __builtin_memcpy(str->buffer, slice->buf, sz);
+    str->len = sz;
 
-// func (* ptr) free() error
-cell_error cell_mem_free(void *ptr);
+    return CELL_NULL;
+}
 
-#    define CELL_MEM_COPY(x, y) \
-        { \
-            cell_assert(__builtin_types_compatible_p(typeof(x), typeof(y))); \
-            __builtin_memcpy(&(y), &(x), sizeof(typeof(x))); \
-        }
+cell_error cell_string_copy_s(cell_string * s1, const cell_string * s2) {
+    cell_error err;
 
-#endif /* __CELL__MEM_H__ */
+    if((err = cell_mem_alloc(s2->len, (void **)&s1->buffer))) {
+        return err;
+    }
+
+    __builtin_memcpy(s1->buffer, s2->buffer, s1->len);
+    s1->len = s2->len;
+
+    return CELL_NULL;
+}
