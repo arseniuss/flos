@@ -388,6 +388,7 @@ CFLAGS += -g
 endif
 
 CFLAGS += -ffunction-sections -fdata-sections -Wall -Wno-unused-local-typedefs -std=gnu18
+LDFLAGS += --whole-archive
 
 ## TODO
 ARCH_LD_START = 0x40000000
@@ -526,7 +527,7 @@ $(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(3)_TEST_LIBS)
 $(1)_$(2)_$(3)_$(4)_TEST_LIBS += $$($(1)_$(4)_TEST_LIBS)
 
 $(1)_$(2)_$(3)_$(4)_TEST_LINK = $$(addprefix $(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_TEST_LIBS))
-$(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_TEST_LINK),$$(shell make -s -C $$(__lib) static-lib ROOT=$$(ROOT)))
+$(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(foreach __lib,$$($(1)_$(2)_$(3)_$(4)_TEST_LINK),$$(shell make -s -C $$(__lib) static-lib ROOT=$$(ROOT) RECURSION=1))
 $(1)_$(2)_$(3)_$(4)_TEST_LINK := $$(sort $$($(1)_$(2)_$(3)_$(4)_TEST_LINK))
 
 $(1)_$(2)_$(3)_$(4)_TEST_CFLAGS += $$(addsuffix /include,$$(addprefix -I$(ROOT)/source/,$$($(1)_$(2)_$(3)_$(4)_TEST_LIBS)))

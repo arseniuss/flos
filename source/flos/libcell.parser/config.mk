@@ -24,7 +24,8 @@ cell_parser_LIBS = \
 	flos/libcell.scanner \
 	flos/libcell.io \
 	flos/libcell.os \
-	flos/libcell.mem
+	flos/libcell.mem \
+	flos/libcell.fmt
 
 cell_parser_CFLAGS = -Iinclude
 
@@ -39,7 +40,6 @@ cell_parser_HAS_TESTS = 1
 
 cell_parser_TEST_LIBS = \
     flos/libcell.io \
-    flos/libcell.fmt \
     flos/libcell.utf \
     flos/libcell.ascii
 
