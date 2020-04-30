@@ -28,7 +28,7 @@ struct cell_lang_position_s {
 
 typedef struct cell_lang_position_s cell_lang_position;
 
-static inline void cell_lang_position_init(cell_lang_position *pos) {
+static inline void cell_lang_position_init(cell_lang_position * pos) {
     pos->line = -1;
     pos->offset = -1;
 }

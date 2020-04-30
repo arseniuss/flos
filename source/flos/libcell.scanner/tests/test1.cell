@@ -1,5 +1,10 @@
 module main
 
+var ch char = 'ā'
+var i int = 0
+
 func main() {
-    
+    if i <= 0 {
+        print.fmt("%d", i)
+   }
 }

@@ -32,6 +32,14 @@ cell_error cell_lang_scanner_new(cell_lang_scanner * scn, cell_lang_source src) 
         return err;
     }
 
+    if((err = cell_mem_alloc(256, (void **)&s->buf.buf)) != CELL_NULL) {
+        cell_mem_free(s);
+        return err;
+    }
+
+    s->buf.len = 0;
+    s->buf.cap = 256;
+
     s->src = src;
 
     *scn = s;

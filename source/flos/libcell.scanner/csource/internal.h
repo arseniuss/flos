@@ -26,14 +26,9 @@ struct cell_lang_scanner_s {
 
     void (*err_handler) (const cell_byte * msg);
 
-    char ch;
-    /** Byte offset in file */
-    int offset;
-
-    /** Character offset in file */
-    int choffset;
-
-    int err_count;
+    cell_char ch;
+    cell_slice_type buf;
+    cell_error err;
 };
 
 #endif /* __CELL__SCANNER_INTERNAL_H__ */

@@ -16,13 +16,13 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cell/array.h>
+#include <cell/assert.h>
 #include <cell/fmt.h>
 #include <cell/io.h>
 #include <cell/lang/scanner.h>
 #include <cell/os/proc.h>
+#include <cell/slice.h>
 #include <cell/string.h>
-#include <cell/assert.h>
 
 TEST(test1) {
     cell_error err;
@@ -30,12 +30,11 @@ TEST(test1) {
     cell_lang_scanner scn;
 
     if((err = cell_lang_source_new(cell_string_c("tests/test1.cell"), &src)) != CELL_NULL) {
-        cell_array_make(tmp, 0, 256);
-        cell_string err_str = err->string(err);
+        cell_slice_make_generic(s, 256);
 
-        cell_fmt_format(&tmp, cell_string_c("lang: %S"), &err_str);
+        cell_fmt_format(&s, cell_string_c("lang: %S"), err->string(err));
 
-        cell_os_exit(cell_string_a(tmp));
+        cell_os_exit(cell_string_s(s));
     }
 
     if((err = cell_lang_scanner_new(&scn, src)) != CELL_NULL) {
@@ -46,8 +45,16 @@ TEST(test1) {
     cell_lang_position pos;
     cell_string str;
 
-    while((tok = cell_lang_scanner_scan(scn, &pos, &str)) >= 0) {
+    while((tok = cell_lang_scanner_scan(scn, &pos, &str)) > CELL_LANG_TEOF) {
+        if((err = cell_io_printf("\t%s: \"%S\"\n", cell_lang_tokens[tok], str)) != CELL_NULL) {
+            cell_os_exit(err->string(err));
+        }
+    }
 
+    if(tok != CELL_LANG_TEOF) {
+        if((err = cell_io_printf("failed with char: %S\n", str)) != CELL_NULL) {
+            cell_os_exit(err->string(err));
+        }
     }
 
     cell_io_printf(cell_string_c("DONE!"));
