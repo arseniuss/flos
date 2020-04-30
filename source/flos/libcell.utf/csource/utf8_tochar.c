@@ -22,7 +22,7 @@
 
 // func tochar() char
 
-int cell_utf8_tochar(cell_char * p, const cell_byte * s, cell_size len) {
+cell_size cell_utf8_tochar(cell_char * p, const cell_byte * s, cell_size len) {
     cell_byte c, i, m, n, x;
     char r;
 

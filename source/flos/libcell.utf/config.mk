@@ -63,6 +63,12 @@ endef
 
 cell_utf_HAS_TESTS = 1
 
+cell_utf_TEST_LIBS = \
+    flos/libcell.os
+
+cell_utf_linux_TEST_LIBS = \
+    flos/libcell.linux
+
 cell_utf_TESTS = csource/tests/type_test.c
 
 #

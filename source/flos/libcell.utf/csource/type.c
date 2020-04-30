@@ -60,7 +60,7 @@ int __compare2(const void *v1, const void *v2) {
     cell_char c = *(cell_char *) v1;
     cell_char *p = (cell_char *) v2;
 
-    return c >= p[0] && c < p[1] ? 0 : c - p[0];
+    return c >= p[0] && c <= p[1] ? 0 : c - p[0];
 }
 
 void *__bsearch(const void *key, const void *ptr, cell_size count,
