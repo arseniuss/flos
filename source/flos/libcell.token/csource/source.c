@@ -23,8 +23,12 @@
 #include <cell/lang/source.h>
 #include <cell/mem.h>
 #include <cell/os/file.h>
+#include <cell/utf8.h>
 
 #include "internal.h"
+
+cell_error_def(FULLBUF, "buffer is full");
+cell_error_def(INVCHR, "invalid unicode character");
 
 // func new(filepath string) (error, source)
 
@@ -56,21 +60,48 @@ cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src) {
     return CELL_NULL;
 }
 
-cell_error __source_file_read(const cell_lang_source src, cell_slice_type * buffer) {
+cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_slice_type * buf) {
+    cell_error err = CELL_NULL;
     struct __source_file_s *f = (struct __source_file_s *)src->data;
-    cell_error err;
 
-    cell_size cap = buffer->cap;
-    buffer->cap = 1;
+    if(buf->len >= buf->cap)
+        return __FULLBUF_error;
 
-    if((err = cell_os_read(f->file, buffer)) != CELL_NULL) {
-        buffer->cap = cap;
-        return err;
+    cell_size cap = buf->cap;
+    cell_size start = buf->len;
+
+    cell_char ch;
+    cell_size ch_len;
+
+    do {
+        if(buf->len >= cap + 1) {
+            err = __FULLBUF_error;
+            goto RETURN;
+        }
+
+        buf->cap = buf->len + 1;       // read just one byte
+
+        if((err = cell_os_read(f->file, buf)) != CELL_NULL) {
+            goto RETURN;
+        }
+
+        ch_len = cell_utf8_tochar(&ch, &buf->buf[start], buf->len - start);
+    } while(ch == cell_utf8_error && ch_len < buf->len - start);
+
+    if(ch == cell_utf8_error) {
+        err = __INVCHR_error;
+        buf->len = start;
+        goto RETURN;
     }
 
-    buffer->cap = cap;
+    *_ch = ch;
+    buf->len = start + ch_len;
 
-    return CELL_NULL;
+
+  RETURN:
+    buf->cap = cap;
+
+    return err;
 }
 
 cell_error cell_lang_source_string(cell_string str, cell_lang_source * src) {
@@ -97,20 +128,26 @@ cell_error cell_lang_source_string(cell_string str, cell_lang_source * src) {
     return CELL_NULL;
 }
 
-cell_error __source_str_read(const cell_lang_source src, cell_slice_type * buffer) {
+cell_error __source_str_read(const cell_lang_source src, cell_char * _ch, cell_slice_type * buf) {
     struct __source_str_s *s = (struct __source_str_s *)src->data;
 
-    if(s->ptr >= s->str.buffer + s->str.len) {
-        buffer->len = 0;
-    } else if(buffer->cap < 1) {
-        return __default_error;
-    } else {
-        buffer->len = 1;
-        buffer->buf[0] = *s->ptr;
-        s->ptr++;
+    if(buf->len >= buf->cap)
+        return __FULLBUF_error;
+
+    cell_char ch;
+    cell_size ch_len = cell_utf8_tochar(&ch, s->ptr, s->str.buffer + s->str.len - s->ptr);
+
+    if(ch == cell_utf8_error) {
+        return __INVCHR_error;
     }
 
-    // TODO
+    if(buf->len + ch_len > buf->cap)
+        return __FULLBUF_error;
+
+    __builtin_memcpy(&buf->buf[buf->len], s->ptr, ch_len);
+    buf->len += ch_len;
+    s->ptr += ch_len;
+    *_ch = ch;
 
     return CELL_NULL;
 }

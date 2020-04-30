@@ -29,7 +29,7 @@ typedef struct cell_lang_source_s *cell_lang_source;
 
 struct cell_lang_source_s {
     // func (src source) read() (int16, error)
-    cell_error(*read) (const cell_lang_source src, cell_slice_type * buffer);
+    cell_error(*read) (const cell_lang_source src, cell_char * ch, cell_slice_type * buf);
 
     void *data;
 };

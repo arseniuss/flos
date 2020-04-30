@@ -23,7 +23,7 @@ cell_token_HDRS = \
 	include/cell/lang/source.h \
 	include/cell/lang/target.h \
 	include/cell/lang/token.h \
-	include/cell/lang/tokens.inc.h
+	include/cell/lang/tokens.inc
 
 
 cell_token_SRCS = \
@@ -37,12 +37,17 @@ cell_token_LIBS = \
 	flos/libcell.mem
 	
 cell_token_linux_LIBS = \
+	flos/libcell.io \
+	flos/libcell.fmt \
+	flos/libcell.utf \
+	flos/libcell.ascii \
 	flos/libcell.linux
 	
 cell_token_HAS_TESTS = 1
 
 cell_token_TESTS = \
-    csource/tests/source_test.c
+    csource/tests/source_test.c \
+    csource/tests/token_tests.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

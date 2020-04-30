@@ -16,11 +16,9 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include <cell/lang/token.h>
 
-#define __(x)   #x
-
 const char *cell_lang_tokens[] = {
-#include <cell/lang/tokens.inc.h>
+#define __(u, l, str)   str,
+#include <cell/lang/tokens.inc>
 };

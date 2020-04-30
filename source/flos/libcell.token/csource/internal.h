@@ -31,8 +31,8 @@ struct __source_str_s {
     cell_byte *ptr;
 };
 
-cell_error __source_file_read(const cell_lang_source src, cell_slice_type * buffer);
+cell_error __source_file_read(const cell_lang_source src, cell_char * ch, cell_slice_type * buf);
 
-cell_error __source_str_read(const cell_lang_source src, cell_slice_type * buffer);
+cell_error __source_str_read(const cell_lang_source src, cell_char * ch, cell_slice_type * buf);
 
 #endif /* !__CELL__TOKEN_INTERNAL_H__ */
