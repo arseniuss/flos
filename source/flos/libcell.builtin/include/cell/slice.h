@@ -24,20 +24,23 @@
 
 // module builtin.slice
 
+#    define __cell_slice_inners(buf_type) \
+    buf_type* buf; cell_size len; cell_size cap;
+
 #    define cell_slice_type_def(__name, __type) \
     typedef __type __name##_type; \
-    typedef struct { __type* buf; cell_size cap; cell_size len; } __name##_slice_type;
+    typedef struct { __cell_slice_inners(__type) } __name##_slice_type;
 
 #    define cell_slice_make_generic(__name, __cap) \
     cell_slice_type __name = { .buf = (cell_byte*)cell_mem_salloc(__cap), .cap = __cap, .len = 0 };
 
 #    define cell_slice_make_typed(__name, __cap, __type) \
-    typedef struct { __type* buf; cell_size cap; cell_size len; } __name##_slice_type; \
+    typedef struct { __cell_slice_inners(__type)} __name##_slice_type; \
     __name##_slice_type __name = {.buf = (__type *)cell_mem_salloc(__cap * sizeof(__type)), .cap = __cap,.len = 0}
 
 #    define cell_array_sliceof(__arr, __start, __end, __name) \
     typedef __arr##_type __name##_type; \
-    typedef struct { __arr##_type* buf; cell_size cap; cell_size len; } __name##_slice_type; \
+    typedef struct { __cell_slice_inners(__arr##_type) } __name##_slice_type; \
     __name##_slice_type __name = { .buf = &__arr.buf[__start], .cap = __arr.len - __start, .len = __end - __start  };
 
 #    define cell_slice_append(__slice, __value, __ret) \
@@ -63,9 +66,7 @@
     for(__t __e = __s.buf[0]; __i != __s.len; __e = __s.buf[++__i])
 
 typedef struct {
-    cell_byte *buf;
-    cell_size cap;
-    cell_size len;
+    __cell_slice_inners(cell_byte)
 } cell_slice_type;
 
 cell_error __cell_slice_append(cell_slice_type * s, cell_size elem_size, void *value, cell_slice_type * ret);

@@ -39,8 +39,8 @@
 // }
 
 typedef struct {
-    cell_size len;
     cell_byte *buffer;
+    cell_size len;
 } cell_string;
 
 // func (str *string) init()
