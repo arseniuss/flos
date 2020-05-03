@@ -2,14 +2,31 @@
 #include <cell/io.h>
 #include <cell/lang/source.h>
 
+#include "../internal.h"
+
 TEST(source_test1) {
     cell_error err;
     cell_lang_source src;
 
-    if((err = cell_lang_source_new(cell_string_c("tests/unicode.cell"), &src)) != CELL_NULL) {
-        cell_string str = err->string(err);
+    cell_io_printf("source test 1\n");
 
-        cell_io_printf("error %S\n");
+    if((err = cell_lang_source_new(cell_string_c("tests/unicode.cell"), &src)) != CELL_NULL) {
+        cell_io_printf("tests/unicode.cell error %S\n", err->string(err));
         return;
     }
+
+    cell_char ch;
+    cell_slice_make_generic(buf, 4096);
+
+    while((err = __source_file_read(src, &ch, &buf)) == CELL_NULL) {
+        cell_io_printf("char %u len %d buf %*s\n", ch, buf.len, buf.len, buf.buf);
+        buf.len = 0;
+    }
+
+    if(err != CELL_NULL) {
+        cell_io_printf("read error: %S\n", err->string(err));
+        return;
+    }
+
+    cell_io_printf("source test 1 done\n");
 }

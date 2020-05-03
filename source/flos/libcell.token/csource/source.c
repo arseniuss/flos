@@ -29,6 +29,7 @@
 
 cell_error_def(FULLBUF, "buffer is full");
 cell_error_def(INVCHR, "invalid unicode character");
+cell_error_def(EOF, "end of file");
 
 // func new(filepath string) (error, source)
 
@@ -71,7 +72,7 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
     cell_size start = buf->len;
 
     cell_char ch;
-    cell_size ch_len;
+    cell_size ch_len = 0;
 
     do {
         if(buf->len >= cap + 1) {
@@ -82,6 +83,11 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
         buf->cap = buf->len + 1;       // read just one byte
 
         if((err = cell_os_read(f->file, buf)) != CELL_NULL) {
+            goto RETURN;
+        }
+
+        if(buf->len == 0) {
+            err = __EOF_error;
             goto RETURN;
         }
 
