@@ -20,12 +20,12 @@ LIBRARIES = cell_scanner
 cell_scanner_CFLAGS = -Iinclude
 
 cell_scanner_LIBS = \
+	flos/libcell.ascii \
 	flos/libcell.builtin \
-	flos/libcell.token \
-	flos/libcell.os \
 	flos/libcell.mem \
-	flos/libcell.utf \
-	flos/libcell.ascii
+	flos/libcell.os \
+	flos/libcell.token \
+	flos/libcell.utf
 	
 cell_scanner_linux_LIBS = \
 	flos/libcell.linux
@@ -42,12 +42,12 @@ cell_scanner_SRCS = \
 cell_scanner_HAS_TESTS = 1
 
 cell_scanner_TEST_LIBS = \
-    flos/libcell.ascii \
     flos/libcell.fmt \
     flos/libcell.io
 
 cell_scanner_TESTS = \
-    csource/tests/test1.c
+    csource/tests/test1.c \
+    csource/tests/test2.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)

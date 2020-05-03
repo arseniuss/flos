@@ -1,8 +1,29 @@
 module main
 
-var ch char = 'ā'
-var i int = 0
+// Comment 1  
+  
+/* Comment 
+2 */
 
+var ch char = '''
+var a char = 'ā'
+var str = "TEST\"TEST\""
+var zero int = 0
+var i uint16 = 123_0000
+var hex int = 0xFF_FF
+var bin int = 0b10_001
+var oct int = 0o344_334
+var f float = 0.123e+10
+var t bool = true
+var f bool = false
+
+alias BOOL = bool
+alias
+
+var ptr *int
+var b !bool
+
+#inline
 func main() {
     if i <= 0 {
         print.fmt("%d", i)

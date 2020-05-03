@@ -16,6 +16,7 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cell/ascii.h>
 #include <cell/assert.h>
 #include <cell/fmt.h>
 #include <cell/io.h>
@@ -46,15 +47,21 @@ TEST(test1) {
     cell_string str;
 
     while((tok = cell_lang_scanner_scan(scn, &pos, &str)) > CELL_LANG_TEOF) {
-        if((err = cell_io_printf("\t%s: \"%S\"\n", cell_lang_tokens[tok], str)) != CELL_NULL) {
-            cell_os_exit(err->string(err));
+        cell_io_printf("\t%s: ", cell_lang_tokens[tok]);
+        if(!cell_ascii_isspace(str.buffer[0])) {
+            cell_io_printf(" \"%S\"", str);
         }
+        cell_io_printf("\n");
     }
 
     if(tok != CELL_LANG_TEOF) {
-        if((err = cell_io_printf("failed with char: %S\n", str)) != CELL_NULL) {
-            cell_os_exit(err->string(err));
+        err = cell_lang_scanner_err(scn);
+
+        cell_io_printf("failed with char: %S", str);
+        if(err != CELL_NULL) {
+            cell_io_printf(" (%S)", err->string(err));
         }
+        cell_io_printf("\n");
     }
 
     cell_io_printf(cell_string_c("DONE!"));

@@ -19,6 +19,7 @@
 #include <cell/array.h>
 #include <cell/ascii.h>
 #include <cell/assert.h>
+#include <cell/error.h>
 #include <cell/lang/scanner.h>
 #include <cell/mem.h>
 #include <cell/mem/slice.h>
@@ -54,10 +55,13 @@ struct {
 #include <cell/lang/tokens.inc>
 };
 
+cell_error_def(unclosed_char, "unclosed character literal");
+cell_error_def(unclosed_str, "unclosed string literal");
+
 // func (scn scanner) scan() (token, position, string)
 
 cell_error cell_lang_scanner_skip_whitespace(cell_lang_scanner scn) {
-    while(cell_utf8_isspace(scn->ch)) {
+    while(cell_ascii_isblank(scn->ch)) {
 
         scn->buf.len = 0;
 
@@ -71,16 +75,34 @@ cell_error cell_lang_scanner_skip_whitespace(cell_lang_scanner scn) {
     return CELL_NULL;
 }
 
+cell_bool cell_lang_scanner_is_oper(cell_char ch, cell_lang_token * t) {
+    cell_bool ret = 0;
+
+    for(cell_size i = 0; i < sizeof(__operators) / sizeof(__operators[0]); i++) {
+        if(ch == __operators[i].oper) {
+            *t = __operators[i].token;
+            return 1;
+        }
+    }
+
+    return ret;
+}
+
+#define NEXT \
+    if ((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) { \
+        if(err == __cell_lang_source_eof_error) return CELL_LANG_TEOF; \
+        scn->err = err; \
+        return CELL_LANG_TINVALID; \
+    }
+
 cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position * pos, cell_string * str) {
     cell_error err;
+    cell_lang_token token = CELL_LANG_TINVALID;
 
     if(pos)
         pos->line = 0, pos->offset = 0;
     if(scn->ch == 0) {
-        if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
-            scn->err = err;
-            return CELL_LANG_TINVALID;
-        }
+        NEXT;
     }
 
     if((err = cell_lang_scanner_skip_whitespace(scn)) != CELL_NULL) {
@@ -88,14 +110,39 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         return CELL_LANG_TINVALID;
     }
 
-    if(scn->ch == '\'') {
-        if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
+    if(scn->ch == '\n') {
+        if((err = cell_string_copy(str, &scn->buf, scn->buf.len))) {
             scn->err = err;
             return CELL_LANG_TINVALID;
         }
 
-        if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
-            scn->err = err;
+        do {
+            NEXT;
+        } while(scn->ch == '\n');
+
+        cell_slice_strip(&scn->buf, scn->buf.len - 1);
+
+        return CELL_LANG_TNEWLINE;
+    }
+
+    if(scn->ch == '"') {
+        cell_slice_strip(&scn->buf, scn->buf.len);  /* Strip all */
+
+        cell_char last;
+        do {
+            last = scn->ch;
+            NEXT;
+        } while(last == '\\' || (scn->ch != '"' && scn->ch != '\n'));
+
+        if(scn->ch == '\n') {
+            cell_slice_strip(&scn->buf, scn->buf.len - 1);
+
+            if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 1))) {
+                scn->err = err;
+                return CELL_LANG_TINVALID;
+            }
+
+            scn->err = __unclosed_str_error;
             return CELL_LANG_TINVALID;
         }
 
@@ -104,22 +151,47 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
             return CELL_LANG_TINVALID;
         }
 
-        cell_slice_strip(&scn->buf, scn->buf.len - 1);
+        cell_slice_strip(&scn->buf, scn->buf.len);  /* Strip all */
 
-        if(scn->ch != '\'') {
-            // TODO: scn->err
+        NEXT;
+
+        return CELL_LANG_TSTR;
+    }
+
+    if(scn->ch == '\'') {
+        cell_slice_strip(&scn->buf, scn->buf.len);  /* Strip all */
+
+        NEXT;
+
+        if((err = cell_string_copy(str, &scn->buf, scn->buf.len))) {
+            scn->err = err;
             return CELL_LANG_TINVALID;
         }
+
+        cell_slice_strip(&scn->buf, scn->buf.len);  /* Strip all */
+
+        NEXT;
+
+        if(scn->ch != '\'') {
+            if((err = cell_string_copy(str, &scn->buf, scn->buf.len))) {
+                scn->err = err;
+                return CELL_LANG_TINVALID;
+            }
+
+            scn->err = __unclosed_char_error;
+            return CELL_LANG_TINVALID;
+        }
+
+        cell_slice_strip(&scn->buf, scn->buf.len);  /* Strip all */
+
+        NEXT;
 
         return CELL_LANG_TCHAR;
     }
 
     if(cell_ascii_isalpha(scn->ch)) {
         do {
-            if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
-                scn->err = err;
-                return CELL_LANG_TINVALID;
-            }
+            NEXT;
         } while(cell_ascii_isalnum(scn->ch));
 
         if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 1))) {
@@ -137,6 +209,87 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         return CELL_LANG_TIDENT;
     }
 
+    if(cell_ascii_isdigit(scn->ch)) {
+        cell_lang_token t = CELL_LANG_TINT;
+
+        NEXT;
+
+        switch (scn->ch) {
+            case 'o':
+            case 'O':
+                do {
+                    NEXT;
+                } while((scn->ch >= '0' && scn->ch <= '7') || scn->ch == '_');
+                break;
+            case 'b':
+            case 'B':
+                do {
+                    NEXT;
+                } while(scn->ch == '0' || scn->ch == '1' || scn->ch == '_');
+                break;
+            case 'x':
+            case 'X':
+                do {
+                    NEXT;
+                } while(cell_ascii_isxdigit(scn->ch) || scn->ch == '_');
+                break;
+            default:
+                while(cell_ascii_isdigit(scn->ch) || scn->ch == '_') {
+                    NEXT;
+                }
+                break;
+        }
+
+        if(scn->ch == '.') {
+            NEXT;
+
+            switch (scn->ch) {
+                case 'o':
+                case 'O':
+                    do {
+                        NEXT;
+                    } while((scn->ch >= '0' && scn->ch <= '7') || scn->ch == '_');
+                    break;
+                case 'b':
+                case 'B':
+                    do {
+                        NEXT;
+                    } while(scn->ch == '0' || scn->ch == '1' || scn->ch == '_');
+                    break;
+                case 'x':
+                case 'X':
+                    do {
+                        NEXT;
+                    } while(cell_ascii_isxdigit(scn->ch) || scn->ch == '_');
+                    break;
+                default:
+                    while(cell_ascii_isdigit(scn->ch) || scn->ch == '_') {
+                        NEXT;
+                    }
+                    break;
+            }
+        }
+
+        if(scn->ch == 'e' || scn->ch == 'E') {
+            NEXT;
+            if(scn->ch == '+' || scn->ch == '-') {
+                NEXT;
+            }
+
+            while(cell_ascii_isdigit(scn->ch) || scn->ch == '_') {
+                NEXT;
+            }
+        }
+
+        if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 1))) {
+            scn->err = err;
+            return CELL_LANG_TINVALID;
+        }
+
+        cell_slice_strip(&scn->buf, scn->buf.len - 1);
+
+        return t;
+    }
 
     for(cell_size i = 0; i < sizeof(__brackets) / sizeof(__brackets[0]); i++) {
         if(scn->ch == __brackets[i].bracket) {
@@ -147,40 +300,83 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
 
             cell_slice_strip(&scn->buf, scn->buf.len);
 
-            if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
-                scn->err = err;
-                return CELL_LANG_TINVALID;
-            }
+            NEXT;
 
             return __brackets[i].token;
         }
     }
 
-    for(cell_size i = 0; i < sizeof(__operators) / sizeof(__operators[0]); i++) {
-        if(scn->ch == __operators[i].oper) {
-            if((err = cell_string_copy(str, &scn->buf, scn->buf.len))) {
+    if(scn->ch == '/') {
+        NEXT;
+
+        if(scn->ch == '*') {
+            NEXT;
+
+            cell_slice_strip(&scn->buf, scn->buf.len);
+
+            cell_char last;
+
+            do {
+                last = scn->ch;
+                NEXT;
+            } while(scn->ch != '/' && last != '*');
+
+            if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 2))) {
                 scn->err = err;
                 return CELL_LANG_TINVALID;
             }
 
             cell_slice_strip(&scn->buf, scn->buf.len);
 
-            if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
+            NEXT;
+
+            return CELL_LANG_TCOMMENT;
+
+        } else if(scn->ch == '/') {
+            NEXT;
+
+            cell_slice_strip(&scn->buf, scn->buf.len);
+
+            while(scn->ch != '\n') {
+                NEXT;
+            }
+
+            if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 1))) {
                 scn->err = err;
                 return CELL_LANG_TINVALID;
             }
 
-            return __operators[i].token;
+            cell_slice_strip(&scn->buf, scn->buf.len);
+
+            NEXT;
+
+            return CELL_LANG_TCOMMENT;
         }
     }
 
-    if(scn->buf.len == 0) {
-        return CELL_LANG_TEOF;
+
+    if(cell_lang_scanner_is_oper(scn->ch, &token)) {
+        do {
+            NEXT;
+        } while(cell_lang_scanner_is_oper(scn->ch, &token));
+
+        if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 1))) {
+            scn->err = err;
+            return CELL_LANG_TINVALID;
+        }
+
+        cell_slice_strip(&scn->buf, scn->buf.len - 1);
+
+        return str->len > 1 ? CELL_LANG_TOPER : token;
     }
 
     if((err = cell_string_copy(str, &scn->buf, scn->buf.len))) {
         scn->err = err;
         return CELL_LANG_TINVALID;
+    }
+
+    if(scn->buf.len == 0) {
+        return CELL_LANG_TEOF;
     }
 
     return CELL_LANG_TINVALID;

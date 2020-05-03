@@ -38,4 +38,6 @@ cell_error cell_lang_scanner_new(cell_lang_scanner * scn, cell_lang_source src);
 // func (scn scanner) scan() (token, position, string)
 cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position * pos, cell_string * str);
 
+cell_error cell_lang_scanner_err(cell_lang_scanner scn);
+
 #endif /* __CELL__LANG_SCANNER_H__ */
