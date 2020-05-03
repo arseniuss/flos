@@ -186,6 +186,8 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
         case 's':
             ptr = (cell_byte *) cell_va_arg(list, void *);
             width = cell_c_strlen(ptr);
+            if(args->width != 0 && width > args->width) 
+                width = args->width;
             goto DO_STRING;
         case 'S':
         {
