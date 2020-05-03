@@ -25,6 +25,8 @@
 #    include <cell/error.h>
 #    include <cell/slice.h>
 
+cell_error_decl(cell_lang_source_eof);
+
 typedef struct cell_lang_source_s *cell_lang_source;
 
 struct cell_lang_source_s {
