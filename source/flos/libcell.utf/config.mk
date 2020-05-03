@@ -20,7 +20,8 @@ LIBRARIES = cell_utf
 UNICODE_VER = 12.1.0
 
 cell_utf_LIBS = \
-	flos/libcell.builtin
+	flos/libcell.builtin \
+	flos/libcell.mem
 
 cell_utf_CFLAGS = -Iinclude
 
