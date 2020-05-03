@@ -27,6 +27,8 @@ __(INT, int, "number")
 __(FLOAT, float, "floting point number") 
 __(CHAR, char, "character") 
 __(STR, str, "string literal")
+__(OPER, oper, "operator")
+__(NEWLINE, newline, "newline")        
 #endif
 
 #if !defined(__TOKEN_TYPE) || __TOKEN_TYPE==TOKEN_BRACKETS
@@ -37,6 +39,8 @@ __(RPAREM,, ")")
 __(RQBRACK,, "]")
 __(RCBRACK,, "}")
 __(SEMICOLON,, ";") 
+__(COMMA,, ",") 
+__(HASH,, "#") 
 #endif
         
 #if !defined(__TOKEN_TYPE) || __TOKEN_TYPE==TOKEN_OPER     
@@ -53,7 +57,7 @@ __(EQ,, "=")
 __(RDIV,, "\\")
 __(TILDE,, "~")
 __(PERIOD,, "/") 
-__(COMMA,, ".") 
+__(DOT,, ".") 
 __(COLON,, ":") 
 __(QUEST,, "?") 
 __(EXCLAM,, "!") 
