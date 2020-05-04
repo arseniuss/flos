@@ -57,6 +57,7 @@ struct {
 
 cell_error_def(unclosed_char, "unclosed character literal");
 cell_error_def(unclosed_str, "unclosed string literal");
+cell_error_def(unexpected_eof, "unexpected end of file");
 
 // func (scn scanner) scan() (token, position, string)
 
@@ -90,7 +91,6 @@ cell_bool cell_lang_scanner_is_oper(cell_char ch, cell_lang_token * t) {
 
 #define NEXT \
     if ((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) { \
-        if(err == __cell_lang_source_eof_error) return CELL_LANG_TEOF; \
         scn->err = err; \
         return CELL_LANG_TINVALID; \
     }
@@ -101,8 +101,15 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
 
     if(pos)
         pos->line = 0, pos->offset = 0;
+
     if(scn->ch == 0) {
         NEXT;
+    }
+
+    if(scn->ch == -1) {
+        str->len = 0;
+        cell_slice_strip(&scn->buf, scn->buf.len);
+        return CELL_LANG_TEOF;
     }
 
     if((err = cell_lang_scanner_skip_whitespace(scn)) != CELL_NULL) {
@@ -117,8 +124,10 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         }
 
         do {
+            cell_slice_strip(&scn->buf, scn->buf.len);
             NEXT;
-        } while(scn->ch == '\n');
+
+        } while(scn->ch == '\n' && scn->ch != -1);
 
         cell_slice_strip(&scn->buf, scn->buf.len - 1);
 
@@ -132,6 +141,10 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         do {
             last = scn->ch;
             NEXT;
+            if(scn->ch == -1) {
+                scn->err = __unexpected_eof_error;
+                return CELL_LANG_TINVALID;
+            }
         } while(last == '\\' || (scn->ch != '"' && scn->ch != '\n'));
 
         if(scn->ch == '\n') {

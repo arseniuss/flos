@@ -33,8 +33,6 @@ TEST(test2) {
             return;
         }
 
-
-
         cell_lang_token tok;
         cell_lang_position pos;
         cell_string str;
@@ -49,8 +47,12 @@ TEST(test2) {
 
             if(tok != __test_cases[i].seq[j]) {
                 cell_io_printf(" - incorrect token\n");
-                return;
+                break;
+            } else {
+                cell_io_printf("\n");
             }
+            if(tok == CELL_LANG_TEOF)
+                break;
         }
     }
 

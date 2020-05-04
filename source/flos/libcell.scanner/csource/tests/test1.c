@@ -57,12 +57,12 @@ TEST(test1) {
     if(tok != CELL_LANG_TEOF) {
         err = cell_lang_scanner_err(scn);
 
-        cell_io_printf("failed with char: %S", str);
+        cell_io_printf("failed with char: \"%S\" (%d)", str, tok);
         if(err != CELL_NULL) {
             cell_io_printf(" (%S)", err->string(err));
         }
         cell_io_printf("\n");
     }
 
-    cell_io_printf(cell_string_c("DONE!"));
+    cell_io_printf(cell_string_c("DONE!\n"));
 }
