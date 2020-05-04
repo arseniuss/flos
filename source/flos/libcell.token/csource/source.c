@@ -27,9 +27,8 @@
 
 #include "internal.h"
 
-cell_error_def(FULLBUF, "buffer is full");
-cell_error_def(INVCHR, "invalid unicode character");
-cell_error_def(cell_lang_source_eof, "end of file");
+cell_error_def(cell_lang_source_fullbuf, "buffer is full");
+cell_error_def(cell_lang_source_invchr, "invalid unicode character");
 
 // func new(filepath string) (error, source)
 
@@ -66,7 +65,7 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
     struct __source_file_s *f = (struct __source_file_s *)src->data;
 
     if(buf->len >= buf->cap)
-        return __FULLBUF_error;
+        return __cell_lang_source_fullbuf_error;
 
     cell_size cap = buf->cap;
     cell_size start = buf->len;
@@ -76,7 +75,7 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
 
     do {
         if(buf->len >= cap + 1) {
-            err = __FULLBUF_error;
+            err = __cell_lang_source_fullbuf_error;
             goto RETURN;
         }
 
@@ -87,7 +86,7 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
         }
 
         if(buf->len == 0) {
-            err = __cell_lang_source_eof_error;
+            *_ch = -1;                 // eof
             goto RETURN;
         }
 
@@ -95,7 +94,7 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
     } while(ch == cell_utf8_error && ch_len < buf->len - start);
 
     if(ch == cell_utf8_error) {
-        err = __INVCHR_error;
+        err = __cell_lang_source_invchr_error;
         buf->len = start;
         goto RETURN;
     }
@@ -129,7 +128,8 @@ cell_error cell_lang_source_string(cell_string str, cell_lang_source * src) {
     (*src)->read = &__source_str_read;
     (*src)->data = s;
 
-    // TODO
+    s->ptr = str.buffer;
+    s->str = str;
 
     return CELL_NULL;
 }
@@ -138,22 +138,30 @@ cell_error __source_str_read(const cell_lang_source src, cell_char * _ch, cell_s
     struct __source_str_s *s = (struct __source_str_s *)src->data;
 
     if(buf->len >= buf->cap)
-        return __FULLBUF_error;
+        return __cell_lang_source_fullbuf_error;
 
-    cell_char ch;
-    cell_size ch_len = cell_utf8_tochar(&ch, s->ptr, s->str.buffer + s->str.len - s->ptr);
-
-    if(ch == cell_utf8_error) {
-        return __INVCHR_error;
+    if(!*s->ptr || s->ptr >= (s->str.buffer + s->str.len)) {
+        buf->buf[buf->len++] = -1;
+        *_ch = -1;                     // eof
+        return CELL_NULL;
     }
 
-    if(buf->len + ch_len > buf->cap)
-        return __FULLBUF_error;
+    cell_char ch;
+    cell_size ch_len = 0;
+
+    ch_len = cell_utf8_tochar(&ch, s->ptr, s->str.len - (s->ptr - s->str.buffer));
+    if(ch == cell_utf8_error) {
+        return __cell_lang_source_invchr_error;
+    }
+
+    if(buf->len + ch_len >= buf->cap) {
+        return __cell_lang_source_fullbuf_error;
+    }
 
     __builtin_memcpy(&buf->buf[buf->len], s->ptr, ch_len);
     buf->len += ch_len;
-    s->ptr += ch_len;
     *_ch = ch;
+    s->ptr += ch_len;
 
     return CELL_NULL;
 }
