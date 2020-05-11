@@ -9,8 +9,8 @@ struct {
     cell_lang_token seq[10];
 } __test_cases[] = {
     {
-        .text = "var a int",.seq = {
-    CELL_LANG_TVAR, CELL_LANG_TIDENT, CELL_LANG_TIDENT, 0}}
+     .text = "var a int",.seq = {
+                                 CELL_LANG_TVAR, CELL_LANG_TIDENT, CELL_LANG_TIDENT, 0}}
 };
 
 TEST(test2) {
@@ -34,11 +34,11 @@ TEST(test2) {
         }
 
         cell_lang_token tok;
-        cell_lang_position pos;
+        cell_lang_range r;
         cell_string str;
 
         for(int j = 0; j < 10; j++) {
-            tok = cell_lang_scanner_scan(scn, &pos, &str);
+            tok = cell_lang_scanner_scan(scn, &r, &str);
 
             cell_io_printf("\t%s: ", cell_lang_tokens[tok]);
             if(!cell_ascii_isspace(str.buffer[0])) {

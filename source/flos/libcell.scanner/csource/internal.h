@@ -24,11 +24,13 @@
 struct cell_lang_scanner_s {
     cell_lang_source src;
 
-    void (*err_handler) (const cell_byte * msg);
+    void (*err_handler)(const cell_byte * msg);
 
     cell_char ch;
     cell_slice_type buf;
     cell_error err;
+    cell_lang_position last_pos;
+    cell_lang_position pos;
 };
 
 #endif /* __CELL__SCANNER_INTERNAL_H__ */

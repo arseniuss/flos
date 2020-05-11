@@ -68,7 +68,9 @@ cell_error cell_lang_scanner_skip_whitespace(cell_lang_scanner scn) {
 
         cell_error err;
 
-        if((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) {
+        __builtin_memcpy(&scn->last_pos, &scn->pos, sizeof(cell_lang_position));
+
+        if((err = scn->src->read(scn->src, &scn->ch, &scn->buf, &scn->pos)) != CELL_NULL) {
             return err;
         }
     }
@@ -90,17 +92,15 @@ cell_bool cell_lang_scanner_is_oper(cell_char ch, cell_lang_token * t) {
 }
 
 #define NEXT \
-    if ((err = scn->src->read(scn->src, &scn->ch, &scn->buf)) != CELL_NULL) { \
+    __builtin_memcpy(&scn->last_pos, &scn->pos, sizeof(cell_lang_position)); \
+    if ((err = scn->src->read(scn->src, &scn->ch, &scn->buf, &scn->pos)) != CELL_NULL) { \
         scn->err = err; \
         return CELL_LANG_TINVALID; \
     }
 
-cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position * pos, cell_string * str) {
+cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_range * r, cell_string * str) {
     cell_error err;
     cell_lang_token token = CELL_LANG_TINVALID;
-
-    if(pos)
-        pos->line = 0, pos->offset = 0;
 
     if(scn->ch == 0) {
         NEXT;
@@ -117,6 +117,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         return CELL_LANG_TINVALID;
     }
 
+    __builtin_memcpy(&r->start, &scn->last_pos, sizeof(cell_lang_position));
+
     if(scn->ch == '\n') {
         if((err = cell_string_copy(str, &scn->buf, scn->buf.len))) {
             scn->err = err;
@@ -130,6 +132,7 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         } while(scn->ch == '\n' && scn->ch != -1);
 
         cell_slice_strip(&scn->buf, scn->buf.len - 1);
+        __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
 
         return CELL_LANG_TNEWLINE;
     }
@@ -168,6 +171,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
 
         NEXT;
 
+        __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
+
         return CELL_LANG_TSTR;
     }
 
@@ -199,6 +204,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
 
         NEXT;
 
+        __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
+
         return CELL_LANG_TCHAR;
     }
 
@@ -218,6 +225,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
             if(cell_string_eq(str, __keywords[i].keyword))
                 return __keywords[i].token;
         }
+
+        __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
 
         return CELL_LANG_TIDENT;
     }
@@ -300,6 +309,7 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         }
 
         cell_slice_strip(&scn->buf, scn->buf.len - 1);
+        __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
 
         return t;
     }
@@ -314,6 +324,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
             cell_slice_strip(&scn->buf, scn->buf.len);
 
             NEXT;
+
+            __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
 
             return __brackets[i].token;
         }
@@ -343,6 +355,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
 
             NEXT;
 
+            __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
+
             return CELL_LANG_TCOMMENT;
 
         } else if(scn->ch == '/') {
@@ -363,6 +377,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
 
             NEXT;
 
+            __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
+
             return CELL_LANG_TCOMMENT;
         }
     }
@@ -379,6 +395,7 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         }
 
         cell_slice_strip(&scn->buf, scn->buf.len - 1);
+        __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
 
         return str->len > 1 ? CELL_LANG_TOPER : token;
     }
@@ -387,6 +404,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_position
         scn->err = err;
         return CELL_LANG_TINVALID;
     }
+
+    __builtin_memcpy(&r->end, &scn->last_pos, sizeof(cell_lang_position));
 
     if(scn->buf.len == 0) {
         return CELL_LANG_TEOF;

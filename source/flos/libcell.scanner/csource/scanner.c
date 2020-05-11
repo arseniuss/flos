@@ -41,6 +41,8 @@ cell_error cell_lang_scanner_new(cell_lang_scanner * scn, cell_lang_source src) 
     s->buf.cap = 256;
 
     s->src = src;
+    cell_lang_position_init(&s->pos);
+    cell_lang_position_init(&s->last_pos);
 
     *scn = s;
 

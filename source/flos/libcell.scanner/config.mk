@@ -31,7 +31,6 @@ cell_scanner_linux_LIBS = \
 	flos/libcell.linux
 
 cell_scanner_HDRS = \
-	include/cell/lang/position.h \
 	include/cell/lang/scanner.h
 
 cell_scanner_SRCS = \

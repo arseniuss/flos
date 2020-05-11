@@ -43,11 +43,15 @@ TEST(test1) {
     }
 
     cell_lang_token tok;
-    cell_lang_position pos;
+    cell_lang_range r;
     cell_string str;
 
-    while((tok = cell_lang_scanner_scan(scn, &pos, &str)) > CELL_LANG_TEOF) {
-        cell_io_printf("\t%s: ", cell_lang_tokens[tok]);
+    cell_lang_position_init(&r.start);
+    cell_lang_position_init(&r.end);
+
+    while((tok = cell_lang_scanner_scan(scn, &r, &str)) > CELL_LANG_TEOF) {
+        cell_io_printf("\t%d:%d - %d:%d:%s ", r.start.line, r.start.offset,
+                       r.end.line, r.end.offset, cell_lang_tokens[tok]);
         if(!cell_ascii_isspace(str.buffer[0])) {
             cell_io_printf(" \"%S\"", str);
         }

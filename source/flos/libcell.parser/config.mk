@@ -18,14 +18,14 @@
 LIBRARIES = cell_parser
 
 cell_parser_LIBS = \
-	flos/libcell.builtin \
-	flos/libcell.token \
 	flos/libcell.ast \
-	flos/libcell.scanner \
+	flos/libcell.builtin \
+	flos/libcell.fmt \
 	flos/libcell.io \
-	flos/libcell.os \
 	flos/libcell.mem \
-	flos/libcell.fmt
+	flos/libcell.os \
+	flos/libcell.scanner \
+	flos/libcell.token 
 
 cell_parser_CFLAGS = -Iinclude
 
@@ -39,9 +39,8 @@ cell_parser_HDRS = \
 cell_parser_HAS_TESTS = 1
 
 cell_parser_TEST_LIBS = \
-    flos/libcell.io \
-    flos/libcell.utf \
-    flos/libcell.ascii
+    flos/libcell.ascii \
+    flos/libcell.utf
 
 cell_parser_linux_TEST_LIBS = \
     flos/libcell.linux
