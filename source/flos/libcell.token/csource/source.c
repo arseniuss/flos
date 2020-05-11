@@ -60,7 +60,8 @@ cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src) {
     return CELL_NULL;
 }
 
-cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_slice_type * buf) {
+cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_slice_type * buf,
+                              cell_lang_position * pos) {
     cell_error err = CELL_NULL;
     struct __source_file_s *f = (struct __source_file_s *)src->data;
 
@@ -101,7 +102,10 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
 
     *_ch = ch;
     buf->len = start + ch_len;
-
+    if(ch == '\n')
+        pos->line++, pos->offset = 1;
+    else
+        pos->offset++;
 
   RETURN:
     buf->cap = cap;
@@ -134,7 +138,8 @@ cell_error cell_lang_source_string(cell_string str, cell_lang_source * src) {
     return CELL_NULL;
 }
 
-cell_error __source_str_read(const cell_lang_source src, cell_char * _ch, cell_slice_type * buf) {
+cell_error __source_str_read(const cell_lang_source src, cell_char * _ch, cell_slice_type * buf,
+                             cell_lang_position * pos) {
     struct __source_str_s *s = (struct __source_str_s *)src->data;
 
     if(buf->len >= buf->cap)
@@ -162,6 +167,10 @@ cell_error __source_str_read(const cell_lang_source src, cell_char * _ch, cell_s
     buf->len += ch_len;
     *_ch = ch;
     s->ptr += ch_len;
+    if(ch == '\n')
+        pos->line++, pos->offset = 1;
+    else
+        pos->offset++;
 
     return CELL_NULL;
 }

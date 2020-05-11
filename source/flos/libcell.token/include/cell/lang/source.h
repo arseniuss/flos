@@ -24,6 +24,7 @@
 #    include <cell/string.h>
 #    include <cell/error.h>
 #    include <cell/slice.h>
+#    include <cell/lang/position.h>
 
 cell_error_decl(cell_lang_source_eof);
 
@@ -31,7 +32,7 @@ typedef struct cell_lang_source_s *cell_lang_source;
 
 struct cell_lang_source_s {
     // func (src source) read() (int16, error)
-    cell_error(*read) (const cell_lang_source src, cell_char * ch, cell_slice_type * buf);
+    cell_error(*read) (const cell_lang_source src, cell_char * ch, cell_slice_type * buf, cell_lang_position * pos);
 
     void *data;
 };

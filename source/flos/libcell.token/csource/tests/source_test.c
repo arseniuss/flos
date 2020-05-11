@@ -17,11 +17,12 @@ TEST(source_test1) {
 
     cell_char ch;
     cell_slice_make_generic(buf, 4096);
+    cell_lang_position pos;
 
-    while((err = __source_file_read(src, &ch, &buf)) == CELL_NULL) {
+    while((err = __source_file_read(src, &ch, &buf, &pos)) == CELL_NULL) {
         if(ch == -1)
             break;
-        cell_io_printf("char %u len %d buf %*s\n", ch, buf.len, buf.len, buf.buf);
+        cell_io_printf("file:%d:%d: char %u: %*s\n", pos.line, pos.offset, ch, buf.len, buf.buf);
         buf.len = 0;
     }
 
@@ -49,11 +50,12 @@ TEST(source_test2) {
 
     cell_char ch;
     cell_slice_make_generic(buf, 4096);
+    cell_lang_position pos;
 
-    while((err = __source_str_read(src, &ch, &buf)) == CELL_NULL) {
+    while((err = __source_str_read(src, &ch, &buf, &pos)) == CELL_NULL) {
         if(ch == -1)
             break;
-        cell_io_printf("char %u len %d buf %*s\n", ch, buf.len, buf.len, buf.buf);
+        cell_io_printf("file:%d:%d: char %u: %*s\n", pos.line, pos.offset, ch, buf.len, buf.buf);
         buf.len = 0;
     }
 
