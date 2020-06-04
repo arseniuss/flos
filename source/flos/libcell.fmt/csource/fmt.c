@@ -59,7 +59,7 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
     cell_uint16 radix;
     cell_int64 num;
     cell_size width = 0;
-    cell_byte *ptr;
+    cell_byte *ptr = CELL_NULL;
     cell_error err = CELL_NULL;
     cell_byte tmp[130];
 
@@ -186,7 +186,7 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
         case 's':
             ptr = (cell_byte *) cell_va_arg(list, void *);
             width = cell_c_strlen(ptr);
-            if(args->width != 0 && width > args->width) 
+            if(args->width != 0 && width > args->width)
                 width = args->width;
             goto DO_STRING;
         case 'S':
@@ -195,8 +195,10 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
 
             str = (cell_string) cell_va_arg(list, cell_string);
 
+            if(str.buffer > 4096) {
             ptr = str.buffer;
             width = str.len;
+            }
 
             goto DO_STRING;
         }
@@ -209,10 +211,11 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
                 }
             }
 
-            while(*ptr != '\0' && width > 0) {
-                emit(p, *ptr++);
-                width--;
-            }
+            if(ptr)
+                while(*ptr != '\0' && width > 0) {
+                    emit(p, *ptr++);
+                    width--;
+                }
 
             if(args->flags & cell_fmt_left) {
                 while(args->width > width) {
