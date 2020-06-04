@@ -387,7 +387,7 @@ ifndef NDEBUG
 CFLAGS += -g
 endif
 
-CFLAGS += -ffunction-sections -fdata-sections -Wall -Wno-unused-local-typedefs -std=gnu18
+CFLAGS += -ffunction-sections -fdata-sections -Wall -Wno-unused-local-typedefs -std=gnu18 -Werror-implicit-function-declaration
 LDFLAGS += --whole-archive
 
 ## TODO
