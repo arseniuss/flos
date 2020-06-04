@@ -25,7 +25,7 @@
 #    include <cell/lang/scanner.h>
 
 typedef struct {
-    cell_lang_position pos;
+    cell_lang_range pos;
     cell_string msg;
 } cell_lang_parser_error;
 
@@ -38,9 +38,9 @@ cell_error cell_lang_parser_new(cell_lang_parser * prs, cell_lang_scanner scn);
 
 cell_bool cell_lang_parser_has_error(cell_lang_parser prs);
 
-void cell_lang_parser_for_error(cell_lang_parser prs, void (*fn) (cell_lang_parser_error * err));
+void cell_lang_parser_for_error(cell_lang_parser prs, void (*fn)(cell_lang_parser_error * err));
 
-cell_error cell_lang_parser_parse(cell_lang_parser prs);
+cell_error cell_lang_parser_parse(cell_lang_parser prs, cell_lang_ast_node ** node);
 
 
 #endif /* __CELL__PARSER_H__ */

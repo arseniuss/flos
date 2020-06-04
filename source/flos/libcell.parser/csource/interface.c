@@ -32,7 +32,7 @@ cell_error cell_lang_parse(cell_lang_source * src, cell_lang_ast_node ** ast) {
     if((err = cell_lang_parser_new(&prs, scn)) != CELL_NULL)
         return err;
 
-    if((err = cell_lang_parser_parse(prs)) != CELL_NULL)
+    if((err = cell_lang_parser_parse(prs, ast)) != CELL_NULL)
         return err;
 
     return CELL_NULL;

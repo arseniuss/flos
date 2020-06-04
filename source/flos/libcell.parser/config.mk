@@ -46,7 +46,10 @@ cell_parser_linux_TEST_LIBS = \
     flos/libcell.linux
 
 cell_parser_TESTS = \
-    csource/tests/test.c
+    csource/tests/internal.c \
+    csource/tests/test.c \
+    csource/tests/test1.c \
+    csource/tests/test2.c
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)
