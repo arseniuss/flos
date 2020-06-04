@@ -39,7 +39,7 @@ cell_error cell_string_copy_s(cell_string * s1, const cell_string * s2) {
         return err;
     }
 
-    __builtin_memcpy(s1->buffer, s2->buffer, s1->len);
+    __builtin_memcpy(s1->buffer, s2->buffer, s2->len);
     s1->len = s2->len;
 
     return CELL_NULL;
