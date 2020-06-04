@@ -45,6 +45,7 @@ cell_scanner_TEST_LIBS = \
     flos/libcell.io
 
 cell_scanner_TESTS = \
+    csource/tests/one_line_test.c \
     csource/tests/test1.c \
     csource/tests/test2.c
 

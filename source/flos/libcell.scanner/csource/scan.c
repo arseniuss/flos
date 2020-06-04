@@ -214,7 +214,8 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_range * 
             NEXT;
         } while(cell_ascii_isalnum(scn->ch));
 
-        if((err = cell_string_copy(str, &scn->buf, scn->buf.len - 1))) {
+
+        if((err = cell_string_copy(str, &scn->buf, scn->buf.len + (scn->ch == -1 ? 0 : -1)))) {
             scn->err = err;
             return CELL_LANG_TINVALID;
         }
