@@ -82,11 +82,13 @@ cell_error __source_file_read(const cell_lang_source src, cell_char * _ch, cell_
 
         buf->cap = buf->len + 1;       // read just one byte
 
+        cell_size old_size = buf->len;
+
         if((err = cell_os_read(f->file, buf)) != CELL_NULL) {
             goto RETURN;
         }
 
-        if(buf->len == 0) {
+        if(buf->len == old_size) {
             *_ch = -1;                 // eof
             goto RETURN;
         }
