@@ -1,4 +1,5 @@
 #include <cell/linux.h>
+#include <cell/string.h>
 
 TEST(sys_write_test) {
     cell_byte str[] = "system write";

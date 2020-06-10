@@ -151,7 +151,6 @@ F(CELL_LINUX_EPERM, 1, "Operation not permitted")
     F(CELL_LINUX_EISNAM, 120, "Is a named type file")
     F(CELL_LINUX_EREMOTEIO, 121, "Remote I/O error")
     F(CELL_LINUX_EDQUOT, 122, "Quota exceeded")
-
     F(CELL_LINUX_ENOMEDIUM, 123, "No medium found")
     F(CELL_LINUX_EMEDIUMTYPE, 124, "Wrong medium type")
     F(CELL_LINUX_ECANCELED, 125, "Operation Canceled")
@@ -159,7 +158,5 @@ F(CELL_LINUX_EPERM, 1, "Operation not permitted")
     F(CELL_LINUX_EKEYEXPIRED, 127, "Key has expired")
     F(CELL_LINUX_EKEYREVOKED, 128, "Key has been revoked")
     F(CELL_LINUX_EKEYREJECTED, 129, "Key was rejected by service")
-
-
     F(CELL_LINUX_EOWNERDEAD, 130, "Owner died")
     F(CELL_LINUX_ENOTRECOVERABLE, 131, "State not recoverable")
