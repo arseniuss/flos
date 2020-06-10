@@ -7,3 +7,5 @@ include config.mk
 all:
 
 include pkg-install.mk
+
+tests:

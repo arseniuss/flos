@@ -2,6 +2,7 @@ all:
 install:
 	
 
+tests:
 
 uninstall:
 	

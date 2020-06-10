@@ -6,4 +6,5 @@ install:
 
 uninstall:
 	
+tests:
 
