@@ -60,7 +60,7 @@ static void format_assert(const cell_c_char * result, const cell_c_char * format
                 cell_os_write(stdout, err->string(err));
             }
             cell_os_write(stdout, cell_string_c("\n"));
-            cell_os_exit(cell_string_c("test failed"));
+            cell_os_exit_S(cell_string_c("test failed"));
         } else {
             cell_os_write(stdout, cell_string_c(" OK\n"));
         }
@@ -75,7 +75,7 @@ static void format_assert(const cell_c_char * result, const cell_c_char * format
         cell_error err = cell_fmt_format_list((cell_slice_type *) & s, cell_string_c(format), list);
         if(err == CELL_NULL) {
             cell_os_write(stdout, cell_string_c("\n"));
-            cell_os_exit(cell_string_c("test failed"));
+            cell_os_exit_S(cell_string_c("test failed"));
         } else {
             cell_os_write(stdout, err->string(err));
             cell_os_write(stdout, cell_string_c(" OK\n"));

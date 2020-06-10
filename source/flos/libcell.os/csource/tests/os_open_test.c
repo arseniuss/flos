@@ -26,7 +26,7 @@ TEST(os_open_test) {
     cell_os_file f;
 
     if((err = cell_os_open(cell_string_c("tests/open.this"), &f)) != CELL_NULL) {
-        cell_os_exit(err->string(err));
+        cell_os_exit_s(err->string(err));
     }
 
     cell_io_printf_s(cell_string_c("os_open OK\n"));

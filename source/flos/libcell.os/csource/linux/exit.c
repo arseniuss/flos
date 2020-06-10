@@ -19,7 +19,7 @@
 #include <cell/string.h>
 #include <cell/linux.h>
 
-void cell_os_exit(const cell_string msg) {
+void cell_os_exit_s(const cell_string msg) {
     cell_linux_sys_write(1, msg.buffer, msg.len);
 
     cell_linux_sys_exit(msg.len == 0 ? 0 : 1);

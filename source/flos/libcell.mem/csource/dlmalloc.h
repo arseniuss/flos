@@ -23,7 +23,7 @@ extern "C" {
 #    define MORECORE(sz)            __morecore(sz)
 #    define USE_LOCKS               1
 #    define LACKS_SYS_TYPES_H       1
-#    define ABORT                   cell_os_exit(cell_string_c("abort"))
+#    define ABORT                   cell_os_exit_s(cell_string_c("abort"))
 #    define USE_DL_PREFIX           1
 #    define LACKS_ERRNO_H           1
 #    define NO_MALLOC_STATS         1
@@ -180,6 +180,7 @@ extern "C" {
       cell_error_decl(no_memory);
 
     void *dlmalloc(size_t);
+    cell_error cell_os_sbrk(cell_uint32 inc, void **ptr);
 
     static inline void *__morecore(cell_size sz) {
         void *ptr = CELL_NULL;

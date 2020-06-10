@@ -26,25 +26,25 @@ TEST(os_sbrk_test) {
     cell_error err;
 
     if((err = cell_os_sbrk(0, &p1)) != CELL_NULL) {
-        cell_os_exit(err->string(err));
+        cell_os_exit_s(err->string(err));
     } else {
         cell_io_printf_s(cell_string_c("os_sbrk(0) returned %#x\n"), p1);
     }
 
     if((err = cell_os_sbrk(100, &p2)) != CELL_NULL) {
-        cell_os_exit(err->string(err));
+        cell_os_exit_s(err->string(err));
         return;
     }
 
     cell_io_printf_s(cell_string_c("os_sbrk(100) returned %#x\n"), p2);
 
     if((err = cell_os_sbrk(100, &p3)) != CELL_NULL) {
-        cell_os_exit(err->string(err));
+        cell_os_exit_s(err->string(err));
         return;
     }
 
     if(p2 + 100 != p3) {
-        cell_os_exit(cell_string_c("error"));
+        cell_os_exit_s(cell_string_c("error"));
     } else {
         cell_io_printf_s(cell_string_c("os_sbrk(100) returned %#x\n"), p3);
     }

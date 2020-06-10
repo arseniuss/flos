@@ -7,6 +7,9 @@ cell_error_def(no_memory, "no memory");
 
 cell_error mem_error = CELL_NULL;
 
+void *dlrealloc(void *oldmem, size_t bytes);
+void dlfree(void *mem);
+
 cell_error cell_mem_alloc(cell_size sz, void **ptr) {
     mem_error = CELL_NULL;
 

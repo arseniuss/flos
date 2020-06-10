@@ -21,6 +21,14 @@
 
 #    include <cell/string.h>
 
-void cell_os_exit(const cell_string msg);
+#    define cell_os_exit(msg) \
+    _Generic((msg), \
+        const char*: cell_os_exit_p, \
+        char*: cell_os_exit_p, \
+        cell_string: cell_os_exit_s \
+    )(msg)
+
+void cell_os_exit_s(const cell_string msg);
+void cell_os_exit_p(const cell_string msg);
 
 #endif /* !__OS__PROC_H__ */

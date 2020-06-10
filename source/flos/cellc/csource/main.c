@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
         struct list *f;
 
         if((err = cell_mem_alloc(sizeof(struct list), (void **)&f))) {
-            cell_os_exit(err->string(err));
+            cell_os_exit_s(err->string(err));
         }
 
         f->next = files;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(files == CELL_NULL)
-        cell_os_exit(cell_string_c("error: no input files\n"));
+        cell_os_exit_s(cell_string_c("error: no input files\n"));
 
     for(struct list * p = files; p; p = p->next) {
         cell_lang_source src;
@@ -73,11 +73,11 @@ int main(int argc, char *argv[]) {
 
         err = cell_lang_parse(&src, &ast);
         if(err)
-            cell_os_exit(err->string(err));
+            cell_os_exit_s(err->string(err));
 
         err = cell_lang_asm(ast, trg);
         if(err)
-            cell_os_exit(err->string(err));
+            cell_os_exit_s(err->string(err));
     }
 
     return 0;

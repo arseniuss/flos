@@ -35,11 +35,11 @@ TEST(test1) {
 
         cell_fmt_format(&s, cell_string_c("lang: %S"), err->string(err));
 
-        cell_os_exit(cell_string_s(s));
+        cell_os_exit_S(cell_string_s(s));
     }
 
     if((err = cell_lang_scanner_new(&scn, src)) != CELL_NULL) {
-        cell_os_exit(err->string(err));
+        cell_os_exit_S(err->string(err));
     }
 
     cell_lang_token tok;

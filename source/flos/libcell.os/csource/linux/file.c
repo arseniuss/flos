@@ -20,6 +20,6 @@
 
 #include "internal.h"
 
-cell_os_file stdin = &(struct os_file_s){.fd = 0 };
-cell_os_file stdout = &(struct os_file_s){.fd = 1 };
-cell_os_file stderr = &(struct os_file_s){.fd = 2 };
+cell_os_file stdin = &(struct os_file_s) {.fd = 0 };
+cell_os_file stdout = &(struct os_file_s) {.fd = 1 };
+cell_os_file stderr = &(struct os_file_s) {.fd = 2 };
