@@ -35,6 +35,10 @@ cell_fmt_HDRS = \
     include/cell/fmt.h
 
 cell_fmt_HAS_TESTS = 1
+
+cell_fmt_TEST_LIBS = \
+    flos/libcell.mem
+
 cell_fmt_TESTS = \
     csource/tests/fmt_test.c
 

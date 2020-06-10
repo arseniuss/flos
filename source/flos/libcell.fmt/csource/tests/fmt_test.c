@@ -17,10 +17,11 @@
  */
 
 #include <cell/array.h>
+#include <cell/assert.h>
 #include <cell/error.h>
 #include <cell/fmt.h>
-#include <cell/assert.h>
 #include <cell/os/file.h>
+#include <cell/os/proc.h>
 
 static cell_bool equal(const cell_c_char * result, const cell_slice_type * buffer) {
     for(cell_uint32 i = 0; *result || buffer->len < buffer->cap; result++, i++) {
@@ -60,7 +61,7 @@ static void format_assert(const cell_c_char * result, const cell_c_char * format
                 cell_os_write(stdout, err->string(err));
             }
             cell_os_write(stdout, cell_string_c("\n"));
-            cell_os_exit_S(cell_string_c("test failed"));
+            cell_os_exit("test failed");
         } else {
             cell_os_write(stdout, cell_string_c(" OK\n"));
         }
@@ -75,7 +76,7 @@ static void format_assert(const cell_c_char * result, const cell_c_char * format
         cell_error err = cell_fmt_format_list((cell_slice_type *) & s, cell_string_c(format), list);
         if(err == CELL_NULL) {
             cell_os_write(stdout, cell_string_c("\n"));
-            cell_os_exit_S(cell_string_c("test failed"));
+            cell_os_exit("test failed");
         } else {
             cell_os_write(stdout, err->string(err));
             cell_os_write(stdout, cell_string_c(" OK\n"));

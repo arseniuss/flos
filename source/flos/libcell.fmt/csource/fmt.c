@@ -196,8 +196,8 @@ cell_error __do_format(fmt_format_args * args, cell_va_list list, void *p, cell_
             str = (cell_string) cell_va_arg(list, cell_string);
 
             if(str.buffer > 4096) {
-            ptr = str.buffer;
-            width = str.len;
+                ptr = str.buffer;
+                width = str.len;
             }
 
             goto DO_STRING;
