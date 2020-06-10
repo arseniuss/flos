@@ -119,7 +119,7 @@ void cell_lang_parser_expected(cell_lang_parser prs, cell_lang_token tok) {
     prs_err->pos = prs->pos;
     prs_err->msg = cell_string_s(buf);
 
-    cell_slice_append(prs->errors, prs_err, prs->errors);
+    cell_slice_append(prs->errors, *prs_err, prs->errors);
 }
 
 void cell_lang_parser_expect(cell_lang_parser prs, cell_lang_token tok) {

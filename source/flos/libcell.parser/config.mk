@@ -46,6 +46,7 @@ cell_parser_linux_TEST_LIBS = \
     flos/libcell.linux
 
 cell_parser_TESTS = \
+    csource/tests/error_test1.c \
     csource/tests/internal.c \
     csource/tests/test.c \
     csource/tests/test1.c \
