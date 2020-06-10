@@ -29,6 +29,6 @@
     )(msg)
 
 void cell_os_exit_s(const cell_string msg);
-void cell_os_exit_p(const cell_string msg);
+void cell_os_exit_p(const char *msg);
 
 #endif /* !__OS__PROC_H__ */
