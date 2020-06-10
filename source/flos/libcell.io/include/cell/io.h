@@ -22,7 +22,7 @@
 #    include <cell/error.h>
 
 
-#define cell_io_printf(fmt, ...) \
+#    define cell_io_printf(fmt, ...) \
     _Generic((fmt), \
         const char*: cell_io_printf_p, \
         char*: cell_io_printf_p, \
@@ -32,6 +32,6 @@
 // func printf(fmt string, ...) error
 cell_error cell_io_printf_s(cell_string fmt, ...);
 
-cell_error cell_io_printf_p(const char* fmt, ...);
+cell_error cell_io_printf_p(const char *fmt, ...);
 
 #endif /* __CELL__STD_IO_H__ */

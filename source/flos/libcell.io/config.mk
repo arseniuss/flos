@@ -23,7 +23,10 @@ cell_io_DISTRO = flos
 cell_io_LIBS = \
 	flos/libcell.builtin \
 	flos/libcell.os \
-	flos/libcell.fmt
+	flos/libcell.fmt \
+	flos/libcell.mem \
+	flos/libcell.utf \
+	flos/libcell.ascii
 
 cell_io_CFLAGS = -Iinclude
 
@@ -34,6 +37,11 @@ cell_io_SRCS = \
 	csource/print.c
 	
 cell_io_HAS_TESTS = 1
+
+cell_io_TEST_LIBS =
+
+cell_io_linux_TEST_LIBS = \
+    flos/libcell.linux
 
 cell_io_TESTS = \
     csource/tests/printf.c
