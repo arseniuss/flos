@@ -21,20 +21,20 @@
 #include <cell/assert.h>
 
 TEST(utf8_isalpha_test) {
-        cell_assert(cell_utf8_isalpha('a'));
+    cell_assert(cell_utf8_isalpha('a'));
 }
 
 TEST(utf8_isspace_test) {
     cell_assert(cell_utf8_isspace('\t'));
     cell_assert(cell_utf8_isspace(' '));
-    
+
 }
 
 TEST(utf8_len_test) {
     cell_string str = cell_string_c("こんにちは世界");
 
     cell_size sz = cell_utf8_len(str);
-    
+
     cell_assert(sz == 13);
 
 }

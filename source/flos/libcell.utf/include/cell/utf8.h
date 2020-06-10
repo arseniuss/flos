@@ -64,7 +64,7 @@ cell_size cell_utf8_len(cell_string s);
 cell_size cell_utf8_tochar(cell_char * p, const cell_byte * s, cell_size len);
 
 // func fromchar(char ch) ( int, byte[])
-int cell_utf8_fromchar(cell_char ch, cell_byte *b, cell_size sz);
+int cell_utf8_fromchar(cell_char ch, cell_byte * b, cell_size sz);
 
 cell_int32 cell_utf8_char_len(cell_char ch);
 

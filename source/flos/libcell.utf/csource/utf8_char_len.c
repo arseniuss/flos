@@ -19,12 +19,20 @@
 #include <cell/utf8.h>
 
 cell_int32 cell_utf8_char_len(cell_char ch) {
-    if(ch <= 0x7F) return 1;
-    else if(ch <= 0x07FF) return 2;
-    else if(ch <= 0xD7FF) return 3; 
-    else if(ch <= 0xDFFF) return 0; /* surrogate character */
-    else if(ch <= 0xFFFD) return 3;
-    else if(ch <= 0xFFFF) return 0; /* illegal character */
-    else if(ch <= 0x10FFFF) return 4;
-    else return 0; /* too large character */
+    if(ch <= 0x7F)
+        return 1;
+    else if(ch <= 0x07FF)
+        return 2;
+    else if(ch <= 0xD7FF)
+        return 3;
+    else if(ch <= 0xDFFF)
+        return 0;                      /* surrogate character */
+    else if(ch <= 0xFFFD)
+        return 3;
+    else if(ch <= 0xFFFF)
+        return 0;                      /* illegal character */
+    else if(ch <= 0x10FFFF)
+        return 4;
+    else
+        return 0;                      /* too large character */
 }

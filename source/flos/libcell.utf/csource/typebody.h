@@ -46,8 +46,7 @@ cell_bool ISCHAR(cell_char c) {
 #endif
 
 #ifdef SINGLES
-    if((match =
-        __bsearch(&c, SINGLES, LEN(SINGLES), sizeof *SINGLES, __compare1)))
+    if((match = __bsearch(&c, SINGLES, LEN(SINGLES), sizeof *SINGLES, __compare1)))
         return 1;
 #endif
 
@@ -74,8 +73,7 @@ cell_char TOCHAR(cell_char c) {
         return ((c - match[0]) % 2) ? c : c - 1;
 #    endif
 #    ifdef SINGLES
-    if((match =
-        __bsearch(&c, SINGLES, LEN(SINGLES), sizeof *SINGLES, __compare1)))
+    if((match = __bsearch(&c, SINGLES, LEN(SINGLES), sizeof *SINGLES, __compare1)))
         return match[1];
 #    endif
 
@@ -87,10 +85,10 @@ cell_char TOCHAR(cell_char c) {
 #if defined(TOINT) && defined(RANGES)
 cell_int8 TOINT(cell_char c) {
     cell_char *match;
-    
+
     if((match = __bsearch(&c, RANGES, LEN(RANGES), sizeof *RANGES, __compare2)))
         return c - match[0];
-    
+
     return -1;
 }
 #endif /* TOINT */

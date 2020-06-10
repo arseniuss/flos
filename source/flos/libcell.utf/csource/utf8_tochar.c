@@ -26,26 +26,26 @@ cell_size cell_utf8_tochar(cell_char * p, const cell_byte * s, cell_size len) {
     cell_uint8 c, i, m, n, x;
     cell_char r;
 
-    if (len == 0) /* can't even look at s[0] */
+    if(len == 0)                       /* can't even look at s[0] */
         return 0;
 
     c = *s++;
 
-    if (!(c & 0200)) /* basic byte */
+    if(!(c & 0200))                    /* basic byte */
         return (*p = c, 1);
 
-    if (!(c & 0100)) /* continuation byte */
+    if(!(c & 0100))                    /* continuation byte */
         return (*p = cell_utf8_error, 1);
 
     n = __utfcnt[c & 077];
 
-    if (n == 0) /* illegal byte */
+    if(n == 0)                         /* illegal byte */
         return (*p = cell_utf8_error, 1);
 
-    if (len == 1) /* reached len limit */
+    if(len == 1)                       /* reached len limit */
         return (*p = cell_utf8_error, 0);
 
-    if ((*s & 0300) != 0200) /* not a continuation byte */
+    if((*s & 0300) != 0200)            /* not a continuation byte */
         return (*p = cell_utf8_error, 1);
 
     x = 0377 >> n;
@@ -53,22 +53,22 @@ cell_size cell_utf8_tochar(cell_char * p, const cell_byte * s, cell_size len) {
 
     r = (r << 6) | (*s++ & 077);
 
-    if (r <= x) /* overlong sequence */
+    if(r <= x)                         /* overlong sequence */
         return (*p = cell_utf8_error, 2);
 
     m = (len < n) ? len : n;
 
-    for (i = 2; i < m; i++) {
-        if ((*s & 0300) != 0200) /* not a continuation byte */
+    for(i = 2; i < m; i++) {
+        if((*s & 0300) != 0200)        /* not a continuation byte */
             return (*p = cell_utf8_error, i);
 
         r = (r << 6) | (*s++ & 077);
     }
 
-    if (i < n) /* must have reached len limit */
+    if(i < n)                          /* must have reached len limit */
         return 0;
 
-    if (!__isvalid(r))
+    if(!__isvalid(r))
         return (*p = cell_utf8_error, i);
 
     return (*p = r, i);

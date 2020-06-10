@@ -28,4 +28,4 @@ int __compare1(const void *v1, const void *v2);
 int __compare2(const void *v1, const void *v2);
 
 void *__bsearch(const void *key, const void *ptr, cell_size count,
-                cell_size size, int (*comp) (const void *, const void *));
+                cell_size size, int (*comp)(const void *, const void *));
