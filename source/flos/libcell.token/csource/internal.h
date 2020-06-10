@@ -24,6 +24,7 @@
 
 struct __source_file_s {
     cell_os_file file;
+    cell_string name;
 };
 
 struct __source_str_s {

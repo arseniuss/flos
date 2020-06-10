@@ -1,4 +1,4 @@
-
+#include <cell/os/proc.h>
 #include <cell/io.h>
 #include <cell/lang/source.h>
 
@@ -66,4 +66,53 @@ TEST(source_test2) {
 
 
     cell_io_printf("source test 2 done\n");
+}
+
+TEST(source_name_test1) {
+    cell_error err;
+    cell_lang_source src;
+    cell_string str = cell_string_c(src_code);
+
+    cell_io_printf("source name test1\n");
+
+    if((err = cell_lang_source_string(str, &src)) != CELL_NULL) {
+        cell_io_printf("string source error %S\n", err->string(err));
+        return;
+    }
+
+    cell_string name;
+
+    cell_string_init(&name);
+
+    if((err = cell_lang_source_name(src, &name)) != CELL_NULL) {
+        cell_io_printf("string source name error %S\n", err->string(err));
+        return;
+    }
+
+    cell_io_printf("name %S\n", name);
+}
+
+TEST(source_name_test2) {
+    cell_error err;
+    cell_lang_source src;
+
+    cell_io_printf("source name test 1\n");
+
+    if((err = cell_lang_source_new(cell_string_c("tests/unicode.cell"), &src)) != CELL_NULL) {
+        cell_io_printf("tests/unicode.cell error %S\n", err->string(err));
+        cell_os_exit("error");
+        return;
+    }
+
+    cell_string name;
+
+    cell_string_init(&name);
+
+    if((err = cell_lang_source_name(src, &name)) != CELL_NULL) {
+        cell_io_printf("string source name error %S\n", err->string(err));
+        cell_os_exit("error");
+        return;
+    }
+
+    cell_io_printf("name %S\n", name);
 }

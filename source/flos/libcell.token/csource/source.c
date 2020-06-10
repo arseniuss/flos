@@ -22,6 +22,7 @@
 #include <cell/error.h>
 #include <cell/lang/source.h>
 #include <cell/mem.h>
+#include <cell/mem/string.h>
 #include <cell/os/file.h>
 #include <cell/utf8.h>
 
@@ -29,6 +30,7 @@
 
 cell_error_def(cell_lang_source_fullbuf, "buffer is full");
 cell_error_def(cell_lang_source_invchr, "invalid unicode character");
+cell_error_def(cell_lang_source_unrecognised, "unrecognised source");
 
 // func new(filepath string) (error, source)
 
@@ -53,6 +55,7 @@ cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src) {
         return err;
     }
 
+    cell_string_copy_s(&s->name, &filepath);
 
     (*src)->read = &__source_file_read;
     (*src)->data = s;
@@ -173,6 +176,22 @@ cell_error __source_str_read(const cell_lang_source src, cell_char * _ch, cell_s
         pos->line++, pos->offset = 1;
     else
         pos->offset++;
+
+    return CELL_NULL;
+}
+
+cell_error cell_lang_source_name(const cell_lang_source src, cell_string * name) {
+    if(src->read == &__source_file_read) {
+        struct __source_file_s *f = (struct __source_file_s *)src->data;
+
+        cell_string_copy_s(name, &f->name);
+    } else if(src->read == &__source_str_read) {
+        cell_string str = cell_string_c("<string>");
+
+        cell_string_copy_s(name, &str);
+    } else {
+        return __cell_lang_source_unrecognised_error;
+    }
 
     return CELL_NULL;
 }

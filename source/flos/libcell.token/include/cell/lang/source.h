@@ -47,4 +47,7 @@ cell_error cell_lang_source_new(cell_string filepath, cell_lang_source * src);
 // func string(str string) (error, source)
 cell_error cell_lang_source_string(cell_string str, cell_lang_source * src);
 
+//func (src *source) name() (error, string)
+cell_error cell_lang_source_name(const cell_lang_source src, cell_string * name);
+
 #endif /* __CELL__LANG_SOURCE_H__ */
