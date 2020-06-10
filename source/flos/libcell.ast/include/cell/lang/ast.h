@@ -19,32 +19,32 @@
 #ifndef __CELL__LANG_AST_H__
 #    define __CELL__LANG_AST_H__
 
-#include <cell/lang/position.h>
+#    include <cell/lang/position.h>
 
 enum cell_lang_ast {
     CELL_LANG_AINVALID = -1,
-#define __(u)    CELL_LANG_A##u,
-#include <cell/lang/ast.inc>
+#    define __(u)    CELL_LANG_A##u,
+#    include <cell/lang/ast.inc>
     CELL_LANG_ALAST
 };
-#undef __
+#    undef __
 
 typedef struct cell_lang_ast_node_s {
     enum cell_lang_ast type;
     struct cell_lang_ast_node_s *next;
-    
+
     cell_lang_position start;
     cell_lang_position end;
 } cell_lang_ast_node;
 
 typedef struct cell_lang_ast_ident_s {
     cell_string text;
-    struct cell_lang_ast_ident_s* next;
+    struct cell_lang_ast_ident_s *next;
 } cell_lang_ast_ident;
 
 typedef struct cell_lang_ast_module {
     cell_lang_ast_node base;
-    cell_lang_ast_ident* name;
+    cell_lang_ast_ident *name;
 } cell_lang_ast_module;
 
 // Node

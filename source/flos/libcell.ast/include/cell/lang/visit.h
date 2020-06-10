@@ -17,15 +17,14 @@
  */
 
 #ifndef __CELL__LANG_VISIT_H__
-#define __CELL__LANG_VISIT_H__
+#    define __CELL__LANG_VISIT_H__
 
-#include <cell/lang/ast.h>
+#    include <cell/lang/ast.h>
 
 typedef struct cell_lang_ast_visit_if_s {
-    void (*visit_module)(const cell_lang_ast_module* module);
+    void (*visit_module)(const cell_lang_ast_module * module);
 } cell_lang_ast_visit_if;
 
-void cell_lang_ast_visit(const cell_lang_ast_node* node,
-    const cell_lang_ast_visit_if* visit);
+void cell_lang_ast_visit(const cell_lang_ast_node * node, const cell_lang_ast_visit_if * visit);
 
 #endif /* __CELL__LANG_VISIT_H__ */
