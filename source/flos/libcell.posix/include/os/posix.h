@@ -16,10 +16,10 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __OS__POSIX_H__ 
-#define __OS__POSIX_H__
+#ifndef __OS__POSIX_H__
+#    define __OS__POSIX_H__
 
-#include "posix/socket.h"
+#    include "posix/socket.h"
 
 
 #endif /* __OS__POSIX_H__ */

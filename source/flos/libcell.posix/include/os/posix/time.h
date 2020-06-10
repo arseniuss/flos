@@ -16,8 +16,8 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __OS_POSIX__TIME_H__ 
-#define __OS_POSIX__TIME_H__
+#ifndef __OS_POSIX__TIME_H__
+#    define __OS_POSIX__TIME_H__
 
 // clock_getres
 // clock_gettime

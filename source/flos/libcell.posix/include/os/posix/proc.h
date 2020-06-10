@@ -17,7 +17,7 @@
  */
 
 #ifndef __OS_POSIX__PROC_H__
-#define __OS_POSIX__PROC_H__
+#    define __OS_POSIX__PROC_H__
 
 
 // execve
