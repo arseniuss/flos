@@ -42,10 +42,18 @@ typedef struct cell_lang_ast_ident_s {
     struct cell_lang_ast_ident_s *next;
 } cell_lang_ast_ident;
 
-typedef struct cell_lang_ast_module {
+typedef struct cell_lang_ast_module_s {
     cell_lang_ast_node base;
     cell_lang_ast_ident *name;
+    struct cell_lang_ast_node_s *imports;   // cell_lang_ast_import
 } cell_lang_ast_module;
+
+typedef struct cell_lang_ast_import_s {
+    cell_lang_ast_node base;
+    cell_lang_ast_ident *path;
+    cell_string alias;
+    cell_string location;
+} cell_lang_ast_import;
 
 // Node
 // Scope, Module

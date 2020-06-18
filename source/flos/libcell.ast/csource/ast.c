@@ -27,10 +27,22 @@ void cell_lang_ast_visit(const cell_lang_ast_node * node, const cell_lang_ast_vi
         case CELL_LANG_AMODULE:{
             const cell_lang_ast_module *module = (const cell_lang_ast_module *)node;
 
-            visit->visit_module(module);
+            if(visit->visit_module)
+                visit->visit_module(module);
+
+            cell_lang_ast_visit(module->imports, visit);
+            break;
+        }
+        case CELL_LANG_AIMPORT:{
+            const cell_lang_ast_import *import = (const cell_lang_ast_import *)node;
+
+            if(visit->visit_import)
+                visit->visit_import(import);
             break;
         }
         default:
+            if(visit->visit_unrecognised)
+                visit->visit_unrecognised(node);
             break;
     }
 

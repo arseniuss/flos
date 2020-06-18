@@ -17,4 +17,5 @@
  */
 
 __(MODULE)
+__(IMPORT)
 __(IDENTIFIER)

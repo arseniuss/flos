@@ -23,6 +23,9 @@
 
 typedef struct cell_lang_ast_visit_if_s {
     void (*visit_module)(const cell_lang_ast_module * module);
+    void (*visit_import)(const cell_lang_ast_import * import);
+
+    void (*visit_unrecognised)(const cell_lang_ast_node * node);
 } cell_lang_ast_visit_if;
 
 void cell_lang_ast_visit(const cell_lang_ast_node * node, const cell_lang_ast_visit_if * visit);
