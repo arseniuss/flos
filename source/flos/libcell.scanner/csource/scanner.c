@@ -52,3 +52,7 @@ cell_error cell_lang_scanner_new(cell_lang_scanner * scn, cell_lang_source src) 
 cell_error cell_lang_scanner_err(cell_lang_scanner scn) {
     return scn->err;
 }
+
+cell_lang_source cell_lang_scanner_source(cell_lang_scanner scn) {
+    return scn->src;
+}

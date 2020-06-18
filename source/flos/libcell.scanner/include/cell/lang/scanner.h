@@ -40,4 +40,6 @@ cell_lang_token cell_lang_scanner_scan(cell_lang_scanner scn, cell_lang_range * 
 
 cell_error cell_lang_scanner_err(cell_lang_scanner scn);
 
+cell_lang_source cell_lang_scanner_source(cell_lang_scanner scn);
+
 #endif /* __CELL__LANG_SCANNER_H__ */
