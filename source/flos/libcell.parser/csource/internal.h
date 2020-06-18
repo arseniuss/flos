@@ -45,16 +45,20 @@ struct cell_lang_parser_s {
     cell_lang_parser_error_slice_type errors;
 };
 
-void cell_lang_parser_expect(cell_lang_parser prs, cell_lang_token tok);
+cell_bool cell_lang_parser_expect(cell_lang_parser prs, cell_lang_token tok);
 void cell_lang_parser_expect_semi(cell_lang_parser prs);
 
 void cell_lang_parser_next(cell_lang_parser prs);
 
+void cell_lang_parser_parse_ident(cell_lang_parser prs, cell_string * str);
+cell_lang_ast_ident **cell_lang_parser_parse_ident_section(cell_lang_parser prs, cell_lang_ast_ident ** ident);
+void cell_lang_parser_parse_ident_path(cell_lang_parser prs, cell_lang_ast_ident ** base);
 
-cell_lang_ast_ident **cell_lang_parser_parse_ident(cell_lang_parser prs, cell_lang_ast_ident ** ident);
+void cell_lang_parser_parse_str(cell_lang_parser prs, cell_string * str);
 
 
-void cell_lang_parser_parse_module(cell_lang_parser prs, cell_lang_ast_node ** node);
+cell_lang_ast_module *cell_lang_parser_parse_module(cell_lang_parser prs, cell_lang_ast_node ** node);
+void cell_lang_parser_parse_import(cell_lang_parser prs, cell_lang_ast_module * module);
 
 
 #endif /* !__CELL__INTERNAL__ */

@@ -1,0 +1,6 @@
+module test3
+
+import std
+import std.a = A
+import std.b from "/lib/b.so"
+import std.c = C from "/lib/c.so"

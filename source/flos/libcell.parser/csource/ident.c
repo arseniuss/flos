@@ -18,7 +18,7 @@
 
 #include "internal.h"
 
-cell_lang_ast_ident **cell_lang_parser_parse_ident(cell_lang_parser prs, cell_lang_ast_ident ** ident) {
+cell_lang_ast_ident **cell_lang_parser_parse_ident_section(cell_lang_parser prs, cell_lang_ast_ident ** ident) {
     if(prs->tok != CELL_LANG_TIDENT) {
         cell_lang_parser_expect(prs, CELL_LANG_TIDENT);
 
@@ -36,10 +36,34 @@ cell_lang_ast_ident **cell_lang_parser_parse_ident(cell_lang_parser prs, cell_la
             cell_error_label_throw(prs->err_lbl, err);
         }
 
-        __debug("ident %S\n", (*ident)->text);
-
         cell_lang_parser_next(prs);
 
         return &((*ident)->next);
+    }
+}
+
+void cell_lang_parser_parse_ident(cell_lang_parser prs, cell_string * str) {
+    if(cell_lang_parser_expect(prs, CELL_LANG_TIDENT)) {
+        cell_error err;
+
+        if((err = cell_string_copy_s(str, &prs->str))) {
+            __debug("alloc error\n");
+            cell_error_label_throw(prs->err_lbl, err);
+        }
+
+        cell_lang_parser_next(prs);
+    }
+}
+
+void cell_lang_parser_parse_ident_path(cell_lang_parser prs, cell_lang_ast_ident ** base) {
+    cell_lang_ast_ident **ident = cell_lang_parser_parse_ident_section(prs, base);
+
+    while(prs->tok == CELL_LANG_TDOT) {
+        cell_lang_parser_next(prs);
+
+        if(prs->tok != CELL_LANG_TIDENT)
+            break;
+
+        cell_lang_parser_parse_ident_section(prs, ident);
     }
 }

@@ -32,6 +32,7 @@ cell_parser_CFLAGS = -Iinclude
 cell_parser_SRCS = \
 	csource/ident.c \
 	csource/interface.c \
+	csource/literal.c \
 	csource/module.c \
 	csource/parser.c
 
@@ -49,10 +50,9 @@ cell_parser_linux_TEST_LIBS = \
 
 cell_parser_TESTS = \
     csource/tests/error_test1.c \
+    csource/tests/file_tests.c \
     csource/tests/internal.c \
-    csource/tests/test.c \
-    csource/tests/test1.c \
-    csource/tests/test2.c
+    csource/tests/test.c 
 
 #
 # $_BUILDDIR(1 - arch, 2 - os, 3 - host, 4 - category)
