@@ -16,32 +16,9 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cell/error.h>
-#include <cell/fmt.h>
-#include <cell/io.h>
-#include <cell/lang/ast.h>
-#include <cell/lang/parser.h>
-#include <cell/lang/scanner.h>
-#include <cell/mem.h>
-#include <cell/mem/slice.h>
-#include <cell/mem/string.h>
-
-#define __debug(fmt, ...) cell_io_printf("%s:%d: " fmt, __FILE__,__LINE__, ##__VA_ARGS__)
-
-cell_slice_type_def(cell_lang_parser_error, cell_lang_parser_error);
+#include "internal.h"
 
 cell_error_def(INV, "error while reading");
-
-struct cell_lang_parser_s {
-    cell_lang_scanner scn;
-
-    cell_lang_token ltok, tok;
-    cell_lang_range pos;
-    cell_string str;
-
-    cell_error_label err_lbl;
-    cell_lang_parser_error_slice_type errors;
-};
 
 // func new(scn scanner) (error, parser)
 
@@ -119,6 +96,13 @@ void cell_lang_parser_expected(cell_lang_parser prs, cell_lang_token tok) {
     prs_err->pos = prs->pos;
     prs_err->msg = cell_string_s(buf);
 
+    cell_lang_source src = cell_lang_scanner_source(prs->scn);
+
+    if((err = cell_lang_source_name(src, &prs_err->src)) != CELL_NULL) {
+        __debug("source string error\n");
+        cell_error_label_throw(prs->err_lbl, err);
+    }
+
     cell_slice_append(prs->errors, *prs_err, prs->errors);
 }
 
@@ -152,35 +136,7 @@ void cell_lang_parser_expect_semi(cell_lang_parser prs) {
     }
 }
 
-cell_lang_ast_ident **cell_lang_parser_parse_ident(cell_lang_parser prs, cell_lang_ast_ident ** ident) {
-    if(prs->tok != CELL_LANG_TIDENT) {
-        cell_lang_parser_expect(prs, CELL_LANG_TIDENT);
-
-        return CELL_NULL;
-    } else {
-        cell_error err;
-
-        if((err = cell_mem_alloc(sizeof(cell_lang_ast_ident), (void **)ident))) {
-            __debug("alloc error\n");
-            cell_error_label_throw(prs->err_lbl, err);
-        }
-
-        if((err = cell_string_copy_s(&(*ident)->text, &prs->str))) {
-            __debug("alloc error\n");
-            cell_error_label_throw(prs->err_lbl, err);
-        }
-
-        __debug("ident %S\n", (*ident)->text);
-
-        cell_lang_parser_next(prs);
-
-        return &((*ident)->next);
-    }
-}
-
 cell_error cell_lang_parser_parse(cell_lang_parser prs, cell_lang_ast_node ** node) {
-    cell_error err;
-
     if(cell_error_label_init(prs->err_lbl)) {
         __debug("parse error %d\n", prs->err_lbl.err);
         return prs->err_lbl.err;
@@ -188,29 +144,7 @@ cell_error cell_lang_parser_parse(cell_lang_parser prs, cell_lang_ast_node ** no
 
     cell_lang_parser_next(prs);
 
-    cell_lang_parser_expect(prs, CELL_LANG_TMODULE);
-
-    cell_lang_ast_module *module = CELL_NULL;
-    if((err = cell_mem_alloc(sizeof(cell_lang_ast_module), (void **)&module)) != CELL_NULL) {
-        return err;
-    }
-
-    cell_lang_ast_ident **ident = cell_lang_parser_parse_ident(prs, &module->name);
-
-    while(prs->tok == CELL_LANG_TDOT) {
-        cell_lang_parser_next(prs);
-
-        if(prs->tok != CELL_LANG_TIDENT)
-            break;
-
-        cell_lang_parser_parse_ident(prs, ident);
-    }
-
-    cell_lang_parser_expect_semi(prs);
-
-    //TODO
-
-    *node = (cell_lang_ast_node *) module;
+    cell_lang_parser_parse_module(prs, node);
 
     return CELL_NULL;
 }

@@ -27,6 +27,7 @@
 typedef struct {
     cell_lang_range pos;
     cell_string msg;
+    cell_string src;
 } cell_lang_parser_error;
 
 typedef struct cell_lang_parser_s *cell_lang_parser;

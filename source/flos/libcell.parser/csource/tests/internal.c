@@ -18,7 +18,7 @@ const cell_lang_ast_visit_if visit = {
 };
 
 static void __print_error(cell_lang_parser_error * err) {
-    cell_io_printf("%s:%i:%i: %S\n", "<undefined>", err->pos.start, err->pos.end, err->msg);
+    cell_io_printf("%S:%i:%i: %S\n", err->src, err->pos.start, err->pos.end, err->msg);
 }
 
 void parse_file(const char *filename) {
