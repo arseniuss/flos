@@ -26,4 +26,12 @@
 cell_error cell_string_copy(cell_string * str, const cell_slice_type * slice, cell_size sz);
 cell_error cell_string_copy_s(cell_string * s1, const cell_string * s2);
 
+#define cell_string_append(t, s) \
+        _Generic((t), \
+            cell_string *: \
+                _Generic((s), \
+                    cell_string: cell_string_append_ss \
+                ) \
+        )(t, s)
+
 #endif /* !__CELL__MEM_STRING_H__ */

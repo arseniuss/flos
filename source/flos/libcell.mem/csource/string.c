@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cell/mem/string.h>
 #include <cell/mem.h>
+#include <cell/mem/string.h>
+#include <cell/string.h>
 
 cell_error cell_string_copy(cell_string * str, const cell_slice_type * slice, cell_size sz) {
     cell_error err;
@@ -42,5 +43,29 @@ cell_error cell_string_copy_s(cell_string * s1, const cell_string * s2) {
     __builtin_memcpy(s1->buffer, s2->buffer, s2->len);
     s1->len = s2->len;
 
+    return CELL_NULL;
+}
+
+cell_error cell_string_append_ss(cell_string * target, const cell_string source) {
+    cell_error err;
+    
+    cell_size sz = target->len + source.len;
+    cell_c_char* ptr;
+    
+    if((err = cell_mem_alloc(sz, (void **)&ptr)) != CELL_NULL) {
+        return err;
+    }
+    
+    __builtin_memcpy(ptr, target->buffer, target->len);
+    __builtin_memcpy(&ptr[target->len], source.buffer, source.len);
+    
+    if((err = cell_mem_free(target->buffer)) != CELL_NULL) {
+        cell_mem_free(ptr);
+        return err;
+    }
+    
+    target->buffer = (cell_byte *)ptr;
+    target->len = sz;
+    
     return CELL_NULL;
 }
