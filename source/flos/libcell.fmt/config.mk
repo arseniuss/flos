@@ -21,7 +21,8 @@ cell_fmt_LIBS = \
     flos/libcell.builtin \
     flos/libcell.ascii \
     flos/libcell.utf \
-    flos/libcell.os
+    flos/libcell.os \
+    flos/libcell.mem
 
 cell_fmt_linux_LIBS = flos/libcell.linux
 
@@ -36,8 +37,7 @@ cell_fmt_HDRS = \
 
 cell_fmt_HAS_TESTS = 1
 
-cell_fmt_TEST_LIBS = \
-    flos/libcell.mem
+cell_fmt_TEST_LIBS =
 
 cell_fmt_TESTS = \
     csource/tests/fmt_test.c
