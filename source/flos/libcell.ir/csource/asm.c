@@ -16,9 +16,50 @@
  *  along with this library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cell/lang/ir.h>
+#include <cell/fmt.h>
+#include <cell/io.h>
 #include <cell/lang/ast.h>
+#include <cell/lang/ir.h>
+#include <cell/lang/visit.h>
+#include <cell/mem/string.h>
+#include <cell/mem/string.h>
+#include <cell/slice.h>
+#include <cell/string.h>
+#include <cell/os/file.h>
 
-cell_error cell_lang_asm(cell_lang_ast_node * ast, cell_lang_target * target) {
-    return CELL_NULL;
+typedef struct {
+    cell_lang_target target;
+    cell_error last_error;
+} cell_asm;
+
+static cell_bool asm_visit_module(const cell_lang_ast_module * module, void *data) {
+    cell_error err;
+
+    cell_asm *a = (cell_asm *) data;
+
+    if((err = cell_lang_target_write(a->target, cell_string_c("; module"))) != CELL_NULL) {
+        a->last_error = err;
+        return 0;
+    }
+
+
+
+
+
+    return 1;
+}
+
+cell_lang_ast_visit_if asm_visit = {
+    .visit_module = &asm_visit_module
+};
+
+cell_error cell_lang_asm(cell_lang_ast_node * ast, cell_lang_target target) {
+    cell_asm a = {
+        .last_error = CELL_NULL,
+        .target = target
+    };
+
+    cell_lang_ast_visit(ast, &asm_visit, &a);
+
+    return a.last_error;
 }

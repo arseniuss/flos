@@ -23,7 +23,11 @@ cell_ir_LIBS = \
     flos/libcell.builtin \
     flos/libcell.ast \
     flos/libcell.token \
-    flos/libcell.scanner
+    flos/libcell.scanner \
+    flos/libcell.io \
+    flos/libcell.fmt \
+    flos/libcell.mem \
+    flos/libcell.os
 
 cell_ir_SRCS = \
     csource/asm.c
