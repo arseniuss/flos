@@ -22,12 +22,14 @@
 #    include <cell/lang/ast.h>
 
 typedef struct cell_lang_ast_visit_if_s {
-    void (*visit_module)(const cell_lang_ast_module * module);
-    void (*visit_import)(const cell_lang_ast_import * import);
+    cell_bool(*visit_module) (const cell_lang_ast_module * module, void *data);
+    cell_bool(*visit_import) (const cell_lang_ast_import * import, void *data);
+    cell_bool(*visit_var) (const cell_lang_ast_var * variable, void *data);
 
-    void (*visit_unrecognised)(const cell_lang_ast_node * node);
+    cell_bool(*visit_unrecognised) (const cell_lang_ast_node * node, void *data);
+    cell_bool(*post_visit) (const cell_lang_ast_node * node, void *data);
 } cell_lang_ast_visit_if;
 
-void cell_lang_ast_visit(const cell_lang_ast_node * node, const cell_lang_ast_visit_if * visit);
+void cell_lang_ast_visit(const cell_lang_ast_node * node, const cell_lang_ast_visit_if * visit, void *data);
 
 #endif /* __CELL__LANG_VISIT_H__ */

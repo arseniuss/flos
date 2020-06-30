@@ -55,9 +55,19 @@ typedef struct cell_lang_ast_import_s {
     cell_string location;
 } cell_lang_ast_import;
 
-// Node
-// Scope, Module
-// Comment
-// Stmt
+typedef struct cell_lang_ast_type_s {
+    cell_lang_ast_node base;
+    cell_string name;
+    struct cell_lang_ast_type_s *base_type;
+    struct cell_lang_ast_type_s *sub_type;
+} cell_lang_ast_type;
+
+typedef struct cell_lang_ast_var_s {
+    cell_lang_ast_node base;
+    cell_string name;
+    cell_lang_ast_type *type;
+} cell_lang_ast_var;
+
+void cell_lang_ast_free(cell_lang_ast_node * node);
 
 #endif /* __CELL__LANG_AST_H__ */

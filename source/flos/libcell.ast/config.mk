@@ -20,7 +20,8 @@ LIBRARIES = cell_ast
 cell_ast_LIBS = \
 	flos/libcell.builtin \
 	flos/libcell.scanner \
-	flos/libcell.token
+	flos/libcell.token \
+	flos/libcell.mem
 
 cell_ast_CFLAGS = -Iinclude
 
@@ -29,6 +30,7 @@ cell_ast_HDRS = \
 	include/cell/lang/visit.h
 	
 cell_ast_SRCS = \
+    csource/analyze.c \
     csource/ast.c
 
 #
