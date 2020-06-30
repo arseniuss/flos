@@ -56,9 +56,14 @@ void cell_lang_parser_parse_ident_path(cell_lang_parser prs, cell_lang_ast_ident
 
 void cell_lang_parser_parse_str(cell_lang_parser prs, cell_string * str);
 
+void cell_lang_parser_parse_type(cell_lang_parser prs, cell_lang_ast_type ** type);
+void cell_lang_parser_parse_struct(cell_lang_parser prs, cell_lang_ast_type ** type);
+void cell_lang_parser_parse_inf(cell_lang_parser prs, cell_lang_ast_type ** type);
+
 
 cell_lang_ast_module *cell_lang_parser_parse_module(cell_lang_parser prs, cell_lang_ast_node ** node);
 void cell_lang_parser_parse_import(cell_lang_parser prs, cell_lang_ast_module * module);
+cell_lang_ast_node *cell_lang_parser_parse_var(cell_lang_parser prs, cell_lang_ast_node * last);
 
 
 #endif /* !__CELL__INTERNAL__ */

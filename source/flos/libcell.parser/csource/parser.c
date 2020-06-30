@@ -127,7 +127,7 @@ cell_bool cell_lang_parser_expect(cell_lang_parser prs, cell_lang_token tok) {
 }
 
 void cell_lang_parser_expect_semi(cell_lang_parser prs) {
-    if(prs->tok != CELL_LANG_TRPAREM && prs->tok != CELL_LANG_TRCBRACK) {
+    if(prs->tok != CELL_LANG_TRPAREN && prs->tok != CELL_LANG_TRCBRACK) {
         switch (prs->tok) {
             case CELL_LANG_TCOMMA:
                 cell_lang_parser_expect(prs, CELL_LANG_TSEMICOLON);
@@ -136,7 +136,7 @@ void cell_lang_parser_expect_semi(cell_lang_parser prs) {
                 break;
             case CELL_LANG_TEOF:
             case CELL_LANG_TNEWLINE:
-                if(prs->ltok == CELL_LANG_TIDENT || prs->ltok == CELL_LANG_TSTR) {
+                if(prs->ltok == CELL_LANG_TIDENT || prs->ltok == CELL_LANG_TSTR || prs->ltok == CELL_LANG_TRCBRACK) {
                     cell_lang_parser_next(prs);
                     break;
                 }
@@ -161,11 +161,15 @@ cell_error cell_lang_parser_parse(cell_lang_parser prs, cell_lang_ast_node ** no
     cell_lang_parser_next(prs);
 
     cell_lang_ast_module *module = cell_lang_parser_parse_module(prs, node);
+    cell_lang_ast_node *last_node = (cell_lang_ast_node *) module;
 
     while(prs->tok != CELL_LANG_TEOF) {
         switch (prs->tok) {
             case CELL_LANG_TIMPORT:
                 cell_lang_parser_parse_import(prs, module);
+                break;
+            case CELL_LANG_TVAR:
+                last_node = cell_lang_parser_parse_var(prs, last_node);
                 break;
             default:
                 cell_lang_parser_new_error(prs, "unrecognised token: %S (%s)", prs->str, cell_lang_tokens[prs->tok]);

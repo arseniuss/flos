@@ -45,7 +45,7 @@ TEST(string_parsing) {
         cell_lang_parser_for_error(prs, __print_error);
     }
 
-    cell_lang_ast_visit(tree, &visit);
+    cell_lang_ast_visit(tree, &visit, CELL_NULL);
 
     cell_io_printf_s(cell_string_c("ALL DONE\n"));
 }

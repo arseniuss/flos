@@ -2,7 +2,7 @@
 
 #include "internal.h"
 
-static void test_visit_module(const cell_lang_ast_module * module) {
+static cell_bool test_visit_module(const cell_lang_ast_module * module, void *data) {
     cell_io_printf("MODULE");
 
     cell_lang_ast_ident *ident = module->name;
@@ -11,9 +11,11 @@ static void test_visit_module(const cell_lang_ast_module * module) {
         ident = ident->next;
     }
     cell_io_printf("\n");
+
+    return 1;
 }
 
-static void test_visit_import(const cell_lang_ast_import * import) {
+static cell_bool test_visit_import(const cell_lang_ast_import * import, void *data) {
     cell_io_printf("IMPORT");
 
     cell_lang_ast_ident *ident = import->path;
@@ -29,17 +31,48 @@ static void test_visit_import(const cell_lang_ast_import * import) {
         cell_io_printf(" LOCATION %S", import->location);
 
     cell_io_printf("\n");
+
+    return 1;
 }
 
-static void test_visit_unrecognised(const cell_lang_ast_node * node) {
+static cell_bool test_visit_type(const cell_lang_ast_type * type, void *data) {
+    while(type != CELL_NULL) {
+        cell_io_printf(" %S", type->name);
+
+        if(type->sub_type != CELL_NULL) {
+            cell_io_printf("(");
+            test_visit_type(type->sub_type, CELL_NULL);
+            cell_io_printf(")");
+        }
+
+        type = type->base_type;
+    }
+
+    return 1;
+}
+
+static cell_bool test_visit_var(const cell_lang_ast_var * variable, void *data) {
+    cell_io_printf("VAR %S", variable->name);
+
+    test_visit_type(variable->type, CELL_NULL);
+
+    cell_io_printf("\n");
+
+    return 1;
+}
+
+static cell_bool test_visit_unrecognised(const cell_lang_ast_node * node, void *data) {
     cell_io_printf("UNRECOGNISED %d", node->type);
 
     cell_io_printf("\n");
+
+    return 1;
 }
 
 const cell_lang_ast_visit_if visit = {
     .visit_module = &test_visit_module,
     .visit_import = &test_visit_import,
+    .visit_var = &test_visit_var,
     .visit_unrecognised = &test_visit_unrecognised
 };
 
@@ -85,7 +118,7 @@ void parse_file(const char *filename) {
         return;
     }
 
-    cell_lang_ast_visit(tree, &visit);
+    cell_lang_ast_visit(tree, &visit, CELL_NULL);
 
     cell_io_printf("ALL DONE %s\n", filename);
 }

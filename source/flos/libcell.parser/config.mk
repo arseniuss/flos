@@ -31,10 +31,14 @@ cell_parser_CFLAGS = -Iinclude
 
 cell_parser_SRCS = \
 	csource/ident.c \
+	csource/inf.c \
 	csource/interface.c \
 	csource/literal.c \
 	csource/module.c \
-	csource/parser.c
+	csource/parser.c \
+	csource/struct.c \
+	csource/type.c \
+	csource/variable.c
 
 cell_parser_HDRS = \
 	include/cell/lang/parser.h

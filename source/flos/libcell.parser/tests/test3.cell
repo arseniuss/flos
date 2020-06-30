@@ -4,3 +4,12 @@ import std
 import std.a = A
 import std.b from "/lib/b.so"
 import std.c = C from "/lib/c.so"
+
+var a uint
+var b *uint
+var c []uint
+var d [3]uint
+var e map[string]uint
+var f struct { }
+var g interface { }
+var h func(uint) int
