@@ -34,7 +34,8 @@ cell_token_SRCS = \
 cell_token_LIBS = \
 	flos/libcell.builtin \
 	flos/libcell.os \
-	flos/libcell.mem
+	flos/libcell.mem \
+	flos/libcell.fmt
 	
 cell_token_linux_LIBS = \
 	flos/libcell.io \

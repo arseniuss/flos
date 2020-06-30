@@ -23,8 +23,12 @@
 
 struct cell_lang_target_s;
 
-typedef struct cell_lang_target_s cell_lang_target;
+typedef struct cell_lang_target_s *cell_lang_target;
 
-cell_lang_target *cell_lang_target_file(cell_string str);
+cell_error cell_lang_target_file(cell_string str, cell_lang_target * trg);
+
+cell_error cell_lang_target_name(const cell_lang_target trg, cell_string * name);
+
+cell_error cell_lang_target_write(cell_lang_target trg, const cell_string str);
 
 #endif /* !__CELL__LANG_TARGET_H__ */
