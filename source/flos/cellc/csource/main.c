@@ -18,6 +18,7 @@
 
 #include <cell/builtin.h>
 #include <cell/error.h>
+#include <cell/io.h>
 #include <cell/lang/ast.h>
 #include <cell/lang/ir.h>
 #include <cell/lang/parser.h>
@@ -64,20 +65,21 @@ int main(int argc, char *argv[]) {
 
     for(struct list * p = files; p; p = p->next) {
         cell_lang_source src;
+        cell_lang_target trg;
 
-        cell_lang_source_new(cell_string_c(p->str), &src);
+        if((err = cell_lang_source_new(cell_string_c(p->str), &src)) != CELL_NULL)
+            cell_os_exit(err->string(err));
 
-        cell_lang_target *trg = cell_lang_target_file(cell_string_c(p->str));
+        if((err = cell_lang_target_file(cell_string_c(p->str), &trg)) != CELL_NULL)
+            cell_os_exit(err->string(err));
 
         cell_lang_ast_node *ast;
 
-        err = cell_lang_parse(&src, &ast);
-        if(err)
-            cell_os_exit_s(err->string(err));
+        if((err = cell_lang_parse(&src, &ast)) != CELL_NULL)
+            cell_os_exit(err->string(err));
 
-        err = cell_lang_asm(ast, trg);
-        if(err)
-            cell_os_exit_s(err->string(err));
+        if((err = cell_lang_asm(ast, trg)) != CELL_NULL)
+            cell_os_exit(err->string(err));
     }
 
     return 0;
